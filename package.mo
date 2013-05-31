@@ -8,8 +8,11 @@ package UsersGuide "User's Guide"
 
     class Message_Mailbox "Message and Mailbox"
 
-      annotation (Documentation(info="<html>
-<p>Examples are specified at: &QUOT;<a href=\"modelica://RealTimeCoordinationLibrary.Examples.AsynchronousCommunication\">Examples.AsynchronousCommunication</a>&QUOT; and &QUOT;<a href=\"modelica://RealTimeCoordinationLibrary.Examples.InteractingComponents\">Examples.InteractingComponents</a>&QUOT;.</p>
+      annotation (Documentation(info="<!DOCTYPE html>
+<html>
+<head><title>RealTimeCoordinationLibrary.UsersGuide.Elements.Messsage_Mailbox</title></head>
+<body>
+<p>Examples are specified at: &quot;<a href=\"modelica://RealTimeCoordinationLibrary.Examples.AsynchronousCommunication\">Examples.AsynchronousCommunication</a>&quot; and &quot;<a href=\"modelica://RealTimeCoordinationLibrary.Examples.InteractingComponents\">Examples.InteractingComponents</a>&quot;.</p>
 <p>We use messages to model asynchronous communication between different state graphs. Message defines the type of asynchronous messages.</p>
 <p><img src=\"modelica://RealTimeCoordinationLibrary/images/message.jpg\"/></p>
 <p>A message has parameters that transfer information from its sender to its receiver. The signature of the message type defines which parameter the message has. The parameters have a call by value semantics. The sender transition binds concrete values to the parameters that can be accessed by the receiver transition. In StateGraph2 models, the defined messages can be used as raise messages by a sender transition. A raise message is a message which is raised when a transition fires. A raise message is sent via the associated output delegation port of the State Graph2 class. This port is connected to an input delegation port which itself has a StateGraph2 model and a receiver mailbox and a receiver transition.</p>
@@ -24,13 +27,18 @@ package UsersGuide "User's Guide"
 <p><img src=\"modelica://RealTimeCoordinationLibrary/images/receive.jpg\"/></p>
 <p>The receiver transition must set the check box <b>use_messageReceive</b>.</p>
 <p><img src=\"modelica://RealTimeCoordinationLibrary/images/transitionReceive.jpg\"/></p>
-</html>"));
+</body>
+</html>
+"));
     end Message_Mailbox;
 
     class Synchronization "Synchronization"
 
-      annotation (Documentation(info="<html>
-<p>Examples are specified at: &QUOT;<a href=\"modelica://RealTimeCoordinationLibrary.Examples.Synchronization\">Examples.Synchronization</a>&QUOT;.</p>
+      annotation (Documentation(info="<!DOCTYPE html>
+<html>
+<head><title>RealTimeCoordinationLibrary.UsersGuide.Elements.Synchronization</title></head>
+<body>
+<p>Examples are specified at: &quot;<a href=\"modelica://RealTimeCoordinationLibrary.Examples.Synchronization\">Examples.Synchronization</a>&quot;.</p>
 <p>A common use case when modeling orthogonal regions is to allow two regions to change their state only in an atomic way. This means either both transitions are allowed to fire or both transition are not allowed to fire. Sending and receiving synchronizations via synchronization channels synchronize the firing of transitions of parallel regions. A synchronization channel has to be specified at a common ancestor state of the parallel regions and serves as the type for the synchronizations using it.</p>
 <p><img src=\"modelica://RealTimeCoordinationLibrary/images/sync.jpg\"/></p>
 <p>Sending a synchronization via the synchronization channel from one <b>sender transition</b> </p>
@@ -38,35 +46,52 @@ package UsersGuide "User's Guide"
 <p>to a <b>receiver transition</b> performs a synchronization. We allow only a receiving synchronization or sending synchronization per transition.</p>
 <p><img src=\"modelica://RealTimeCoordinationLibrary/images/syncReceiveDialog.jpg\"/></p>
 <p>A synchronization affects the prioritization and execution order of parallel transitions as described in the following. The sender transition is executed before the receiver transition because a synchronization is directed from sender to receiver. This may violate region priorities when the sender transition is in a region with a lower priority than the region of the receiver transition because without the sending and the receiving of synchronizations between them the transition in the region with the higher priority would be executed first. </p>
-</html>"));
+</body>
+</html>
+"));
     end Synchronization;
 
     class Transition "Transition"
 
       annotation (Documentation(info="<html>
-<p>Examples are specified at: &QUOT;<a href=\"modelica://RealTimeCoordinationLibrary.Examples\">Examples</a>&QUOT;.</p>
+<head><title>RealTimeCoordinationLibrary.UsersGuide.Elements.Transition</title></head>
+<body>
+<p>Examples are specified at: &quot;<a href=\"modelica://RealTimeCoordinationLibrary.Examples\">Examples</a>&quot;.</p>
 <p>Transitions of StateGraph2 are used to change the Step (i.e., the state) of a StateGraph2 model. When the Step connected to the input of a Transition is active and the Transition condition becomes true, then the Transition fires. This means that the Step connected to the input to the Transition is deactivated and the Step connected to the output of the Transition is activated. </p>
 <p>We changed the transition of StateGraph2 as follows. Instead of <i>delayTransition </i>and<i> waitTime</i> we added the <b>use_after </b>and<b> afterTime </b>parameters. The after time construct differs from the delay time in the original version of the StateGraph2 library in that at least the after time must have expired to let the transition fire. In contrast, the semantics of the delay time is that exactly the after time must have expired in order to let the transition fire. We introduced the after time semantics because it might happen that for two transitions that need to synchronize the time instants in which they are allowed to fire might not match due to their delay time.</p>
 <p>We extended the transition of StateGraph2 as follows. We added the parameters <b>use_syncSend</b>,<b> use_syncReceive</b>,<b> use_messageReceive</b>,<b> numberOfMessageIntegers</b>,<b> numberOfMessageBooleans</b>,<b> numberOfMessageReals</b>, and<b> syncChannelName</b>. </p>
-<p>We use these parameters to synchronize the firing of parallel transitions as described in &QUOT;<a href=\"modelica://RealTimeCoordinationLibrary.UsersGuide.Elements.Synchronization\">Synchronization</a>&QUOT; and to receive asynchronous messages as described in &QUOT;<a href=\"modelica://RealTimeCoordinationLibrary.UsersGuide.Elements.Message_Mailbox\">Message and Mailbox</a>&QUOT;.</p>
+<p>We use these parameters to synchronize the firing of parallel transitions as described in &quot;<a href=\"modelica://RealTimeCoordinationLibrary.UsersGuide.Elements.Synchronization\">Synchronization</a>&quot; and to receive asynchronous messages as described in &quot;<a href=\"modelica://RealTimeCoordinationLibrary.UsersGuide.Elements.Message_Mailbox\">Message and Mailbox</a>&quot;.</p>
 <p><img src=\"modelica://RealTimeCoordinationLibrary/images/transition.jpg\"/></p>
-</html>"));
+</body>
+</html>
+"));
     end Transition;
 
     class Clock "Clock"
 
       annotation (Documentation(info="<html>
-<p>Examples are specified at: &QUOT;<a href=\"modelica://RealTimeCoordinationLibrary.Examples.Clock\">Examples.Clock</a>&QUOT;.</p>
+<head><title>RealTimeCoordinationLibrary.UsersGuide.Elements.Clock</title></head>
+<body>
+<p>Examples are specified at: &quot;<a href=\"modelica://RealTimeCoordinationLibrary.Examples.Clock\">Examples.Clock</a>&quot;.</p>
 <p>A StateGraph2 model has a finite number of clocks. A clock models the elapsing of time during the execution of a system. Time elapses continuously, not in discrete steps. A clock can be reset to zero when it&apos;s input port <i>u</i>. The time value represented by a clock is relative to the last point in time when the clock has been reset. </p>
 <p><img src=\"modelica://RealTimeCoordinationLibrary/images/clock.jpg\"/></p>
-</html>"));
+</body>
+</html>
+"));
     end Clock;
 
     class Invariant "Invariant"
 
       annotation (Documentation(info="<html>
-<p>Examples are specified at: &QUOT;<a href=\"modelica://RealTimeCoordinationLibrary.Examples.Invariant\">Examples.Invariant</a>&QUOT;.</p>
-<p>An invariant is an inequation that specifies an upper <b>bound</b> on a clock, e.g., c &LT; 2 or c &LT;= 2 where c is a <a href=\"modelica://RealTimeCoordinationLibrary.UsersGuide.Elements.Clock\">Clock</a>. Invariants are assigned to generalized steps and are used to specify a time span in which this generalized step is allowed to be active. </p>
+<head><title>RealTimeCoordinationLibrary.UsersGuide.Elements.Invariant</title></head>
+<body>
+<p>Examples are specified at: &quot;<a href=\"modelica://RealTimeCoordinationLibrary.Examples.Invariant\">Examples.Invariant</a>&quot;.</p>
+<p>An invariant is an inequation that specifies an upper <b>bound</b> on a clock, e.g., c &lt; 2 or c &lt;= 2 where c is a <a href=\"modelica://RealTimeCoordinationLibrary.UsersGuide.Elements.Clock\">Clock</a>. Invariants are assigned to generalized steps and are used to specify a time span in which this generalized step is allowed to be active. </p>
+<p><img src=\"modelica://RealTimeCoordinationLibrary/images/invariant.jpg\"/></p>
+</body>
+</html>
+p>Examples are specified at: &QUOT;<a href=\"modelica://RealTimeCoordinationLibrary.Examples.Invariant\">Examples.Invariant</a>&QUOT;.</p>
+<p>An invariant is an inequation that specifies an upper <b>bound</b> on a clock, e.g., c &lt; 2 or c &lt;= 2 where c is a <a href=\"modelica://RealTimeCoordinationLibrary.UsersGuide.Elements.Clock\">Clock</a>. Invariants are assigned to generalized steps and are used to specify a time span in which this generalized step is allowed to be active. </p>
 <p><img src=\"modelica://RealTimeCoordinationLibrary/images/invariant.jpg\"/></p>
 </html>"));
     end Invariant;
@@ -74,52 +99,68 @@ package UsersGuide "User's Guide"
     class ClockConstraint "ClockConstraint"
 
       annotation (Documentation(info="<html>
-<p>Examples are specified at: &QUOT;<a href=\"modelica://RealTimeCoordinationLibrary.Examples.ClockConstraint\">Examples.ClockConstraint</a>&QUOT;.</p>
-<p>A clock constraint might be any kind of inequation specifying a <b>bound</b> on a certain clock, e.g., c &GT; 2, c &GT;= 5, c &LT; 2, c &LT;= 5, where c is a <a href=\"modelica://RealTimeCoordinationLibrary.UsersGuide.Elements.Clock\">Clock</a>. Clock constraints are assigned to transitions in order to restrict the time span in which a transition is allowed to fire.</p>
+<head><title>RealTimeCoordinationLibrary.UsersGuide.Elements.ClockConstraint</title></head>
+<body>
+<p>Examples are specified at: &quot;<a href=\"modelica://RealTimeCoordinationLibrary.Examples.ClockConstraint\">Examples.ClockConstraint</a>&quot;.</p>
+<p>A clock constraint might be any kind of inequation specifying a <b>bound</b> on a certain clock, e.g., c &gt; 2, c &gt;= 5, c &lt; 2, c &lt;= 5, where c is a <a href=\"modelica://RealTimeCoordinationLibrary.UsersGuide.Elements.Clock\">Clock</a>. Clock constraints are assigned to transitions in order to restrict the time span in which a transition is allowed to fire.</p>
 <p><img src=\"modelica://RealTimeCoordinationLibrary/images/clockCondition.jpg\"/></p>
-</html>"));
+</body>
+</html>
+"));
     end ClockConstraint;
 
     class DelegationPort "DelegationPort"
 
       annotation (Documentation(info="<html>
-<p>Examples are specified at: &QUOT;<a href=\"modelica://RealTimeCoordinationLibrary.Examples.InteractingComponents\">Examples.InteractingComponents</a>&QUOT;.</p>
+<head><title>RealTimeCoordinationLibrary.UsersGuide.Elements.DelegationPort</title></head>
+<body>
+<p>Examples are specified at: &quot;<a href=\"modelica://RealTimeCoordinationLibrary.Examples.InteractingComponents\">Examples.InteractingComponents</a>&quot;.</p>
 <p>If two extended StateGraph2 models are included in different component instances they might still communicate asynchronously across the boundaries of these component instances with the help of delegation ports. Therefore, one component defines an output delegation port and the other defines an input delegation port. Both delegation ports are connected. Then, the component instance containing the message type connects the message type to the output delegation ports and the component instance containing the Mailbox instance connects the Mailbox instance to the input delegation port. </p>
 <p>It is necessary that instances of DelegationPort redeclare the variables Integers, Booleans and Reals with the required array size as shown in the Figure below. Connected DelegationPorts must always have the same redeclaration. </p>
 <p><br/><img src=\"modelica://RealTimeCoordinationLibrary/images/DelegationPort.jpg\"/></p>
+</body>
 </html>"));
     end DelegationPort;
     annotation (__Dymola_DocumentationClass=true, Documentation(info="<html>
-<p><ol>
-<li>&QUOT;<a href=\"modelica://RealTimeCoordinationLibrary.UsersGuide.Elements.Message_Mailbox\">Message and Mailbox</a>&QUOT; gives an overview about the elements: Message and Mailbox.</li>
-<li>&QUOT;<a href=\"modelica://RealTimeCoordinationLibrary.UsersGuide.Elements.Synchronization\">Synchronization</a>&QUOT; gives an overview about the element: Synchronization.</li>
-<li>&QUOT;<a href=\"modelica://RealTimeCoordinationLibrary.UsersGuide.Elements.Transition\">Transition</a>&QUOT; gives an overview about the element: Transition.</li>
-<li>&QUOT;<a href=\"modelica://RealTimeCoordinationLibrary.UsersGuide.Elements.Clock\">Clock</a>&QUOT; gives an overview about the element: Clock.</li>
-<li>&QUOT;<a href=\"modelica://RealTimeCoordinationLibrary.UsersGuide.Elements.Invariant\">Invariant</a>&QUOT; gives an overview about the element: Invariant. </li>
-<li>&QUOT;<a href=\"modelica://RealTimeCoordinationLibrary.UsersGuide.Elements.ClockConstraint\">ClockConstraint</a>&QUOT; gives an overview about the element: ClockConstraint. </li>
-<li>&QUOT;<a href=\"modelica://RealTimeCoordinationLibrary.UsersGuide.Elements.DelegationPort\">DelegationPort</a>&QUOT; gives an overview about the element: DelegationPort. </li>
-</ol></p>
-</html>"));
+<head><title>RealTimeCoordinationLibrary.UsersGuide.Elements</title></head>
+<body>
+<ol>
+<li>&quot;<a href=\"modelica://RealTimeCoordinationLibrary.UsersGuide.Elements.Message_Mailbox\">Message and Mailbox</a>&quot; gives an overview about the elements: Message and Mailbox.</li>
+<li>&quot;<a href=\"modelica://RealTimeCoordinationLibrary.UsersGuide.Elements.Synchronization\">Synchronization</a>&quot; gives an overview about the element: Synchronization.</li>
+<li>&quot;<a href=\"modelica://RealTimeCoordinationLibrary.UsersGuide.Elements.Transition\">Transition</a>&quot; gives an overview about the element: Transition.</li>
+<li>&quot;<a href=\"modelica://RealTimeCoordinationLibrary.UsersGuide.Elements.Clock\">Clock</a>&quot; gives an overview about the element: Clock.</li>
+<li>&quot;<a href=\"modelica://RealTimeCoordinationLibrary.UsersGuide.Elements.Invariant\">Invariant</a>&quot; gives an overview about the element: Invariant. </li>
+<li>&quot;<a href=\"modelica://RealTimeCoordinationLibrary.UsersGuide.Elements.ClockConstraint\">ClockConstraint</a>&quot; gives an overview about the element: ClockConstraint. </li>
+<li>&quot;<a href=\"modelica://RealTimeCoordinationLibrary.UsersGuide.Elements.DelegationPort\">DelegationPort</a>&quot; gives an overview about the element: DelegationPort. </li>
+</ol>
+</body>
+</html>
+"));
   end Elements;
 
   class ReleaseNotes "Release notes"
 
     annotation (Documentation(info="<html>
-<p><h4>Version 1.0.0, 2012-05-21</h4></p>
+<head><title>RealTimeCoordinationLibrary.UsersGuide.Release_Notes</title></head>
+<body>
+<h4>Version 1.0.0, 2012-05-21</h4>
 <p>Uses Modelica Standard Library 3.2 </p>
 <p>First version of the real-time coordination library based on StateGraph2, Modelica.StateGraph and the prototype ModeGraph library from Martin Malmheden. </p>
-<p><h4>Version 1.0.1, 2012-10-08</h4></p>
+<h4>Version 1.0.1, 2012-10-08</h4>
 <p>Changed Transition Class</p>
-<p>firePort = fire -&GT; firePort = pre(fire) // Avoid algebraic loop when two outgoing transitions of a state send and receive a message.</p>
-<p><br/><b>Version v1.0.2, 2013-04-04 </b></p>
+<p>firePort = fire -&gt; firePort = pre(fire) // Avoid algebraic loop when two outgoing transitions of a state send and receive a message.</p>
+<h4>Version v1.0.2, 2013-04-04 </h4>
 <p>Added SelfTransition Class</p>
 <p>Fixed SelfTransitions in Example/Application</p>
+</body>
 </html>"));
   end ReleaseNotes;
 
   class Literature "Literature"
 
     annotation (Documentation(info="<html>
+<head><title>RealTimeCoordinationLibrary.UsersGuide.Literature</title></head>
+<body>
 <p>
 The RealTimeCoordination library is described in detail in
 </p>
@@ -135,7 +176,7 @@ based on the following references:</p>
 <P>[2] S.         Becker, C. Brenner, S. Dziwok, T. Gewering, C. Heinzemann, U. Pohlmann, C. Priesterjahn, </P>
 <P>W. Sch&auml;fer, J. Suck, O. Sudmann, and M. Tichy. The mechatronicuml method -process, syntax, and semantics. Technical Report tr-ri-12-318, Software Engineering Group, Heinz Nixdorf Institute University of Paderborn, 2012. </P>
 <P>[3] Lionel C. Briand and Alexander L. Wolf, editors. </P>
-<P><I>Internationa</I><I>l </I><I>Conferenc</I><I>e </I><I>o</I><I>n </I><I>Softwar</I><I>e </I><I>Engineering</I><I>, </I><I>ISC</I><I>E </I><I>2007</I><I>, </I><I>Worksho</I><I>p </I><I>o</I><I>n </I><I>th</I><I>e </I><I>Futur</I><I>e </I><I>o</I><I>f </I><I>Softwar</I><I>e </I><I>Engi</I><I></I><I>neering</I><I>, </I><I>FOS</I><I>E </I><I>2007</I><I>, </I><I>Ma</I><I>y </I><I>23-25</I><I>, </I><I>2007</I><I>, </I><I>Minneapolis</I><I>, </I><I>MN</I><I>, </I><I>USA</I>, 2007. </P>
+<P><I>Internationa</I><I>l </I><I>Conferenc</I><I>e </I><I>o</I><I>n </I><I>Softwar</I><I>e </I><I>Engineering</I><I>, </I><I>ISC</I><I>E </I><I>2007</I><I>, </I><I>Worksho</I><I>p </I><I>o</I><I>n </I><I>th</I><I>e </I><I>Futur</I><I>e </I><I>o</I><I>f </I><I>Softwar</I><I>e </I><I>Engi</I><I>neering</I><I>, </I><I>FOS</I><I>E </I><I>2007</I><I>, </I><I>Ma</I><I>y </I><I>23-25</I><I>, </I><I>2007</I><I>, </I><I>Minneapolis</I><I>, </I><I>MN</I><I>, </I><I>USA</I>, 2007. </P>
 <P
 
 >[4] U. Donath, J. Haufe, T. Blochwitz, and T. Neidhold. A new approach for modeling and veri&#64257;cation of discrete control components within a Modelica environment. In <I>Proceeding</I><I>s </I><I>o</I><I>f </I><I>th</I><I>e </I><I>6t</I><I>h </I><I>Modelic</I><I>a </I><I>Conference</I><I>, </I><I>Bielefeld</I>, pages 269&ndash;276, 2008. </P
@@ -144,7 +185,7 @@ based on the following references:</p>
 >[5] Christof Ebert and Capers Jones. Embedded software: Facts, &#64257;gures, and future. <I>IEE</I><I>E </I><I>Computer</I>, 42(4):42&ndash; 52, 2009. </P
 ><P
 
->[6] Peter Fritzson.         <I>Principle</I><I>s </I><I>o</I><I>f </I><I>Object-Oriente</I><I>d </I><I>Model</I><I></I><I>in</I><I>g </I><I>an</I><I>d </I><I>Simulatio</I><I>n </I><I>wit</I><I>h </I><I>Modelic</I><I>a </I><I>2.1</I>. Wiley-IEEE Press, 1st edition, 2004. </P
+>[6] Peter Fritzson.         <I>Principle</I><I>s </I><I>o</I><I>f </I><I>Object-Oriente</I><I>d </I><I>Model</I><I>in</I><I>g </I><I>an</I><I>d </I><I>Simulatio</I><I>n </I><I>wit</I><I>h </I><I>Modelic</I><I>a </I><I>2.1</I>. Wiley-IEEE Press, 1st edition, 2004. </P
 ><P
 
 >[7] Object Management Group. Omg uni&#64257;ed modeling language (omg uml), superstructure, v2.4.1. Technical report, 2011. </P
@@ -156,22 +197,22 @@ based on the following references:</p>
 >[9] C. Heinzemann, U. Pohlmann, J. Rieke, W. Sch&auml;fer, </P
 ><P
 
->O. Sudmann, and M. Tichy. Generating simulink and state&#64258;ow models from software speci&#64257;cations. In <I>Pro</I><I></I><I>ceeding</I><I>s </I><I>o</I><I>f </I><I>th</I><I>e </I><I>Internationa</I><I>l </I><I>Desig</I><I>n </I><I>Conference</I><I>, </I><I>DE</I><I></I><I>SIG</I><I>N </I><I>2012</I><I>, </I><I>Dubrovnik</I><I>, </I><I>Croatia</I>, May 2012. </P
+>O. Sudmann, and M. Tichy. Generating simulink and state&#64258;ow models from software speci&#64257;cations. In <I>Pro</I><I>ceeding</I><I>s </I><I>o</I><I>f </I><I>th</I><I>e </I><I>Internationa</I><I>l </I><I>Desig</I><I>n </I><I>Conference</I><I>, </I><I>DE</I><I>SIG</I><I>N </I><I>2012</I><I>, </I><I>Dubrovnik</I><I>, </I><I>Croatia</I>, May 2012. </P
 ><P
 
 >[10] S. Herbrechtsmeier,         U. Witkowski, and U. R&uuml;ckert. Bebot: A modular mobile miniature robot platform supporting hardware recon&#64257;guration and multistandard communication. In <I>Progres</I><I>s </I><I>i</I><I>n </I><I>Robotics</I><I>, </I></P
 ><P
 
-><I>Communication</I><I>s </I><I>i</I><I>n </I><I>Compute</I><I>r </I><I>an</I><I>d </I><I>Informatio</I><I>n </I><I>Sci</I><I></I><I>ence</I><I>. </I><I>Proceeding</I><I>s </I><I>o</I><I>f </I><I>th</I><I>e </I><I>FIR</I><I>A </I><I>RoboWorl</I><I>d </I><I>Congres</I><I>s </I><I>2009</I>, volume 44, pages 346&ndash;356, Incheon, Korea, 2009. Springer. </P
+><I>Communication</I><I>s </I><I>i</I><I>n </I><I>Compute</I><I>r </I><I>an</I><I>d </I><I>Informatio</I><I>n </I><I>Sci</I><I>ence</I><I>. </I><I>Proceeding</I><I>s </I><I>o</I><I>f </I><I>th</I><I>e </I><I>FIR</I><I>A </I><I>RoboWorl</I><I>d </I><I>Congres</I><I>s </I><I>2009</I>, volume 44, pages 346&ndash;356, Incheon, Korea, 2009. Springer. </P
 ><P
 
 >[11] I. Kaiser, T. Kaulmann, J. Gausemeier, and </P
 ><P
 
->U. Witkowski. Miniaturization of autonomous robots by the new technology molded interconnected devices (mid). In <I>Proceeding</I><I>s </I><I>o</I><I>f </I><I>th</I><I>e </I><I>4t</I><I>h </I><I>Internationa</I><I>l </I><I>Sym</I><I></I><I>posiu</I><I>m </I><I>o</I><I>n </I><I>Autonomou</I><I>s </I><I>Minirobot</I><I>s </I><I>fo</I><I>r </I><I>Researc</I><I>h </I><I>an</I><I>d </I><I>Edutainment</I>, October 2007. </P
+>U. Witkowski. Miniaturization of autonomous robots by the new technology molded interconnected devices (mid). In <I>Proceeding</I><I>s </I><I>o</I><I>f </I><I>th</I><I>e </I><I>4t</I><I>h </I><I>Internationa</I><I>l </I><I>Sym</I><I>posiu</I><I>m </I><I>o</I><I>n </I><I>Autonomou</I><I>s </I><I>Minirobot</I><I>s </I><I>fo</I><I>r </I><I>Researc</I><I>h </I><I>an</I><I>d </I><I>Edutainment</I>, October 2007. </P
 ><P
 
->[12] C. C. Loh and A. Tr&auml;chtler.         Laser-sintered platform with optical sensor for a mobile robot used in cooperative load transport. In <I>Proceeding</I><I>s </I><I>o</I><I>f </I><I>th</I><I>e </I><I>37t</I><I>h </I><I>An</I><I></I><I>nua</I><I>l </I><I>Conferenc</I><I>e </I><I>o</I><I>n </I><I>IEE</I><I>E </I><I>Industria</I><I>l </I><I>Electronic</I><I>s </I><I>Soci</I><I></I><I>ety</I>, pages 888&ndash;893, November 2011. </P
+>[12] C. C. Loh and A. Tr&auml;chtler.         Laser-sintered platform with optical sensor for a mobile robot used in cooperative load transport. In <I>Proceeding</I><I>s </I><I>o</I><I>f </I><I>th</I><I>e </I><I>37t</I><I>h </I><I>An</I><I>nua</I><I>l </I><I>Conferenc</I><I>e </I><I>o</I><I>n </I><I>IEE</I><I>E </I><I>Industria</I><I>l </I><I>Electronic</I><I>s </I><I>Soci</I><I>ety</I>, pages 888&ndash;893, November 2011. </P
 ><P
 
 >[13] M. Malmheden, Hilding Elmqvist, S.E. Mattsson, </P
@@ -180,7 +221,7 @@ based on the following references:</p>
 >D. Henriksson, and M. Otter. ModeGraph-A Modelica Library for Embedded Control Based on Mode-Automata. In <I>i</I><I>n </I><I>Proc</I><I>. </I><I>o</I><I>f </I><I>Modelic</I><I>a </I><I>200</I><I>8 </I><I>conference</I><I>, </I><I>Bielefeld</I><I>, </I><I>Germany.</I>, 2008. </P
 ><P
 
->[14] M. Otter, K-E. &Aring;rz&eacute;n, and I. Dressler. StateGraph&ndash;A Modelica Library for Hierarchical State Machines. In <I>Proceeding</I><I>s </I><I>o</I><I>f </I><I>th</I><I>e </I><I>4t</I><I>h </I><I>Internationa</I><I>l </I><I>Modelic</I><I>a </I><I>Con</I><I></I><I>ferenc</I><I>e </I><I>(Modelic</I><I>a </I><I>2005)</I><I>, </I><I>Hamburg</I><I>, </I><I>Germany</I>, 2005. </P
+>[14] M. Otter, K-E. &Aring;rz&eacute;n, and I. Dressler. StateGraph&ndash;A Modelica Library for Hierarchical State Machines. In <I>Proceeding</I><I>s </I><I>o</I><I>f </I><I>th</I><I>e </I><I>4t</I><I>h </I><I>Internationa</I><I>l </I><I>Modelic</I><I>a </I><I>Con</I><I>ferenc</I><I>e </I><I>(Modelic</I><I>a </I><I>2005)</I><I>, </I><I>Hamburg</I><I>, </I><I>Germany</I>, 2005. </P
 ><P
 
 >[15] M. Otter, M. Malmheden, H. Elmqvist, S.E. Mattsson, </P
@@ -189,7 +230,7 @@ based on the following references:</p>
 >C. Johnsson, D. Syst&egrave;mes, and S.D. Lund. A new formalism for modeling of reactive and hybrid systems. In <I>Proceeding</I><I>s </I><I>o</I><I>f </I><I>th</I><I>e </I><I>7t</I><I>h </I><I>Modelica&rsquo;200</I><I>9 </I><I>Conference</I><I>, </I><I>Como</I><I>, </I><I>Italy</I>, 2009. </P
 ><P
 
->[16] M. Pajic, Z. Jiang, I. Lee, O. Sokolsky, and R. Mangharam. From veri&#64257;cation to implementation: A model translation tool and a pacemaker case study. In <I>Pro</I><I></I><I>ceeding</I><I>s </I><I>o</I><I>f </I><I>th</I><I>e </I><I>18t</I><I>h </I><I>IEE</I><I>E </I><I>Real-Tim</I><I>e </I><I>an</I><I>d </I><I>Embed</I><I></I><I>de</I><I>d </I><I>Technolog</I><I>y </I><I>an</I><I>d </I><I>Application</I><I>s </I><I>Symposiu</I><I>m </I><I>(RTA</I><I>S </I><I>2012)</I><I>, </I><I>Beijing</I><I>, </I><I>China</I>, April 2012. </P
+>[16] M. Pajic, Z. Jiang, I. Lee, O. Sokolsky, and R. Mangharam. From veri&#64257;cation to implementation: A model translation tool and a pacemaker case study. In <I>Pro</I><I>ceeding</I><I>s </I><I>o</I><I>f </I><I>th</I><I>e </I><I>18t</I><I>h </I><I>IEE</I><I>E </I><I>Real-Tim</I><I>e </I><I>an</I><I>d </I><I>Embed</I><I>de</I><I>d </I><I>Technolog</I><I>y </I><I>an</I><I>d </I><I>Application</I><I>s </I><I>Symposiu</I><I>m </I><I>(RTA</I><I>S </I><I>2012)</I><I>, </I><I>Beijing</I><I>, </I><I>China</I>, April 2012. </P
 ><P
 
 >[17] U. Pohlmann and M. Tichy. Modelica code generation from ModelicaML state machines extended by asynchronous communication. In <I>Proceeding</I><I>s </I><I>o</I><I>f </I><I>th</I><I>e </I><I>4t</I><I>h </I><I>Internationa</I><I>l </I><I>Worksho</I><I>p </I><I>o</I><I>n </I><I>Equation-Base</I><I>d </I><I>Object-Oriente</I><I>d </I><I>Modelin</I><I>g </I><I>Language</I><I>s </I><I>an</I><I>d </I><I>Tools</I><I>, </I><I>EOOL</I><I>T </I><I>2011</I><I>, </I><I>Zurich</I><I>, </I><I>Switzerland</I>, 2011. </P
@@ -206,6 +247,7 @@ based on the following references:</p>
 
 >[21] C. Wei&szlig;. V2X communication in Europe -From research projects towards standardization and &#64257;eld testing of vehicle communication technology. <I>Compute</I><I>r </I><I>Networks</I>, 55(14):3103&ndash;3119, 2011. </P
 >
+</body>
 </html>
 "));
 
@@ -214,6 +256,8 @@ based on the following references:</p>
 class ModelicaLicense2 "Modelica License 2"
 
   annotation (Documentation(info="<html>
+<head><title>RealTimeCoordinationLibrary.UsersGuide.Modelica_License_2</title></head>
+<body>
 <p>All files in this directory (Modelica) and in all
 subdirectories, especially all files that build package \"Modelica_StateGraph2\" and all
 files in Modelica\\Images are under the
@@ -751,6 +795,7 @@ Modelica Language Specification?</b></p>
 if you are not the copyright-holder, since article 2c) does not allow
 a selling fee for a (in this case physical) copy. However, mere
 printing and shipping costs may be recovered.</p>
+</body>
 </html>"));
 
 end ModelicaLicense2;
@@ -758,9 +803,10 @@ end ModelicaLicense2;
   class Contact "Contact"
 
     annotation (Documentation(info="<html>
+<head><title>RealTimeCoordinationLibrary.UsersGuide.Literature</title></head>
+<body>
 <dl>
-<dt><b>Main Authors:</b>
-<dd>
+<dt><b>Main Authors:</b></dt>
 </dl>
 
 <table border=0 cellspacing=0 cellpadding=2>
@@ -774,7 +820,6 @@ Heinz Nixdorf Institute<br>
    Germany<br>
    email:upohl (at) upb.de</td>
 <td valign=\"middle\">&nbsp;&nbsp;and&nbsp;&nbsp;</td>
-<td>
 <td>
 <a href=\"http://www.cs.uni-paderborn.de/fachgebiete/fachgebiet-softwaretechnik/personen/stefan-dziwok.html\">Stefan Dziwok</a><br>
     Software Engineering Group<br>
@@ -795,7 +840,7 @@ Heinz Nixdorf Institute<br>
 
 <td valign=\"middle\">&nbsp;&nbsp;and&nbsp;&nbsp;</td>
 <td>
-Boris Wolf</a><br>
+Boris Wolf<br>
     Software Engineering Group<br>
 Heinz Nixdorf Institute<br>
  University of Paderborn<br>
@@ -820,10 +865,6 @@ Heinz Nixdorf Institute<br>
 
 <p><b>Acknowledgements:</b></p>
 
-<p>
-
-</p>
-<ul>
 
 
 <p>
@@ -835,13 +876,15 @@ Rhine-Westphalia (NRW), Germany and the EUROPEAN UNION, European Regional Develo
 Fund, Investing in your future.
 <a href=\"http://wwwhni.uni-paderborn.de/en/priority-projects/entime/\">ENTIME</a>
 </p>
-
+</body>
 </html>
 "));
 
   end Contact;
 
   annotation (__Dymola_DocumentationClass=true, Documentation(info="<html>
+<head><title>RealTimeCoordinationLibrary.UsersGuide</title></head>
+<body>
 <p>
 Library <b>Modelica_StateGraph2</b> is a <b>free</b> Modelica package providing
 components to model <b>discrete event</b> and <b>reactive</b>
@@ -865,8 +908,9 @@ the library and has the following content:
     acknowledgments.</li>
 </ol>
 <p>For an application example have a look at: <a href=\"modelica://RealTimeCoordinationLibrary.Examples.Application.BeBotSystem\">BeBotSystem</a> </p>
-
-</html>"));
+</body>
+</html>
+"));
 end UsersGuide;
 
 
@@ -2265,13 +2309,16 @@ end UsersGuide;
         end system;
 
         model senderComponent
+        import RealTimeCoordinationLibrary;
 
-          Modelica_StateGraph2.Step Step1(initialStep=true, nOut=1)    annotation (
+          Modelica_StateGraph2.Step Step1(initialStep=true, nOut=1,
+          nIn=1)                                                       annotation (
               Placement(transformation(
                 extent={{-4,-4},{4,4}},
                 rotation=90,
                 origin={-48,46})));
-          Modelica_StateGraph2.Step Step2(nIn=1)   annotation (Placement(
+          Modelica_StateGraph2.Step Step2(nIn=1, nOut=1)
+                                                   annotation (Placement(
                 transformation(
                 extent={{-4,-4},{4,4}},
                 rotation=90,
@@ -2282,7 +2329,7 @@ end UsersGuide;
             afterTime=0.5) annotation (Placement(transformation(
                 extent={{-4,-4},{4,4}},
                 rotation=90,
-                origin={-8,46})));
+                origin={-6,42})));
           RealTimeCoordinationLibrary.Message message(nIn=1)
             annotation (Placement(transformation(extent={{-4,62},{8,74}})));
           RealTimeCoordinationLibrary.MessageInterface.OutputDelegationPort delegationPort1(
@@ -2290,17 +2337,22 @@ end UsersGuide;
             redeclare Real reals[0],
             redeclare Integer integers[0])
             annotation (Placement(transformation(extent={{80,58},{100,78}})));
+        RealTimeCoordinationLibrary.Transition T2(use_after=true, afterTime=0.5)
+          annotation (Placement(transformation(
+              extent={{-4,-4},{4,4}},
+              rotation=270,
+              origin={-8,18})));
         equation
           connect(T1.outPort, Step2.inPort[1])   annotation (Line(
-              points={{-3,46},{26,46}},
+              points={{-1,42},{14,42},{14,46},{26,46}},
               color={0,0,0},
               smooth=Smooth.None));
           connect(Step1.outPort[1], T1.inPort)    annotation (Line(
-              points={{-43.4,46},{-12,46}},
+              points={{-43.4,46},{-26,46},{-26,42},{-10,42}},
               color={0,0,0},
               smooth=Smooth.None));
           connect(T1.firePort, message.conditionPort[1]) annotation (Line(
-              points={{-8,50.2},{-6,50.2},{-6,62.24},{-5.2,62.24}},
+              points={{-6,46.2},{-6,62.24},{-5.2,62.24}},
               color={255,0,255},
               smooth=Smooth.None));
           connect(message.message_output_port, delegationPort1)
@@ -2308,6 +2360,14 @@ end UsersGuide;
               points={{7.4,67.4},{48.7,67.4},{48.7,68},{90,68}},
               color={0,0,0},
               smooth=Smooth.None));
+        connect(Step2.outPort[1], T2.inPort) annotation (Line(
+            points={{34.6,46},{46,46},{46,18},{-4,18}},
+            color={0,0,0},
+            smooth=Smooth.None));
+        connect(T2.outPort, Step1.inPort[1]) annotation (Line(
+            points={{-13,18},{-74,18},{-74,46},{-52,46}},
+            color={0,0,0},
+            smooth=Smooth.None));
           annotation (Diagram(graphics));
         end senderComponent;
 
@@ -2326,14 +2386,16 @@ end UsersGuide;
           RealTimeCoordinationLibrary.Mailbox mailbox(
             nIn=1,
             numberOfMessageIntegers=0,
-            nOut=1)
+            nOut=1,
+          queueSize=5,
+          overwriteMessageWhenBufferIsFull=false)
             annotation (Placement(transformation(extent={{-82,-18},{-66,-2}})));
           RealTimeCoordinationLibrary.Transition T2(
             numberOfMessageReceive=1,
             use_messageReceive=true,
             use_after=true,
-            afterTime=1,
-            numberOfMessageIntegers=0)
+            numberOfMessageIntegers=0,
+          afterTime=15)
                       annotation (Placement(transformation(
                 extent={{-4,-4},{4,4}},
                 rotation=90,
@@ -4244,8 +4306,8 @@ this class contains a timing constraint that the state PlatoonProposed is no lon
             color={255,127,0},
             smooth=Smooth.None));
         connect(front.inDrive1, rear.outDrive) annotation (Line(
-            points={{-72.38,30.4},{-82,30.4},{-82,-6},{42,-6},{42,16},{42,16},{
-                42,16.84},{36.96,16.84}},
+            points={{-72.38,30.4},{-82,30.4},{-82,-6},{42,-6},{42,16.84},{36.96,
+              16.84}},
             color={0,0,0},
             smooth=Smooth.None));
         connect(front.outDrive, rear.inDrive1) annotation (Line(
@@ -4511,12 +4573,12 @@ The brake-message is transmitted to the rear driving Be Bot that is going to bra
               smooth=Smooth.None));
           connect(limPI.y, signalVoltage.v) annotation (Line(
               points={{-39.5,0},{-26.5,0},{-26.5,2.14313e-016},{-23.5,
-                  2.14313e-016}},
+                2.14313e-016}},
               color={0,0,127},
               smooth=Smooth.None));
           connect(fb.y, limPI.u) annotation (Line(
               points={{-67.5,-5.51091e-016},{-54.75,-5.51091e-016},{-54.75,0},{
-                  -51,0}},
+                -51,0}},
               color={0,0,127},
               smooth=Smooth.None));
 
@@ -5946,12 +6008,18 @@ end if;
           textString="%condition",
           origin={-160,61},
           rotation=90)}),
-    Documentation(info="<html>
-<p>Examples are specified at: &QUOT;<a href=\"modelica://RealTimeCoordinationLibrary.Examples\">Examples</a>&QUOT;.</p>
+    Documentation(info="<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\"
+       \"http://www.w3.org/TR/html4/loose.dtd\">
+<html>
+<head><title>SelfTransition</title></head>
+<body>
+<p>Examples are specified at: &quot;<a href=\"modelica://RealTimeCoordinationLibrary.Examples\">Examples</a>&quot;.</p>
 <p>SelfTransition works exactly as a  Transition. The only difference to the Transition class is that the use_after construct works also for self transitions. </p>
-<p>We use these parameters to synchronize the firing of parallel transitions as described in &QUOT;<a href=\"modelica://RealTimeCoordinationLibrary.UsersGuide.Elements.Synchronization\">Synchronization</a>&QUOT; and to receive asynchronous messages as described in &QUOT;<a href=\"modelica://RealTimeCoordinationLibrary.UsersGuide.Elements.Message_Mailbox\">Message and Mailbox</a>&QUOT;.</p>
-<p><img src=\"modelica://RealTimeCoordinationLibrary/images/selftransition.jpg\"/></p>
-</html>"));
+<p>We use these parameters to synchronize the firing of parallel transitions as described in &quot;<a href=\"modelica://RealTimeCoordinationLibrary.UsersGuide.Elements.Synchronization\">Synchronization</a>&quot; and to receive asynchronous messages as described in &quot;<a href=\"modelica://RealTimeCoordinationLibrary.UsersGuide.Elements.Message_Mailbox\">Message and Mailbox</a>&quot;.</p>
+<p><img src=\"modelica://RealTimeCoordinationLibrary/images/selftransition.jpg\" alt =\"selfTransition\"></p>
+</body>
+</html>
+"));
 end SelfTransition;
 
 
@@ -6342,6 +6410,9 @@ end Step;
    parameter Integer numberOfMessageReals(min=0)=0
     "number of real parameters of a message";
 
+   parameter Boolean overwriteMessageWhenBufferIsFull = false "determines the behavior in case of message buffer overflow. 'True' means overwriting the last message with the new incoming message.
+     If this parameter is set to 'false', the incoming messages are dropped in case of buffer overflow";
+
    RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.mailbox_output_port
       mailbox_output_port[nOut](
       redeclare Integer integers[numberOfMessageIntegers],
@@ -6530,22 +6601,24 @@ end Step;
            ownerId_q.head);
          //test if message instance of the same owner is already in the queue
          if (not (mailbox_input_port[i].instanceId == testInstanceIdTemp and i == testOwnerIdTemp)) then
+
+          if overwriteMessageWhenBufferIsFull then
           (ownerId_q.vec,ownerId_q.tail,ownerId_q.head) :=
-            RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.IntQueue.enqueue(
+            RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.IntQueue.enqueueOverwriteLastMessage(
              ownerId_q.vec,
              i,
              ownerId_q.tail,
              ownerId_q.head);
          //enqueue  metavariables
           (instanceId_q.vec,instanceId_q.tail,instanceId_q.head) :=
-            RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.IntQueue.enqueue(
+            RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.IntQueue.enqueueOverwriteLastMessage(
              instanceId_q.vec,
              mailbox_input_port[i].instanceId,
              instanceId_q.tail,
              instanceId_q.head);
 
           (time_q.vec,time_q.tail,time_q.head) :=
-            RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.RealQueue.enqueue(
+            RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.RealQueue.enqueueOverwriteLastMessage(
              time_q.vec,
              mailbox_input_port[i].t,
              time_q.tail,
@@ -6553,7 +6626,7 @@ end Step;
          //enqueue  parameters
            for j in 1:numberOfMessageIntegers loop
             (int_q.vec,int_q.tail,int_q.head) :=
-              RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.IntQueue.enqueue(
+              RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.IntQueue.enqueueOverwriteLastMessage(
                int_q.vec,
                mailbox_input_port[i].integers[j],
                int_q.tail,
@@ -6561,7 +6634,7 @@ end Step;
            end for;
            for j in 1:numberOfMessageReals loop
             (real_q.vec,real_q.tail,real_q.head) :=
-              RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.RealQueue.enqueue(
+              RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.RealQueue.enqueueOverwriteLastMessage(
                real_q.vec,
                mailbox_input_port[i].reals[j],
                real_q.tail,
@@ -6569,12 +6642,61 @@ end Step;
            end for;
            for j in 1:numberOfMessageBooleans loop
             (boolean_q.vec,boolean_q.tail,boolean_q.head) :=
-              RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.BooleanQueue.enqueue(
+              RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.BooleanQueue.enqueueOverwriteLastMessage(
                boolean_q.vec,
                mailbox_input_port[i].booleans[j],
                boolean_q.tail,
                boolean_q.head);
            end for;
+          else
+          (ownerId_q.vec,ownerId_q.tail,ownerId_q.head) :=
+            RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.IntQueue.enqueueDenyNewestMessage(
+             ownerId_q.vec,
+             i,
+             ownerId_q.tail,
+             ownerId_q.head);
+         //enqueue  metavariables
+          (instanceId_q.vec,instanceId_q.tail,instanceId_q.head) :=
+            RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.IntQueue.enqueueDenyNewestMessage(
+             instanceId_q.vec,
+             mailbox_input_port[i].instanceId,
+             instanceId_q.tail,
+             instanceId_q.head);
+
+          (time_q.vec,time_q.tail,time_q.head) :=
+            RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.RealQueue.enqueueDenyNewestMessage(
+             time_q.vec,
+             mailbox_input_port[i].t,
+             time_q.tail,
+             time_q.head);
+         //enqueue  parameters
+           for j in 1:numberOfMessageIntegers loop
+            (int_q.vec,int_q.tail,int_q.head) :=
+              RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.IntQueue.enqueueDenyNewestMessage(
+               int_q.vec,
+               mailbox_input_port[i].integers[j],
+               int_q.tail,
+               int_q.head);
+           end for;
+           for j in 1:numberOfMessageReals loop
+            (real_q.vec,real_q.tail,real_q.head) :=
+              RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.RealQueue.enqueueDenyNewestMessage(
+               real_q.vec,
+               mailbox_input_port[i].reals[j],
+               real_q.tail,
+               real_q.head);
+           end for;
+           for j in 1:numberOfMessageBooleans loop
+            (boolean_q.vec,boolean_q.tail,boolean_q.head) :=
+              RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.BooleanQueue.enqueueDenyNewestMessage(
+               boolean_q.vec,
+               mailbox_input_port[i].booleans[j],
+               boolean_q.tail,
+               boolean_q.head);
+           end for;
+
+          end if;
+
  end if;
        end if;
     end for;
@@ -9742,7 +9864,7 @@ fallen out.
           redeclare Integer integers[0] "integers[0]",
           redeclare Boolean booleans[0] "booelans[0]",
           redeclare Real reals[0] "reals[0]")
-          annotation (Placement(transformation(extent={{62,20},{82,40}})));
+          annotation (Placement(transformation(extent={{112,20},{132,40}})));
       equation
         connect(Producing.outPort[1], T1.inPort) annotation (Line(
             points={{-34.6,68},{-52,68},{-52,34}},
@@ -9771,7 +9893,7 @@ fallen out.
             color={255,0,255},
             smooth=Smooth.None));
         connect(Consumed.mailbox_input_port[1], In_Consumed) annotation (Line(
-            points={{43,29},{72,30}},
+            points={{43,29},{122,30}},
             color={0,0,0},
             smooth=Smooth.None));
         connect(Produced_Message.message_output_port, Out_Produced) annotation (
@@ -10945,7 +11067,7 @@ if value redeems the limit.
 
     package Periodic_Transmission
       model Sender
-      parameter Integer period;
+      parameter Real period;
         RealTimeCoordinationLibrary.Step PeriodicSending(
           initialStep=true,
           nOut=1,
@@ -10954,11 +11076,8 @@ if value redeems the limit.
                  annotation (Placement(transformation(extent={{-68,40},{-76,48}})));
         RealTimeCoordinationLibrary.Message Data_Message(nIn=1)
           annotation (Placement(transformation(extent={{22,12},{42,32}})));
-        RealTimeCoordinationLibrary.MessageInterface.OutputDelegationPort Out_Data(
-          redeclare Integer integers[0] "integers[0]",
-          redeclare Boolean booleans[0] "booelans[0]",
-          redeclare Real reals[0] "reals[0]")
-          annotation (Placement(transformation(extent={{66,10},{86,30}})));
+        RealTimeCoordinationLibrary.MessageInterface.OutputDelegationPort Out_Data
+          annotation (Placement(transformation(extent={{94,10},{114,30}})));
         RealTimeCoordinationLibrary.Transition T1(use_firePort=true,
           use_after=true,
           afterTime=period)                                          annotation (
@@ -10972,7 +11091,7 @@ if value redeems the limit.
               rotation=180,
               origin={-64,8})));
         RealTimeCoordinationLibrary.TimeElements.TimeInvariant.TimeInvariantLessOrEqual
-          timeInvariantLessOrEqual(bound=20)
+          timeInvariantLessOrEqual(bound=period)
           annotation (Placement(transformation(extent={{-82,-40},{-62,-20}})));
       equation
         connect(T1.firePort, Data_Message.conditionPort[1])
@@ -10981,7 +11100,7 @@ if value redeems the limit.
             color={255,0,255},
             smooth=Smooth.None));
         connect(Data_Message.message_output_port, Out_Data)        annotation (Line(
-            points={{41,21},{45.5,21},{45.5,20},{76,20}},
+            points={{41,21},{45.5,21},{45.5,20},{104,20}},
             color={0,0,0},
             smooth=Smooth.None));
         connect(PeriodicSending.outPort[1], T1.inPort) annotation (Line(
@@ -11022,7 +11141,7 @@ More information concerning the pattern can be found &QUOT;<a href=\"modelica://
       end Sender;
 
       model Receicer
-      parameter Integer timeout;
+      parameter Real timeout;
         RealTimeCoordinationLibrary.Step PeriodicReceiving(
           initialStep=true,
           nIn=2,
@@ -11068,10 +11187,7 @@ More information concerning the pattern can be found &QUOT;<a href=\"modelica://
         RealTimeCoordinationLibrary.Mailbox Mailbox_Data(nOut=2, nIn=1)
           annotation (Placement(transformation(extent={{74,0},{54,20}})));
         RealTimeCoordinationLibrary.MessageInterface.InputDelegationPort
-          In_Data(
-          redeclare Integer integers[0] "integers[0]",
-          redeclare Boolean booleans[0] "booelans[0]",
-          redeclare Real reals[0] "reals[0]")
+          In_Data
           annotation (Placement(transformation(extent={{94,-2},{114,18}})));
       equation
         connect(T2.outPort, PeriodicReceiving.inPort[1]) annotation (Line(
@@ -11703,7 +11819,7 @@ package CoordinationProtocols
         color={255,128,0},
         smooth=Smooth.None));
     annotation (Diagram(coordinateSystem(extent={{-260,-120},{180,140}},
-            preserveAspectRatio=false),graphics), Icon(coordinateSystem(extent={{-260,
+            preserveAspectRatio=true), graphics), Icon(coordinateSystem(extent={{-260,
               -120},{180,140}}, preserveAspectRatio=false), graphics={Bitmap(
             extent={{-128,102},{64,-110}},
             imageSource=
@@ -11758,8 +11874,8 @@ package CoordinationProtocols
           smooth=Smooth.None));
       connect(Slave.Out_ActivationRejected, Master.In_ActivationRejected)
         annotation (Line(
-          points={{-71.8,35.8},{-74,35.8},{-74,26},{56,26},{56,54},{47.6,54},
-              {47.6,53}},
+          points={{-71.8,35.8},{-74,35.8},{-74,26},{56,26},{56,54},{47.6,54},{
+              47.6,53}},
           color={0,0,0},
           smooth=Smooth.None));
       connect(Master.Out_ActivationProposal, Slave.InActivationProposal)
@@ -11772,8 +11888,8 @@ package CoordinationProtocols
           color={0,0,0},
           smooth=Smooth.None));
       connect(Slave.OutTurn, Master.InTurn) annotation (Line(
-          points={{-71.8,39.4},{-80,39.4},{-80,40},{-88,40},{-88,16},{54,16},
-              {54,45.2},{47.6,45.2}},
+          points={{-71.8,39.4},{-80,39.4},{-80,40},{-88,40},{-88,16},{54,16},{
+              54,45.2},{47.6,45.2}},
           color={0,0,0},
           smooth=Smooth.None));
       connect(Master.OutTurn, Slave.InTurn) annotation (Line(
@@ -11787,8 +11903,8 @@ package CoordinationProtocols
           smooth=Smooth.None));
       connect(Slave.In_ActivationAccepted, Master.OutActivationAccepted)
         annotation (Line(
-          points={{-28.4,47.2},{-28.4,46},{-20,46},{-20,40},{-12,40},{-12,35},
-              {4.2,35}},
+          points={{-28.4,47.2},{-28.4,46},{-20,46},{-20,40},{-12,40},{-12,35},{
+              4.2,35}},
           color={0,0,0},
           smooth=Smooth.None));
       connect(Slave.Out_Deactivation, Master.InDeactivation) annotation (Line(
@@ -11798,8 +11914,7 @@ package CoordinationProtocols
           smooth=Smooth.None));
       connect(Slave.Out_ActivationProposal, Master.InActivationProposal)
         annotation (Line(
-          points={{-71.8,52.4},{-92,52.4},{-92,12},{62,12},{62,37.4},{47.6,
-              37.4}},
+          points={{-71.8,52.4},{-92,52.4},{-92,12},{62,12},{62,37.4},{47.6,37.4}},
           color={0,0,0},
           smooth=Smooth.None));
 
@@ -12237,56 +12352,59 @@ package CoordinationProtocols
 
       connect(singleRobot_Real1.InActivationProposal, singleRobot_Real.Out_ActivationProposal)
         annotation (Line(
-          points={{4.2,45.6},{-21.9,45.6},{-21.9,56.4},{-48,56.4}},
+          points={{6.18095,44.8267},{-21.9,44.8267},{-21.9,54.7733},{-50,
+              54.7733}},
           color={0,0,255},
           smooth=Smooth.None));
       connect(singleRobot_Real.InActivationProposal, singleRobot_Real1.Out_ActivationProposal)
         annotation (Line(
-          points={{-89.8,43.6},{-132,43.6},{-132,106},{82,106},{82,84},{82,84},
-              {82,58},{82,58},{82,58},{46,58},{46,58.4}},
+          points={{-87.819,42.8267},{-132,42.8267},{-132,106},{82,106},{82,84},
+              {82,84},{82,58},{82,58},{82,58},{44,58},{44,56.7733}},
           color={0,0,255},
           smooth=Smooth.None));
       connect(singleRobot_Real1.Out_Deactivation, singleRobot_Real.InDeactivation)
         annotation (Line(
-          points={{46,55.6},{82,55.6},{82,-8},{-132,-8},{-132,40},{-90,40},{
-              -90,40},{-89.8,40.2}},
+          points={{44,54.16},{82,54.16},{82,-8},{-132,-8},{-132,40},{-90,40},{
+              -90,39.6533},{-87.819,39.6533}},
           color={0,0,0},
           smooth=Smooth.None));
       connect(singleRobot_Real1.InDeactivation, singleRobot_Real.Out_Deactivation)
         annotation (Line(
-          points={{4.2,42.2},{-25.9,42.2},{-25.9,53.6},{-48,53.6}},
+          points={{6.18095,41.6533},{-25.9,41.6533},{-25.9,52.16},{-50,52.16}},
           color={0,0,255},
           smooth=Smooth.None));
       connect(singleRobot_Real1.OutTurn, singleRobot_Real.InTurn) annotation (
          Line(
-          points={{46,45.4},{62,45.4},{62,90},{-122,90},{-122,48},{-89.8,48.2}},
+          points={{44,44.64},{62,44.64},{62,90},{-122,90},{-122,47.12},{-87.819,
+              47.12}},
           color={0,0,0},
           smooth=Smooth.None));
 
       connect(singleRobot_Real1.OutActivationAccepted, singleRobot_Real.In_ActivationAccepted)
         annotation (Line(
-          points={{46,39},{58,40},{58,84},{-100,84},{-100,52},{-89.8,52.6}},
+          points={{44,38.6667},{58,40},{58,84},{-100,84},{-100,51.2267},{
+              -87.819,51.2267}},
           color={0,0,0},
           smooth=Smooth.None));
       connect(singleRobot_Real1.Out_ActivationRejected, singleRobot_Real.In_ActivationRejected)
         annotation (Line(
-          points={{46,41.8},{54,41.8},{54,76},{54,76},{-96,76},{-96,56},{
-              -89.8,56}},
+          points={{44,41.28},{54,41.28},{54,76},{54,76},{-96,76},{-96,54.4},{
+              -87.819,54.4}},
           color={0,0,0},
           smooth=Smooth.None));
       connect(singleRobot_Real1.InTurn, singleRobot_Real.OutTurn) annotation (
          Line(
-          points={{4.2,50.2},{-31.9,50.2},{-31.9,43.4},{-48,43.4}},
+          points={{6.18095,49.12},{-31.9,49.12},{-31.9,42.64},{-50,42.64}},
           color={0,0,255},
           smooth=Smooth.None));
       connect(singleRobot_Real1.In_ActivationRejected, singleRobot_Real.Out_ActivationRejected)
         annotation (Line(
-          points={{4.2,58},{-16,58},{-16,39.8},{-48,39.8}},
+          points={{6.18095,56.4},{-16,56.4},{-16,39.28},{-50,39.28}},
           color={0,0,255},
           smooth=Smooth.None));
       connect(singleRobot_Real.OutActivationAccepted, singleRobot_Real1.In_ActivationAccepted)
         annotation (Line(
-          points={{-48,37},{-10,37},{-10,54.6},{4.2,54.6}},
+          points={{-50,36.6667},{-10,36.6667},{-10,53.2267},{6.18095,53.2267}},
           color={0,0,0},
           smooth=Smooth.None));
       annotation (Diagram(graphics));
@@ -13169,52 +13287,51 @@ package CoordinationProtocols
             origin={-42,-85})));
     equation
       connect(peer1.In_Confirm, peer.Out_Cofirm) annotation (Line(
-          points={{-34.1667,-96},{-34.1667,-112},{48,-112},{48,108},{-26,108},
-              {-26,96.6875},{-25,96.6875}},
+          points={{-34.4,-96},{-34.4,-112},{48,-112},{48,108},{-26,108},{-26,
+              95.3529},{-29.7333,95.3529}},
           color={0,0,255},
           smooth=Smooth.None));
       connect(peer.Out_NoSlave, peer1.In_NoSlave) annotation (Line(
-          points={{-42.3333,96.6875},{-42,130},{124,130},{124,-136},{-47.6667,
-              -136},{-47.6667,-96}},
+          points={{-43.6,95.3529},{-42,130},{124,130},{124,-136},{-45.2,-136},{
+              -45.2,-96}},
           color={0,0,0},
           smooth=Smooth.None));
       connect(peer.Out_Alive2, peer1.In_Alive2) annotation (Line(
-          points={{-33.6667,96.6875},{-34,120},{110,120},{110,-128},{-40.5,
-              -128},{-40.5,-96}},
+          points={{-36.6667,95.3529},{-34,120},{110,120},{110,-128},{-39.4667,
+              -128},{-39.4667,-96}},
           color={0,0,0},
           smooth=Smooth.None));
       connect(peer.Out_YouSlave, peer1.In_YouSlave) annotation (Line(
-          points={{-48.1667,96.6875},{-48,114},{-132,114},{-132,-112},{-52,
-              -112},{-52,-96},{-52.1667,-96}},
+          points={{-48.2667,95.3529},{-48,114},{-132,114},{-132,-112},{-52,-112},
+              {-52,-96},{-48.8,-96}},
           color={0,0,0},
           smooth=Smooth.None));
       connect(peer.Out_Alive, peer1.In_Alive) annotation (Line(
-          points={{-53.6667,96.6875},{-54,96},{-54,124},{-138,124},{-138,-126},
-              {-58,-126},{-58,-96},{-57.5,-96}},
+          points={{-52.6667,95.3529},{-54,96},{-54,124},{-138,124},{-138,-126},
+              {-58,-126},{-58,-96},{-53.0667,-96}},
           color={0,0,0},
           smooth=Smooth.None));
       connect(peer1.Out_Cofirm, peer.In_Confirm) annotation (Line(
-          points={{-59,-73.3125},{-60,-73.3125},{-60,74},{-49.8333,74}},
+          points={{-54.2667,-74.6471},{-60,-74.6471},{-60,74},{-49.6,74}},
           color={0,0,0},
           smooth=Smooth.None));
       connect(peer1.Out_NoSlave, peer.In_NoSlave) annotation (Line(
-          points={{-41.6667,-73.3125},{-40,-73.3125},{-40,74},{-36.3333,74}},
+          points={{-40.4,-74.6471},{-40,-74.6471},{-40,74},{-38.8,74}},
           color={0,0,0},
           smooth=Smooth.None));
 
       connect(peer1.Out_Alive2, peer.In_Alive2) annotation (Line(
-          points={{-50.3333,-73.3125},{-50,-73.3125},{-50,6},{-43.5,6},{-43.5,
-              74}},
+          points={{-47.3333,-74.6471},{-50,-74.6471},{-50,6},{-44.5333,6},{
+              -44.5333,74}},
           color={0,0,0},
           smooth=Smooth.None));
       connect(peer1.Out_YouSlave, peer.In_YouSlave) annotation (Line(
-          points={{-35.8333,-73.3125},{-36,-48},{-32,-48},{-32,74},{-31.8333,
-              74}},
+          points={{-35.7333,-74.6471},{-36,-48},{-32,-48},{-32,74},{-35.2,74}},
           color={0,0,0},
           smooth=Smooth.None));
       connect(peer.In_Alive, peer1.Out_Alive) annotation (Line(
-          points={{-26.5,74},{-26.5,-50.6},{-30.3333,-50.6},{-30.3333,
-              -73.3125}},
+          points={{-30.9333,74},{-30.9333,-50.6},{-31.3333,-50.6},{-31.3333,
+              -74.6471}},
           color={0,0,255},
           smooth=Smooth.None));
       annotation (Diagram(graphics));
@@ -13403,6 +13520,623 @@ package CoordinationProtocols
       annotation (Diagram(graphics));
     end TestClassMain;
   end TestAsynchronousBehavior;
+
+  package ExamplesForPatternUse
+    package ProducerConsumer
+
+      package MemoryExample
+        model ReadingComponent "component that tries to read the shared memory"
+
+          Consumer consumer
+            annotation (Placement(transformation(extent={{8,42},{-14,62}})));
+          MessageInterface.InputDelegationPort inputDelegationPort(
+            redeclare Integer integers[0] "integers[0]",
+            redeclare Boolean booleans[0] "booelans[0]",
+            redeclare Real reals[0] "reals[0]")
+            annotation (Placement(transformation(extent={{14,86},{34,106}})));
+          MessageInterface.OutputDelegationPort outputDelegationPort(
+            redeclare Integer integers[0] "integers[0]",
+            redeclare Boolean booleans[0] "booelans[0]",
+            redeclare Real reals[0] "reals[0]")
+            annotation (Placement(transformation(extent={{-46,88},{-26,108}})));
+          Step ConsumingBlocked(
+            nOut=1,
+            nIn=1,
+            initialStep=true) annotation (Placement(transformation(
+                extent={{-4,-4},{4,4}},
+                rotation=90,
+                origin={-60,10})));
+          Step ConsumingPossible(
+            nIn=1,
+            nOut=1,
+            use_activePort=true) annotation (Placement(transformation(
+                extent={{-4,-4},{4,4}},
+                rotation=270,
+                origin={-14,-30})));
+          Transition T1(use_syncReceive=true, numberOfSyncReceive=1) annotation (
+              Placement(transformation(
+                extent={{4,-4},{-4,4}},
+                rotation=90,
+                origin={-24,10})));
+          Transition T2(
+            use_syncSend=true,
+            numberOfSyncSend=1,
+            use_conditionPort=true,
+            use_after=true,
+            afterTime=0.1) annotation (Placement(transformation(
+                extent={{-4,-4},{4,4}},
+                rotation=270,
+                origin={-66,-30})));
+          Modelica.Blocks.Interfaces.BooleanInput u
+            annotation (Placement(transformation(extent={{-116,-26},{-92,-2}})));
+          Modelica.Blocks.Interfaces.BooleanOutput y
+            annotation (Placement(transformation(extent={{96,-40},{116,-20}})));
+          Modelica.Blocks.MathBoolean.And and1(nu=2)
+            annotation (Placement(transformation(extent={{-18,-60},{-6,-72}})));
+          Modelica.Blocks.MathBoolean.Not nor1
+            annotation (Placement(transformation(extent={{-74,-18},{-66,-10}})));
+        equation
+          connect(consumer.In_Produced, inputDelegationPort) annotation (Line(
+              points={{8.2,55.8},{69.9,55.8},{69.9,96},{24,96}},
+              color={0,0,255},
+              smooth=Smooth.None));
+          connect(consumer.Out_Consumed, outputDelegationPort) annotation (Line(
+              points={{-13.8,55.4},{-41.1,55.4},{-41.1,98},{-36,98}},
+              color={0,0,0},
+              smooth=Smooth.None));
+          connect(T1.outPort, ConsumingPossible.inPort[1]) annotation (Line(
+              points={{-19,10},{-4,10},{-4,-30},{-10,-30}},
+              color={0,0,0},
+              smooth=Smooth.None));
+          connect(ConsumingBlocked.outPort[1], T1.inPort) annotation (Line(
+              points={{-55.4,10},{-28,10}},
+              color={0,0,0},
+              smooth=Smooth.None));
+          connect(T2.outPort, ConsumingBlocked.inPort[1]) annotation (Line(
+              points={{-71,-30},{-86,-30},{-86,10},{-64,10}},
+              color={0,0,0},
+              smooth=Smooth.None));
+          connect(T2.inPort, ConsumingPossible.outPort[1]) annotation (Line(
+              points={{-62,-30},{-18.6,-30}},
+              color={0,0,0},
+              smooth=Smooth.None));
+          connect(consumer.sender, T1.receiver[1]) annotation (Line(
+              points={{8.2,60.6},{20,60},{20,72},{-28.02,72},{-28.02,12.82}},
+              color={255,128,0},
+              smooth=Smooth.None));
+          connect(consumer.receiver, T2.sender[1]) annotation (Line(
+              points={{8,50.6},{20,50.6},{20,-40},{-61.94,-40},{-61.94,-32.6}},
+              color={255,128,0},
+              smooth=Smooth.None));
+          connect(u, nor1.u) annotation (Line(
+              points={{-104,-14},{-75.6,-14}},
+              color={255,0,255},
+              smooth=Smooth.None));
+          connect(nor1.y, T2.conditionPort) annotation (Line(
+              points={{-65.2,-14},{-66,-14},{-66,-25}},
+              color={255,0,255},
+              smooth=Smooth.None));
+          connect(u, and1.u[1]) annotation (Line(
+              points={{-104,-14},{-90,-14},{-90,-68.1},{-18,-68.1}},
+              color={255,0,255},
+              smooth=Smooth.None));
+          connect(ConsumingPossible.activePort, and1.u[2]) annotation (Line(
+              points={{-14,-34.72},{-50,-34.72},{-50,-63.9},{-18,-63.9}},
+              color={255,0,255},
+              smooth=Smooth.None));
+          connect(and1.y, y) annotation (Line(
+              points={{-5.1,-66},{46,-66},{46,-30},{106,-30}},
+              color={255,0,255},
+              smooth=Smooth.None));
+          annotation (Diagram(graphics), Documentation(info="<html>
+This component has a boolean input port that defines the read-behavior of the component. As long as the signal is set to 'true', the component tries to read the shared memory. It will only actually read the memory, if the component is in the state 'ReadingPossible', which means, that the component is allowed to read the memory. If the signal is set to 'false', the component does not try to read and if it should get the right to read, it will give it away so that the WritingComponent may be able to write the memory. 
+</html>"));
+        end ReadingComponent;
+
+        model Consumer
+          "this component adapts the behavior of the consumer role of the ProducerConsumer pattern."
+          extends
+            CoordinationPatternRepository.CoordinationPattern.Producer_Consumer.Consumer(
+              T1(use_syncSend=true, numberOfSyncSend=1), T2(use_syncReceive=true,
+                numberOfSyncReceive=1));
+          Internal.Interfaces.Synchron.receiver receiver
+            annotation (Placement(transformation(extent={{-110,-24},{-90,-4}})));
+          Internal.Interfaces.Synchron.sender sender
+            annotation (Placement(transformation(extent={{-112,76},{-92,96}})));
+        equation
+          connect(T1.sender[1], sender) annotation (Line(
+              points={{-39.4,42.06},{-39.4,65.03},{-102,65.03},{-102,86}},
+              color={255,128,0},
+              smooth=Smooth.None));
+          connect(T2.receiver[1], receiver) annotation (Line(
+              points={{39.18,31.98},{23.59,31.98},{23.59,-14},{-100,-14}},
+              color={255,128,0},
+              smooth=Smooth.None));
+          annotation (Diagram(coordinateSystem(preserveAspectRatio=true, extent={{-100,-100},
+                    {120,100}}),             graphics));
+        end Consumer;
+
+        model Producer
+          "this component adapts the behavior of the producer role of the ProducerConsumer pattern."
+          extends
+            CoordinationPatternRepository.CoordinationPattern.Producer_Consumer.Producer(
+              T1(use_syncReceive=true, numberOfSyncReceive=1), T2(
+              use_syncReceive=false,
+              use_syncSend=true,
+              numberOfSyncSend=1));
+          Internal.Interfaces.Synchron.receiver receiver
+            annotation (Placement(transformation(extent={{-150,70},{-130,90}})));
+          Internal.Interfaces.Synchron.sender sender annotation (Placement(
+                transformation(extent={{-150,-48},{-130,-28}})));
+        equation
+          connect(receiver, T1.receiver[1]) annotation (Line(
+              points={{-140,80},{-46,80},{-46,34.02},{-49.18,34.02}},
+              color={255,128,0},
+              smooth=Smooth.None));
+          connect(T2.sender[1], sender) annotation (Line(
+              points={{1.4,25.94},{1.4,-39.03},{-140,-39.03},{-140,-38}},
+              color={255,128,0},
+              smooth=Smooth.None));
+          annotation (Diagram(coordinateSystem(preserveAspectRatio=true, extent={{-140,-100},
+                    {120,100}}),             graphics));
+        end Producer;
+
+        model SharedMemory
+          "This component represents the shared memory that is written and read-out by the ReadingComponent and the WritingComponent."
+
+          Modelica.Blocks.Interfaces.BooleanInput Read
+            annotation (Placement(transformation(extent={{-124,60},{-84,100}})));
+          Modelica.Blocks.Interfaces.BooleanInput Write
+            annotation (Placement(transformation(extent={{-124,10},{-84,50}})));
+
+        equation
+          when Read and Write then
+            Modelica.Utilities.Streams.error("Error - Simultaneous Reading and Writing");
+          end when;
+
+          annotation (Diagram(graphics));
+        end SharedMemory;
+
+        model WritingComponent
+          "component that tries to write the shared memory"
+
+          RealTimeCoordinationLibrary.CoordinationProtocols.ExamplesForPatternUse.ProducerConsumer.MemoryExample.Producer
+                   producer
+            annotation (Placement(transformation(extent={{13,-10},{-13,10}},
+                rotation=0,
+                origin={33,28})));
+          MessageInterface.OutputDelegationPort outputDelegationPort(
+            redeclare Integer integers[0] "integers[0]",
+            redeclare Boolean booleans[0] "booelans[0]",
+            redeclare Real reals[0] "reals[0]")
+            annotation (Placement(transformation(extent={{30,-108},{50,-88}})));
+          MessageInterface.InputDelegationPort inputDelegationPort(
+            redeclare Integer integers[0] "integers[0]",
+            redeclare Boolean booleans[0] "booelans[0]",
+            redeclare Real reals[0] "reals[0]")
+            annotation (Placement(transformation(extent={{-26,-106},{-6,-86}})));
+          Step ProducingPossible(
+            nOut=1,
+            nIn=1,
+            initialStep=true,
+            use_activePort=true) annotation (Placement(transformation(
+                extent={{-4,-4},{4,4}},
+                rotation=90,
+                origin={-68,14})));
+          Step ProducingBlocked(nIn=1, nOut=1) annotation (Placement(transformation(
+                extent={{-4,-4},{4,4}},
+                rotation=0,
+                origin={-10,-24})));
+          Transition T1(
+            use_syncSend=true,
+            numberOfSyncSend=1,
+            use_conditionPort=true,
+            use_after=true,
+            afterTime=0.1) annotation (Placement(transformation(
+                extent={{-4,-4},{4,4}},
+                rotation=90,
+                origin={-48,14})));
+          Transition T2(
+            use_syncReceive=true,
+            numberOfSyncReceive=1,
+            use_after=true,
+            afterTime=0.1) annotation (Placement(transformation(
+                extent={{4,-4},{-4,4}},
+                rotation=270,
+                origin={-58,-56})));
+          Modelica.Blocks.Interfaces.BooleanInput u
+            annotation (Placement(transformation(extent={{-114,-14},{-94,6}})));
+          Modelica.Blocks.Interfaces.BooleanOutput y
+            annotation (Placement(transformation(extent={{96,-14},{116,6}})));
+          Modelica.Blocks.MathBoolean.And and1(nu=2)
+            annotation (Placement(transformation(extent={{18,62},{30,74}})));
+          Modelica.Blocks.MathBoolean.Not nor1
+            annotation (Placement(transformation(extent={{-68,-8},{-60,0}})));
+        equation
+          connect(producer.Out_Produced, outputDelegationPort) annotation (Line(
+              points={{46,31},{72,31},{72,-98},{40,-98}},
+              color={0,0,0},
+              smooth=Smooth.None));
+          connect(producer.In_Consumed, inputDelegationPort) annotation (Line(
+              points={{19.8,31},{8.1,31},{8.1,-96},{-16,-96}},
+              color={0,0,255},
+              smooth=Smooth.None));
+          connect(ProducingPossible.outPort[1], T1.inPort) annotation (Line(
+              points={{-63.4,14},{-52,14}},
+              color={0,0,0},
+              smooth=Smooth.None));
+          connect(T1.outPort, ProducingBlocked.inPort[1]) annotation (Line(
+              points={{-43,14},{-10,14},{-10,-20}},
+              color={0,0,0},
+              smooth=Smooth.None));
+          connect(ProducingBlocked.outPort[1], T2.inPort) annotation (Line(
+              points={{-10,-28.6},{-10,-56},{-54,-56}},
+              color={0,0,0},
+              smooth=Smooth.None));
+          connect(T2.outPort, ProducingPossible.inPort[1]) annotation (Line(
+              points={{-63,-56},{-86,-56},{-86,14},{-72,14}},
+              color={0,0,0},
+              smooth=Smooth.None));
+          connect(T1.sender[1], producer.receiver) annotation (Line(
+              points={{-52.06,16.6},{-52,42},{56,42},{56,36},{46,36}},
+              color={255,128,0},
+              smooth=Smooth.None));
+          connect(producer.sender, T2.receiver[1]) annotation (Line(
+              points={{46,24.2},{62,24.2},{62,-58.82},{-53.98,-58.82}},
+              color={255,128,0},
+              smooth=Smooth.None));
+          connect(u, and1.u[1]) annotation (Line(
+              points={{-104,-4},{-90,-4},{-90,70.1},{18,70.1}},
+              color={255,0,255},
+              smooth=Smooth.None));
+          connect(ProducingPossible.activePort, and1.u[2]) annotation (Line(
+              points={{-68,18.72},{-68,65.9},{18,65.9}},
+              color={255,0,255},
+              smooth=Smooth.None));
+          connect(and1.y, y) annotation (Line(
+              points={{30.9,68},{88,68},{88,-4},{106,-4}},
+              color={255,0,255},
+              smooth=Smooth.None));
+          connect(u, nor1.u) annotation (Line(
+              points={{-104,-4},{-69.6,-4}},
+              color={255,0,255},
+              smooth=Smooth.None));
+          connect(nor1.y, T1.conditionPort) annotation (Line(
+              points={{-59.2,-4},{-48,-4},{-48,9}},
+              color={255,0,255},
+              smooth=Smooth.None));
+          annotation (Diagram(graphics), Documentation(info="<html>
+This component has a boolean input port that defines the write-behavior of the component. As long as the signal is set to 'true', the component tries to write the shared memory. It will only actually write the memory, if the component is in the state 'WritingPossible', which means, that the component is allowed to write the memory. If the signal is set to 'false', the component does not try to write and if it should get the right to write, it will give it away so that the ReadingComponent may be able to read the memory. 
+</html>"));
+        end WritingComponent;
+
+        model MemoryReadWriteExampleMain
+          "This component represents the whole system."
+
+          RealTimeCoordinationLibrary.CoordinationProtocols.ExamplesForPatternUse.ProducerConsumer.MemoryExample.ReadingComponent
+            readingComponent(T1(use_after=true, afterTime=0.1)) annotation (Placement(
+                transformation(
+                extent={{-10,10},{10,-10}},
+                rotation=0,
+                origin={-34,70})));
+          RealTimeCoordinationLibrary.CoordinationProtocols.ExamplesForPatternUse.ProducerConsumer.MemoryExample.WritingComponent
+            writingComponent(T2(use_after=false), T1(afterTime=0.5)) annotation (
+              Placement(transformation(
+                extent={{-10,10},{10,-10}},
+                rotation=0,
+                origin={-34,26})));
+          RealTimeCoordinationLibrary.CoordinationProtocols.ExamplesForPatternUse.ProducerConsumer.MemoryExample.SharedMemory
+            sharedMemory annotation (Placement(transformation(
+                extent={{-10,-10},{10,10}},
+                rotation=0,
+                origin={76,58})));
+          Modelica.Blocks.Sources.BooleanTable TryReading(startValue=true, table={0.5,1,
+                1.5,2,2.5})
+            annotation (Placement(transformation(extent={{-104,60},{-84,80}})));
+          Modelica.Blocks.Sources.BooleanTable TryWriting(startValue=true, table={1,1.3,
+                2}) annotation (Placement(transformation(extent={{-106,16},{-86,36}})));
+        equation
+          connect(writingComponent.y, sharedMemory.Write) annotation (Line(
+              points={{-23.4,26.4},{45.3,26.4},{45.3,61},{65.6,61}},
+              color={255,0,255},
+              smooth=Smooth.None));
+          connect(readingComponent.y, sharedMemory.Read) annotation (Line(
+              points={{-23.4,73},{-23.4,69.5},{65.6,69.5},{65.6,66}},
+              color={255,0,255},
+              smooth=Smooth.None));
+          connect(readingComponent.outputDelegationPort, writingComponent.inputDelegationPort)
+            annotation (Line(
+              points={{-37.6,60.2},{-36,60.2},{-36,35.6},{-35.6,35.6}},
+              color={0,0,0},
+              smooth=Smooth.None));
+          connect(readingComponent.inputDelegationPort, writingComponent.outputDelegationPort)
+            annotation (Line(
+              points={{-31.6,60.4},{-30,60.4},{-30,35.8}},
+              color={0,0,255},
+              smooth=Smooth.None));
+          connect(TryWriting.y, writingComponent.u) annotation (Line(
+              points={{-85,26},{-64.7,26},{-64.7,26.4},{-44.4,26.4}},
+              color={255,0,255},
+              smooth=Smooth.None));
+          connect(TryReading.y, readingComponent.u) annotation (Line(
+              points={{-83,70},{-64,70},{-64,71.4},{-44.4,71.4}},
+              color={255,0,255},
+              smooth=Smooth.None));
+          annotation (Diagram(graphics), Documentation(info="<html>
+There are two components that use a shared memory. One component (the WritingComponent) can write the memory, the other component (the ReadingComponent) can read it. The shared memory may never be accessed at the same time. If this happens, an error will occur instantly. The two components use the producer-consumer pattern in order to synchronize their access behavior. The ReadingComponent and the WritingComponent have each a boolean input that defines their read- resp. write-behavior. In this implementation boolean tables are used as input for the two components. 
+</html>"));
+        end MemoryReadWriteExampleMain;
+        annotation (Documentation(info="<html>
+<h3>General information</h3>
+In this package you can find an example for an application of the <a href=\"modelica://RealTimeCoordinationLibrary.CoordinationPatternRepository.CoordinationPattern.Producer_Consumer\">producer-consumer pattern</a>. 
+<h3>Description of the scenario</h3>
+There are two components that use a shared memory. One component (the WritingComponent) can write the memory, the other component (the ReadingComponent) can read it. The shared memory may never be accessed at the same time. If this happens, an error will occur instantly. The two components use the producer-consumer pattern in order to synchronize their access behavior.  
+</html>"));
+      end MemoryExample;
+    end ProducerConsumer;
+
+    package PeriodicTransmission
+      package TwoBebotsInARowExample
+        model Bebot
+        parameter Boolean isFrontBebot;
+        Boolean errorOccured(start = false);
+
+          Sender sender(period=0.5)
+                        annotation (Placement(transformation(
+                extent={{-10,-10},{10,10}},
+                rotation=270,
+                origin={-58,52})));
+          Receiver receiver(timeout=2)
+                            annotation (Placement(transformation(
+                extent={{-10,-10},{10,10}},
+                rotation=0,
+                origin={60,58})));
+          MessageInterface.OutputDelegationPort outputDelegationPort(
+            redeclare Integer integers[0] "integers[0]",
+            redeclare Boolean booleans[0] "booelans[0]",
+            redeclare Real reals[1] "reals[1]")
+            annotation (Placement(transformation(extent={{-110,-6},{-90,14}})));
+          MessageInterface.InputDelegationPort inputDelegationPort(
+            redeclare Integer integers[0] "integers[0]",
+            redeclare Boolean booleans[0] "booelans[0]",
+            redeclare Real reals[1] "reals[1]")
+            annotation (Placement(transformation(extent={{90,2},{110,22}})));
+          Step Initial(nOut=2, initialStep=true)
+            annotation (Placement(transformation(extent={{-10,56},{-2,64}})));
+          Transition T1(condition=isFrontBebot,
+            use_after=true,
+            afterTime=0.1)
+            annotation (Placement(transformation(extent={{-10,22},{-2,30}})));
+          Step Front(nIn=2, nOut=1)
+            annotation (Placement(transformation(extent={{-54,-24},{-46,-16}})));
+          Transition T2(condition=not isFrontBebot,
+            use_after=true,
+            afterTime=0.1)
+            annotation (Placement(transformation(extent={{26,20},{34,28}})));
+          Step Rear(nIn=1, nOut=1)
+            annotation (Placement(transformation(extent={{38,-20},{46,-12}})));
+          Step Send(nIn=1, nOut=1) annotation (Placement(transformation(
+                extent={{-4,-4},{4,4}},
+                rotation=270,
+                origin={-54,-72})));
+          Step Error(nIn=1, nOut=1)
+                     annotation (Placement(transformation(extent={{38,-62},{46,-54}})));
+          Modelica.Blocks.Interfaces.BooleanInput SendBehavior
+            annotation (Placement(transformation(extent={{-122,-48},{-92,-18}})));
+          Transition T3(
+            use_conditionPort=true,
+            use_syncSend=true,
+            numberOfSyncSend=1)
+            annotation (Placement(transformation(extent={{-36,-44},{-44,-36}})));
+          Transition T4(use_after=true, afterTime=0.1)
+                        annotation (Placement(transformation(
+                extent={{-4,-4},{4,4}},
+                rotation=180,
+                origin={-82,-50})));
+          Modelica.Blocks.Interfaces.RealInput velocity
+            annotation (Placement(transformation(extent={{-120,56},{-86,90}})));
+
+          Transition T5(use_syncReceive=true, numberOfSyncReceive=1)
+            annotation (Placement(transformation(extent={{38,-42},{46,-34}})));
+          Step EmergencyBreak(nIn=1)
+            annotation (Placement(transformation(extent={{38,-98},{46,-90}})));
+          Transition T6
+            annotation (Placement(transformation(extent={{38,-80},{46,-72}})));
+        Real velocityOfBebot(start = 0);
+        algorithm
+          if isFrontBebot and not errorOccured then
+            velocityOfBebot :=velocity;
+          end if;
+          if T6.fire then
+            velocityOfBebot := 0;
+            errorOccured := true;
+          end if;
+
+          if not isFrontBebot and not errorOccured then
+            velocityOfBebot := receiver.velocityOfFrontBebot;
+          end if;
+
+        equation
+          connect(receiver.In_Data, inputDelegationPort) annotation (Line(
+              points={{70.4,58.8},{81.2,58.8},{81.2,12},{100,12}},
+              color={0,0,255},
+              smooth=Smooth.None));
+          connect(sender.Out_Data, outputDelegationPort) annotation (Line(
+              points={{-56,41.6},{-56,4},{-100,4}},
+              color={0,0,0},
+              smooth=Smooth.None));
+          connect(Initial.outPort[1], T1.inPort)
+                                               annotation (Line(
+              points={{-7,55.4},{-7,42.7},{-6,42.7},{-6,30}},
+              color={0,0,0},
+              smooth=Smooth.None));
+          connect(T1.outPort,Front. inPort[1]) annotation (Line(
+              points={{-6,21},{-6,-16},{-51,-16}},
+              color={0,0,0},
+              smooth=Smooth.None));
+          connect(Initial.outPort[2], T2.inPort) annotation (Line(
+              points={{-5,55.4},{14,55.4},{14,28},{30,28}},
+              color={0,0,0},
+              smooth=Smooth.None));
+          connect(T2.outPort, Rear.inPort[1]) annotation (Line(
+              points={{30,19},{30,-12},{42,-12}},
+              color={0,0,0},
+              smooth=Smooth.None));
+          connect(Front.outPort[1], T3.inPort) annotation (Line(
+              points={{-50,-24.6},{-38,-24.6},{-38,-36},{-40,-36}},
+              color={0,0,0},
+              smooth=Smooth.None));
+          connect(T3.outPort, Send.inPort[1]) annotation (Line(
+              points={{-40,-45},{-38,-45},{-38,-72},{-50,-72}},
+              color={0,0,0},
+              smooth=Smooth.None));
+          connect(Send.outPort[1], T4.inPort) annotation (Line(
+              points={{-58.6,-72},{-82,-72},{-82,-54}},
+              color={0,0,0},
+              smooth=Smooth.None));
+          connect(T4.outPort, Front.inPort[2]) annotation (Line(
+              points={{-82,-45},{-82,-8},{-50,-8},{-50,-16},{-49,-16}},
+              color={0,0,0},
+              smooth=Smooth.None));
+
+          connect(SendBehavior, T3.conditionPort) annotation (Line(
+              points={{-107,-33},{-96,-33},{-96,-86},{-28,-86},{-28,-40},{-35,-40}},
+              color={255,0,255},
+              smooth=Smooth.None));
+          connect(T3.sender[1], sender.receiver) annotation (Line(
+              points={{-42.6,-35.94},{-42.6,72.03},{-49.8,72.03},{-49.8,62}},
+              color={255,128,0},
+              smooth=Smooth.None));
+          connect(velocity, sender.velocity) annotation (Line(
+              points={{-103,73},{-63.5,73},{-63.5,62.5},{-63.9,62.5}},
+              color={0,0,127},
+              smooth=Smooth.None));
+          connect(Rear.outPort[1], T5.inPort) annotation (Line(
+              points={{42,-20.6},{42,-34}},
+              color={0,0,0},
+              smooth=Smooth.None));
+          connect(T5.outPort, Error.inPort[1]) annotation (Line(
+              points={{42,-43},{42,-54}},
+              color={0,0,0},
+              smooth=Smooth.None));
+          connect(receiver.sender, T5.receiver[1]) annotation (Line(
+              points={{50,58.2},{39.18,58.2},{39.18,-33.98}},
+              color={255,128,0},
+              smooth=Smooth.None));
+          connect(Error.outPort[1], T6.inPort) annotation (Line(
+              points={{42,-62.6},{42,-72}},
+              color={0,0,0},
+              smooth=Smooth.None));
+          connect(T6.outPort, EmergencyBreak.inPort[1]) annotation (Line(
+              points={{42,-81},{42,-90}},
+              color={0,0,0},
+              smooth=Smooth.None));
+          annotation (Diagram(graphics));
+        end Bebot;
+
+        model Sender
+          extends
+            CoordinationPatternRepository.CoordinationPattern.Periodic_Transmission.Sender(
+            timeInvariantLessOrEqual(bound=30),
+            T1(use_syncReceive=true, numberOfSyncReceive=1),
+            Data_Message(numberOfMessageReals=1),
+            Out_Data(
+              redeclare Integer integers[0] "integers[0]",
+              redeclare Boolean booleans[0] "booelans[0]",
+              redeclare Real reals[1] "reals[1]"));
+          Internal.Interfaces.Synchron.receiver receiver
+            annotation (Placement(transformation(extent={{-110,72},{-90,92}})));
+          Modelica.Blocks.Interfaces.RealInput velocity
+            annotation (Placement(transformation(extent={{-120,-74},{-90,-44}})));
+        equation
+          connect(T1.receiver[1], receiver) annotation (Line(
+              points={{-44.02,28.82},{-44.02,82.41},{-100,82.41},{-100,82}},
+              color={255,128,0},
+              smooth=Smooth.None));
+          connect(velocity, Data_Message.u_reals[1]) annotation (Line(
+              points={{-105,-59},{3.5,-59},{3.5,22},{21,22}},
+              color={0,0,127},
+              smooth=Smooth.None));
+          annotation (Diagram(graphics));
+        end Sender;
+
+        model Receiver
+          extends
+            CoordinationPatternRepository.CoordinationPattern.Periodic_Transmission.Receicer(
+            T1(use_syncSend=true, numberOfSyncSend=1),
+            Mailbox_Data(overwriteMessageWhenBufferIsFull=false, numberOfMessageReals=1),
+            T3(numberOfMessageReals=1),
+            T2(numberOfMessageReals=1),
+            In_Data(
+              redeclare Integer integers[0] "integers[0]",
+              redeclare Boolean booleans[0] "booelans[0]",
+              redeclare Real reals[1] "reals[1]"));
+          Internal.Interfaces.Synchron.sender sender
+            annotation (Placement(transformation(extent={{-110,-8},{-90,12}})));
+          Modelica.Blocks.Interfaces.RealOutput velocityOfFrontBebot annotation (
+              Placement(transformation(
+                extent={{10,-10},{-10,10}},
+                rotation=0,
+                origin={-106,-60})));
+
+        algorithm
+          when (T3.fire) then
+                 velocityOfFrontBebot :=T3.transition_input_port[1].reals[1];
+           end when;
+
+        equation
+          connect(T1.sender[1], sender) annotation (Line(
+              points={{-11.4,30.06},{6.3,30.06},{6.3,2},{-100,2}},
+              color={255,128,0},
+              smooth=Smooth.None));
+          annotation (Diagram(graphics));
+        end Receiver;
+
+        model TwoBebotsMain
+          Bebot bebotRear(isFrontBebot=false)
+            annotation (Placement(transformation(extent={{-76,18},{-56,38}})));
+          Bebot bebotFront(isFrontBebot=true)
+            annotation (Placement(transformation(extent={{16,20},{36,40}})));
+          Modelica.Blocks.Sources.BooleanConstant booleanConstant(k=false)
+            annotation (Placement(transformation(extent={{-114,70},{-94,90}})));
+          Modelica.Blocks.Sources.Ramp ramp(duration=2) annotation (Placement(
+                transformation(extent={{-136,28},{-116,48}})));
+          Modelica.Blocks.Sources.BooleanStep booleanStep(startTime=3,
+              startValue=true) annotation (Placement(transformation(extent={{
+                    -110,-24},{-90,-4}})));
+        equation
+          connect(bebotRear.inputDelegationPort, bebotFront.outputDelegationPort)
+            annotation (Line(
+              points={{-56,29.2},{-20,29.2},{-20,30.4},{16,30.4}},
+              color={0,0,255},
+              smooth=Smooth.None));
+          connect(booleanConstant.y, bebotRear.SendBehavior)
+                                                         annotation (Line(
+              points={{-93,80},{-82,80},{-82,24.7},{-76.7,24.7}},
+              color={255,0,255},
+              smooth=Smooth.None));
+          connect(ramp.y, bebotFront.velocity) annotation (Line(
+              points={{-115,38},{-92,38},{-92,56},{0,56},{0,38},{15.7,37.3}},
+              color={0,0,127},
+              smooth=Smooth.None));
+          connect(ramp.y, bebotRear.velocity) annotation (Line(
+              points={{-115,38},{-96,38},{-96,35.3},{-76.3,35.3}},
+              color={0,0,127},
+              smooth=Smooth.None));
+          connect(bebotRear.outputDelegationPort, bebotFront.inputDelegationPort)
+            annotation (Line(
+              points={{-76,28.4},{90,28.4},{90,31.2},{36,31.2}},
+              color={0,0,0},
+              smooth=Smooth.None));
+          connect(booleanStep.y, bebotFront.SendBehavior) annotation (Line(
+              points={{-89,-14},{-38,-14},{-38,26.7},{15.3,26.7}},
+              color={255,0,255},
+              smooth=Smooth.None));
+          annotation (Diagram(graphics));
+        end TwoBebotsMain;
+      end TwoBebotsInARowExample;
+    end PeriodicTransmission;
+  end ExamplesForPatternUse;
 end CoordinationProtocols;
 
 
@@ -13450,14 +14184,18 @@ package Internal "Internal utility models (should usually not be used by user)"
        replaceable class Element
        end Element;
 
-     function enqueue
-       input Element vecIn[:]; // ring array for fifo-queue
-       input Element e; // e should be enqueued
-       input Integer tailIn;
-       input Integer headIn;
-       output Element vecOut[size(vecIn,1)];
-       output Integer tailOut;
-       output Integer headOut;
+     function enqueueOverwriteLastMessage
+          "This function enqueues a message into the given ring queue. When the queue is full, the last message in the queue is overwritten."
+       input Element vecIn[:]
+            "This is the array which implements the ring queue";                   // ring array for fifo-queue
+       input Element e "The element which shall be inserted"; // e should be enqueued
+       input Integer tailIn "The actual pointer to the tail of the ring queue";
+       input Integer headIn "The actual pointer to the head of the ring queue";
+       output Element vecOut[size(vecIn,1)] "The updated ring queue";
+       output Integer tailOut
+            "The updated pointer to the tail of the ring queue ";
+       output Integer headOut
+            "The updated pointer to the head of the ring queue";
         protected
        Integer filling_level=0;
      algorithm
@@ -13475,19 +14213,85 @@ package Internal "Internal utility models (should usually not be used by user)"
          filling_level := size(vecIn,1) - (headIn-tailIn);
        end if;
 
-       assert(filling_level+1 < size(vecIn,1), "ArrayOverflow");
+       // if the queue is full, then the last entry is overwritten.
+       if not filling_level+1 < size(vecIn,1) then
+         if (headIn+1 > size(vecIn,1)) then
+           headOut := 1;
+         else
+           headOut :=headIn + 1;
+         end if;
+       end if;
        vecOut := vecIn;
        vecOut[tailIn] := e;
-     end enqueue;
+     /*
+  Modelica.Utilities.Streams.print("Size:"+String(size(vecIn,1)));
+  Modelica.Utilities.Streams.print("FillingLevel:"+String(filling_level));
+  Modelica.Utilities.Streams.print("TailIn:"+String(tailIn));
+  Modelica.Utilities.Streams.print("Tailout:"+String(tailOut));
+  Modelica.Utilities.Streams.print("HeadIn:"+String(headIn));
+  Modelica.Utilities.Streams.print("HeadOut:"+String(headOut));
+  Modelica.Utilities.Streams.print("-----------------------------");*/
+
+     end enqueueOverwriteLastMessage;
+
+     function enqueueDenyNewestMessage
+          "This function enqueues a message into the given ring queue. When the queue is full, the message that shall be inserted is dropped."
+       input Element vecIn[:] "The ring array for the fifo-queue";
+       input Element e "The element that shall be enqueued";
+       input Integer tailIn "The actual pointer to the tail of the ring queue";
+       input Integer headIn "The actual pointer to the head of the ring queue";
+       output Element vecOut[size(vecIn,1)] "The updated ring queue";
+       output Integer tailOut
+            "The updated pointer to the tail of the ring queue";
+       output Integer headOut
+            "The updated pointer to the head of the ring queue";
+        protected
+       Integer filling_level=0;
+     algorithm
+
+       headOut := headIn;
+       if (tailIn+1 > size(vecIn,1)) then
+         tailOut := 1; // jump to first index for enqueue
+       else
+         tailOut := tailIn+1; // jump to next index for enqueue
+       end if;
+      // get current filling level
+       if (headIn <= tailIn) then
+         filling_level := integer(abs(tailIn-headIn));
+       else
+         filling_level := size(vecIn,1) - (headIn-tailIn);
+       end if;
+
+       vecOut := vecIn;
+       if filling_level+1 < size(vecIn,1) then
+         vecOut[tailIn] := e;
+       else
+         tailOut :=tailIn; // do not change the tail when the queue is full, i. e. the last message is dropped
+       end if;
+
+      /* Modelica.Utilities.Streams.print("Size:"+String(size(vecIn,1)));
+  Modelica.Utilities.Streams.print("FillingLevel:"+String(filling_level));
+  Modelica.Utilities.Streams.print("TailIn:"+String(tailIn));
+  Modelica.Utilities.Streams.print("Tailout:"+String(tailOut));
+  Modelica.Utilities.Streams.print("HeadIn:"+String(headIn));
+  Modelica.Utilities.Streams.print("HeadOut:"+String(headOut));
+  Modelica.Utilities.Streams.print("-----------------------------");*/
+     end enqueueDenyNewestMessage;
 
        function dequeue
-         input Element vecIn[:];
-         input Integer tailIn;
-         input Integer headIn;
-         output Element vecOut[size(vecIn,1)];
-         output Element e;
-         output Integer tailOut;
-         output Integer headOut;
+          "This function deletes the first element of the ring queue and returns it"
+         input Element vecIn[:]
+            "The ring queue from which the element shall be deleted";
+         input Integer tailIn
+            "The actual pointer to the tail of the ring queue";
+         input Integer headIn
+            "The actual pointer to the head of the ring queue";
+         output Element vecOut[size(vecIn,1)] "The updated ring queue";
+         output Element e "The deleted element";
+         output Integer tailOut
+            "The updated pointer to the tail of the ring queue";
+         output Integer headOut
+            "The updated pointer to the head of the ring queue";
         protected
          Integer filling_level=0;
        algorithm
@@ -13517,14 +14321,18 @@ package Internal "Internal utility models (should usually not be used by user)"
          Integer           tail(start=1);
          Integer           head(start=1);
          Integer           filling_level(start=0);
-         replaceable Element vec[queueSize];
+         replaceable Element vec[queueSize+1];
        end Queue;
 
        function readQueue
-         input Element vecIn[:];
-         input Integer tailIn;
-         input Integer headIn;
-         output Element e;
+          "This function reads the first element from the assigned ringqueue and returns it"
+         input Element vecIn[:]
+            "The ring queue from which the element shall be read";
+         input Integer tailIn
+            "The actual pointer to the tail of the ring queue";
+         input Integer headIn
+            "The actual pointer to the head of the ring queue";
+         output Element e "The first element of the queue";
 
         protected
          Integer filling_level=0;
