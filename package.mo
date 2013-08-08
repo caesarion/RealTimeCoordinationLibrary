@@ -14267,7 +14267,7 @@ Two bebots are driving a line. The front bebot periodically transmitts its veloc
           annotation (Diagram(graphics));
         end Bebot;
 
-        model ModelMain
+        model FinalSystemMain
           RealTimeCoordinationLibrary.CoordinationProtocols.ExamplesForPatternUse.Limit_Observation.Distance_Sensor.Bebot
                 Front(startpos=1) annotation (Placement(transformation(extent={{-26,-42},
                     {-6,-22}})));
@@ -14321,9 +14321,10 @@ Two bebots are driving a line. The front bebot periodically transmitts its veloc
             __Dymola_experimentSetupOutput,
             Documentation(info="<html>
 <h3>scenario</h3>
-Two bebots drive in a line, so there is a RearBebot and a FrontBebot. So that no accident happens, the FrontBebot periodically measures the distance between both bebots. If the distance crosses a certain security critical limit, the FrontBebot sends a message to the RearBebot with the command to slow down. If the RearBebot receies this message of the FrontBebot it breaks. The acceleration functions of both bebots can be changed in order to see different scenarios. 
+Two bebots drive in a line, so there is a RearBebot and a FrontBebot. So that no accident happens the FrontBebot periodically measures the distance between both bebots. If the distance crosses a certain security critical limit, the FrontBebot will send a message to the RearBebot with the command to slow down. If the RearBebot receives this message of the FrontBebot, it will break. The acceleration functions of both bebots can be changed in order to see different scenarios. An example process is illustrated in the following diagram:
+<p><img src=\"modelica://RealTimeCoordinationLibrary/images/Limit-Observation/examplesForPatternUse/example1/scenario.jpg\"/></p>
 </html>"));
-        end ModelMain;
+        end FinalSystemMain;
       end Distance_Sensor;
     end Limit_Observation;
 
@@ -14817,8 +14818,80 @@ Two bebots drive in a line, so there is a RearBebot and a FrontBebot. So that no
 <body>
 </body>
 <h3>szenario</h3>
-Two Bebots drive in a line, so one is in front, namely the \"FrontBebot\", and the other one is rear, called \"RearBebot\" in the model. Since the bebots are driving in a convoy and should not collide, they are using the same acceleration function. After 'timeOfBreakRequest' seconds the FrontBebot send a break request to the RearBebot with the correspondent breakforce the FrontBebot wants to break with. Depending on the value of the parameter 'breakingPossible' of the RearBebot the RearBebot will start breaking or not. If it is not able to break, the front will break anyway and both Bebots will collide. Otherwise first the RearBebot will start to break and the FrontBebot will also start breaking with the same intense, so no collision occurs.
+Two Bebots drive in a line, so one is in front, namely the \"FrontBebot\", and the other one is rear, called \"RearBebot\" in the model. Together they form a convoy. Since the bebots are driving in a convoy and should not collide, they are using the same acceleration function. After 'timeOfBreakRequest' seconds the FrontBebot send a break request to the RearBebot with the corresponding breakforce the FrontBebot wants to break with. Depending on the value of the parameter 'breakingPossible' of the RearBebot the RearBebot will start breaking or not. If it is not able to break, the front will break anyway and both Bebots will collide. Otherwise first the RearBebot will start to break and the FrontBebot will also start breaking with the same intense, so no collision occurs. The process is shown in the following diagrams:
+<p><div align=\"center\">Time = 0:</div></p>
+<p><div align=\"center\"><img src=\"modelica://RealTimeCoordinationLibrary/images/Fail_Safe_Delegation/examplesForPatternUse/example1/time0.jpg\"/></div></p>
+<p><div align=\"center\">Time = timeOfBreakRequest:</div></p>
+<p><div align=\"center\"><img src=\"modelica://RealTimeCoordinationLibrary/images/Fail_Safe_Delegation/examplesForPatternUse/example1/timeOfBreakRequest.jpg\"/></div></p>
+<p><div align=\"center\"><img src=\"modelica://RealTimeCoordinationLibrary/images/Fail_Safe_Delegation/examplesForPatternUse/example1/arrows.jpg\"/></div></p>
+<p>
 
+<table border=\"0\" align=\"center\">
+<tr>
+	<td>
+		<h3>Case breaking possible:</h3>
+	</td>
+	<td width=\"100\">         &#160; </td>
+	<td>
+		<h3>Case breaking not possible:</h3>
+	</td>
+</tr>
+<tr>
+	<td>
+		The RearBebot answers the request with 'yes':
+	</td>
+	<td width=\"100\">         &#160; </td>
+	<td>
+		The RearBebot answers the request with 'no':
+	</td>
+</tr>
+<tr>
+	<td>
+		<img src=\"modelica://RealTimeCoordinationLibrary/images/Fail_Safe_Delegation/examplesForPatternUse/example1/possible1.jpg\" align=\"left\"/>
+	</td>
+	<td>  </td>
+	<td>
+		<img src=\"modelica://RealTimeCoordinationLibrary/images/Fail_Safe_Delegation/examplesForPatternUse/example1/notPossible1.jpg\" align=\"right\"/>
+	</td>
+</tr>
+<tr>
+	<td>
+		Both can start breaking:
+	</td>
+	<td width=\"100\">         &#160; </td>
+	<td>
+		The Front Bebot has to break anyway:
+	</td>
+</tr>
+<tr>
+	<td>
+		<img src=\"modelica://RealTimeCoordinationLibrary/images/Fail_Safe_Delegation/examplesForPatternUse/example1/possible2.jpg\" align=\"left\"/>
+	</td>
+	<td>  </td>
+	<td>
+		<img src=\"modelica://RealTimeCoordinationLibrary/images/Fail_Safe_Delegation/examplesForPatternUse/example1/notPossible2.jpg\" align=\"right\"/>
+	</td>
+</tr>
+<tr>
+	<td>
+		
+	</td>
+	<td width=\"100\">         &#160; </td>
+	<td>
+		A crash may happen, since the RearBebot might not be able to break:
+	</td>
+</tr>
+<tr>
+	<td>
+		
+	</td>
+	<td>  </td>
+	<td>
+		<img src=\"modelica://RealTimeCoordinationLibrary/images/Fail_Safe_Delegation/examplesForPatternUse/example1/notPossible3.jpg\" align=\"left\"/>
+	</td>
+</tr>
+</table>
+</p>
 </html>"));
       end FinalSystemMain;
     end Fail_Safe_Delegation;
@@ -15124,7 +15197,7 @@ Two Bebots drive in a line, so one is in front, namely the \"FrontBebot\", and t
                 fillColor={0,0,0})}));
       end TrackSectionControl;
 
-      model FinalModel
+      model FinalSystemMain
 
         Bebot bebot(nrOfTrackSections=2)
           annotation (Placement(transformation(extent={{-18,42},{-4,56}})));
@@ -15166,9 +15239,11 @@ Two Bebots drive in a line, so one is in front, namely the \"FrontBebot\", and t
             color={255,0,255},
             smooth=Smooth.None));
         annotation (Diagram(graphics), Documentation(info="<html>
-A bebot is driving on track sections that are ordered in a circle. It is possible, that an accident on a track section occurs. In this case the track section control sends a message to the bebot, that there is an accident on this section. If the bebot is currently driving on the affected section, it stops, if its on a different section, the bebot continues driving. 
+<p>A bebot is driving on track sections that are ordered in a circle. Every track section is controlled by a TrackSectionControl. The TrackSectionControl and the bebot can communicate via messages. </p>
+<p><img src=\"modelica://RealTimeCoordinationLibrary/images/Block-Execution/examplesForPatternUse/example1/scenario.jpg\"/></p>
+<p>It is possible, that an accident on a track section occurs. In this case the track section control sends a message to the bebot, that there is an accident on this section. If the bebot is currently driving on the affected section, it stops, if its on a different section, the bebot continues driving.</p>
 </html>"));
-      end FinalModel;
+      end FinalSystemMain;
     end BlockExecution;
 
     package Synchronized_Collaboration
@@ -15351,7 +15426,7 @@ A bebot is driving on track sections that are ordered in a circle. It is possibl
                 rotation=360)}));
       end Bebot;
 
-      model FinalModel
+      model FinalSystemMain
 
         Bebot bebotRear(evaluationTime=0.1, timeout=0.2)
           annotation (Placement(transformation(extent={{-68,34},{-48,54}})));
@@ -15416,7 +15491,7 @@ A bebot is driving on track sections that are ordered in a circle. It is possibl
           Documentation(info="<html>
 Two bebots drive in a line. The front bebot asks wether they should form a convoy. If the rear bebot is ready, they join an form a convoy, else if it is not ready, the front rebot will repeat its request.
 </html>"));
-      end FinalModel;
+      end FinalSystemMain;
     end Synchronized_Collaboration;
   end ExamplesForPatternUse;
 end CoordinationProtocols;

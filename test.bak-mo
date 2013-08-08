@@ -1,0 +1,855 @@
+within RealTimeCoordinationLibrary;
+package test
+  model MailboxTest1
+    Mailbox mailbox(
+      nOut=2,
+      nIn=1,
+      numberOfMessageIntegers=2)
+      annotation (Placement(transformation(extent={{-92,12},{-72,32}})));
+    Step step1(initialStep=true, nOut=2)
+      annotation (Placement(transformation(extent={{-40,74},{-32,82}})));
+    Transition T1(
+      use_messageReceive=true,
+      numberOfMessageReceive=1,
+      numberOfMessageIntegers=2,
+      condition=true)
+      annotation (Placement(transformation(extent={{-56,34},{-48,42}})));
+    Transition T2(
+      use_messageReceive=true,
+      numberOfMessageReceive=1,
+      numberOfMessageIntegers=2,
+      condition=false)
+      annotation (Placement(transformation(extent={{-14,38},{-6,46}})));
+    Step step2(nIn=2)
+      annotation (Placement(transformation(extent={{-34,-12},{-26,-4}})));
+    MessageInterface.InputDelegationPort inputDelegationPort(
+      redeclare Boolean booleans[0] "booelans[0]",
+      redeclare Real reals[0] "reals[0]",
+      redeclare Integer integers[2] "integers[2]")
+      annotation (Placement(transformation(extent={{-144,28},{-124,48}})));
+  equation
+    connect(step1.outPort[1], T1.inPort) annotation (Line(
+        points={{-37,73.4},{-52,73.4},{-52,42}},
+        color={0,0,0},
+        smooth=Smooth.None));
+    connect(T1.outPort, step2.inPort[1]) annotation (Line(
+        points={{-52,33},{-52,-4},{-31,-4}},
+        color={0,0,0},
+        smooth=Smooth.None));
+    connect(step1.outPort[2], T2.inPort) annotation (Line(
+        points={{-35,73.4},{-10,73.4},{-10,46}},
+        color={0,0,0},
+        smooth=Smooth.None));
+    connect(T2.outPort, step2.inPort[2]) annotation (Line(
+        points={{-10,37},{-10,-4},{-29,-4}},
+        color={0,0,0},
+        smooth=Smooth.None));
+    connect(mailbox.mailbox_output_port[1], T1.transition_input_port[1])
+      annotation (Line(
+        points={{-73,20.5},{-73,30.5},{-56.9,30.5},{-56.9,40.12}},
+        color={0,0,0},
+        smooth=Smooth.None));
+    connect(mailbox.mailbox_output_port[2], T2.transition_input_port[1])
+      annotation (Line(
+        points={{-73,21.5},{-43.5,21.5},{-43.5,44.12},{-14.9,44.12}},
+        color={0,0,0},
+        smooth=Smooth.None));
+    connect(inputDelegationPort, mailbox.mailbox_input_port[1]) annotation (
+        Line(
+        points={{-134,38},{-113,38},{-113,21},{-91,21}},
+        color={0,0,255},
+        smooth=Smooth.None));
+    annotation (Diagram(graphics));
+  end MailboxTest1;
+
+  model MBT2
+    Step step1(initialStep=true, nOut=1)
+      annotation (Placement(transformation(extent={{-30,76},{-22,84}})));
+    Step step2(nIn=1)
+      annotation (Placement(transformation(extent={{-36,6},{-28,14}})));
+    Transition T1(
+      use_after=true,
+      afterTime=0.1,
+      use_firePort=true)
+      annotation (Placement(transformation(extent={{-28,48},{-20,56}})));
+    Message message(numberOfMessageIntegers=2, nIn=1)
+      annotation (Placement(transformation(extent={{24,44},{44,64}})));
+    MessageInterface.OutputDelegationPort outputDelegationPort(
+      redeclare Boolean booleans[0] "booelans[0]",
+      redeclare Real reals[0] "reals[0]",
+      redeclare Integer integers[2] "integers[2]")
+      annotation (Placement(transformation(extent={{82,44},{102,64}})));
+    Modelica.Blocks.Sources.IntegerExpression integerExpression(y=20)
+      annotation (Placement(transformation(extent={{4,74},{24,94}})));
+    Modelica.Blocks.Sources.IntegerExpression integerExpression1(y=10)
+      annotation (Placement(transformation(extent={{-10,-10},{10,10}},
+          rotation=90,
+          origin={16,-10})));
+  equation
+    connect(step1.outPort[1], T1.inPort) annotation (Line(
+        points={{-26,75.4},{-26,56},{-24,56}},
+        color={0,0,0},
+        smooth=Smooth.None));
+    connect(T1.outPort, step2.inPort[1]) annotation (Line(
+        points={{-24,47},{-16,47},{-16,14},{-32,14}},
+        color={0,0,0},
+        smooth=Smooth.None));
+    connect(integerExpression.y, message.u_integers[1]) annotation (Line(
+        points={{25,84},{23,84},{23,64.2}},
+        color={255,127,0},
+        smooth=Smooth.None));
+    connect(message.message_output_port, outputDelegationPort) annotation (Line(
+        points={{43,53},{65.5,53},{65.5,54},{92,54}},
+        color={0,0,0},
+        smooth=Smooth.None));
+    connect(T1.firePort, message.conditionPort[1]) annotation (Line(
+        points={{-19.8,52},{2,52},{2,44.4},{22,44.4}},
+        color={255,0,255},
+        smooth=Smooth.None));
+    connect(integerExpression1.y, message.u_integers[2]) annotation (Line(
+        points={{16,1},{14,1},{14,62.2},{23,62.2}},
+        color={255,127,0},
+        smooth=Smooth.None));
+    annotation (Diagram(graphics));
+  end MBT2;
+
+  model main
+    MailboxTest1 mailboxTest1_1
+      annotation (Placement(transformation(extent={{-44,24},{-24,44}})));
+    MBT2 mBT2_1
+      annotation (Placement(transformation(extent={{-44,64},{-24,84}})));
+  equation
+    connect(mBT2_1.outputDelegationPort, mailboxTest1_1.inputDelegationPort)
+      annotation (Line(
+        points={{-24.8,79.4},{-24.8,58.7},{-47.4,58.7},{-47.4,37.8}},
+        color={0,0,0},
+        smooth=Smooth.None));
+    annotation (Diagram(graphics));
+  end main;
+
+ model MailboxChanged "Receives and stores message instances in a FIFO queue."
+
+    import RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.IntQueue;
+    import RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.RealQueue;
+    import
+      RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.BooleanQueue;
+    import
+      RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.StringQueue;
+
+   parameter Integer nOut(min=0)=0 "Number of output connections"
+                                                             annotation(Dialog(__Dymola_connectorSizing=true), HideResult=false);
+   parameter Integer nIn(min=0)=0 "Number of input connections"
+                                                             annotation(Dialog(__Dymola_connectorSizing=true), HideResult=false);
+
+   parameter Real delayTime=0;
+   parameter Integer queueSize = 20 "The maximal size of the Queue"
+     annotation(Dialog(enable=not use_conditionPort));
+   Integer filling_level(start=0) "Result of the current filling level";
+
+   // Size of the parameter arrays
+   parameter Integer numberOfMessageIntegers(min=0)=0
+      "number of integer parameters of a message";
+   parameter Integer numberOfMessageBooleans(min=0)=0
+      "number of boolean parameters of a message";
+   parameter Integer numberOfMessageReals(min=0)=0
+      "number of real parameters of a message";
+
+   parameter Boolean overwriteMessageWhenBufferIsFull = false "determines the behavior in case of message buffer overflow. 'True' means overwriting the last message with the new incoming message.
+     If this parameter is set to 'false', the incoming messages are dropped in case of buffer overflow";
+
+   RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.mailbox_output_port
+      mailbox_output_port[nOut](
+      redeclare Integer integers[numberOfMessageIntegers],
+      redeclare Boolean booleans[numberOfMessageBooleans],
+      redeclare Real reals[numberOfMessageReals])
+      "Interface for sending messages with parameters"
+     annotation (Placement(transformation(extent={{80,0},{100,20}}),
+          iconTransformation(extent={{80,-20},{100,0}})));
+ // Queues which are required for storing message elements like parameters, sendng time, instanceId, and ownerId
+   RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.IntQueue.Queue int_q(queueSize=
+         queueSize*numberOfMessageIntegers);
+   RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.RealQueue.Queue real_q(queueSize=
+         queueSize*numberOfMessageReals);
+   RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.RealQueue.Queue time_q(queueSize=
+         queueSize);
+   RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.BooleanQueue.Queue
+      boolean_q(queueSize=queueSize*numberOfMessageBooleans);
+      RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.IntQueue.Queue instanceId_q(queueSize=
+         queueSize);
+      RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.IntQueue.Queue ownerId_q(queueSize=
+         queueSize);
+
+ //Temp Variables which are used for dequeuing
+   Integer intTemp[numberOfMessageIntegers];
+   Real realTemp[numberOfMessageReals];
+   Real timeTemp[nOut];
+   Boolean booleanTemp[numberOfMessageBooleans];
+   Integer instaceIdTemp[nOut];
+   Integer ownerIdTemp[nOut];
+
+  //Temp variables which are used to test if the messageInstance is already in the queue.
+   Integer testInstanceIdTemp;
+   Integer testOwnerIdTemp;
+
+   Boolean fire_out[nOut]
+      "Tells the transition that a message has been dequeud";
+   Boolean output_active[nOut]
+      "Stores if a message receiving transition is enable to fire";
+
+    RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.mailbox_input_port
+      mailbox_input_port[nIn](
+      redeclare Integer integers[numberOfMessageIntegers],
+      redeclare Boolean booleans[numberOfMessageBooleans],
+      redeclare Real reals[numberOfMessageReals])
+      "Interface for receiving messages with parameters"                                                           annotation (Placement(transformation(extent=
+              {{-100,0},{-80,20}}), iconTransformation(extent={{-100,-20},{-80,0}})));
+ equation
+ // Stores if a connected message receiving transition is enable to fire
+   for i in 1:nOut loop
+       output_active[i] = mailbox_output_port[i].active;
+   end for;
+ //Forward parameters from the temp variables to the connected message receiving transition
+   for i in 1:nOut loop
+     for j in 1:numberOfMessageIntegers loop
+       mailbox_output_port[i].integers[j] = intTemp[j];
+     end for;
+     for j in 1:numberOfMessageReals loop
+       mailbox_output_port[i].reals[j] = realTemp[j];
+     end for;
+    for j in 1:numberOfMessageBooleans loop
+       mailbox_output_port[i].booleans[j] = booleanTemp[j];
+     end for;
+     mailbox_output_port[i].t = timeTemp[i];
+
+     // Signals the receiving enabled transitions that it can fire
+     mailbox_output_port[i].fire =  fire_out[i];
+     // Signals the receiving transitions that a message is in the queue
+     mailbox_output_port[i].hasMessage = if time_q.filling_level > 0  and      time - RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.RealQueue.readQueue(
+           time_q.vec,
+           time_q.tail,
+           time_q.head) >=delayTime  then true else false;
+   end for;
+
+ algorithm
+   //calculate the current filling level
+   if (int_q.head <=int_q.tail) then
+     int_q.filling_level := integer(abs(int_q.tail-int_q.head));
+   else
+     int_q.filling_level := (queueSize*numberOfMessageIntegers)-(int_q.head-int_q.tail);
+   end if;
+
+   if (real_q.head <=real_q.tail) then
+     real_q.filling_level := integer(abs(real_q.tail-real_q.head));
+   else
+     real_q.filling_level := (queueSize*numberOfMessageReals)-(real_q.head-real_q.tail);
+   end if;
+
+   if (boolean_q.head <=boolean_q.tail) then
+     boolean_q.filling_level := integer(abs(boolean_q.tail-boolean_q.head));
+   else
+     boolean_q.filling_level := (queueSize*numberOfMessageBooleans)-(boolean_q.head-boolean_q.tail);
+   end if;
+
+     if (instanceId_q.head <=instanceId_q.tail) then
+     instanceId_q.filling_level := integer(abs(instanceId_q.tail-instanceId_q.head));
+   else
+     instanceId_q.filling_level := (queueSize)-(instanceId_q.head-instanceId_q.tail);
+     end if;
+
+         if (ownerId_q.head <=ownerId_q.tail) then
+     ownerId_q.filling_level := integer(abs(ownerId_q.tail-ownerId_q.head));
+   else
+     ownerId_q.filling_level := (queueSize)-(ownerId_q.head-ownerId_q.tail);
+   end if;
+
+   if (time_q.head <=time_q.tail) then
+     time_q.filling_level := integer(abs(time_q.tail-time_q.head));
+   else
+     time_q.filling_level := (queueSize)-(time_q.head-time_q.tail);
+   end if;
+   filling_level := time_q.filling_level;
+
+ //Dequeue available and required event parameter
+  for i in 1:nOut loop
+       if pre(output_active[i]) and Modelica_StateGraph2.Blocks.BooleanFunctions.firstTrueIndex(pre(output_active)) == i and not fire_out[i] and time_q.filling_level > 0 then
+         if ((numberOfMessageIntegers > 0 and int_q.filling_level > 0)
+                                   or (numberOfMessageBooleans > 0 and boolean_q.filling_level > 0)
+                                   or (numberOfMessageReals > 0 and real_q.filling_level > 0)) then
+           if i<= 1 then
+           for j in 1:numberOfMessageIntegers loop
+
+              (int_q.vec,intTemp[j],int_q.tail,
+               int_q.head) :=
+               RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.IntQueue.dequeue(
+               int_q.vec,
+               int_q.tail,
+               int_q.head);
+
+           end for;
+           for j in 1:numberOfMessageReals loop
+              (real_q.vec,realTemp[j],real_q.tail,
+                real_q.head) :=
+                RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.RealQueue.dequeue(
+                 real_q.vec,
+                 real_q.tail,
+                 real_q.head);
+           end for;
+           for j in 1:numberOfMessageBooleans loop
+              (boolean_q.vec,booleanTemp[j],
+                boolean_q.tail,boolean_q.head) :=
+                RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.BooleanQueue.dequeue(
+                 boolean_q.vec,
+                 boolean_q.tail,
+                 boolean_q.head);
+           end for;
+           end if;
+         end if;
+
+       fire_out[i] := true; // Stores that a message has just been dequeued
+
+ //Dequeue available and required meta variables
+        (time_q.vec,timeTemp[i],time_q.tail,time_q.head) :=
+          RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.RealQueue.dequeue(
+           time_q.vec,
+           time_q.tail,
+           time_q.head);
+
+        (instanceId_q.vec,instaceIdTemp[i],instanceId_q.tail,instanceId_q.head)
+          :=
+          RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.IntQueue.dequeue(
+           instanceId_q.vec,
+           instanceId_q.tail,
+           instanceId_q.head);
+
+        (ownerId_q.vec,ownerIdTemp[i],ownerId_q.tail,ownerId_q.head) :=
+          RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.IntQueue.dequeue(
+           ownerId_q.vec,
+           ownerId_q.tail,
+           ownerId_q.head);
+        else
+         fire_out[i] := false; // Stores that no message has just been dequeued
+       end if;
+    end for;
+
+ //Enqueue new available event parameters
+    for i in 1:nIn loop
+       if mailbox_input_port[i].fire then
+         //read message instanceId and ownerId from the head of the queue
+        testInstanceIdTemp :=
+          RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.IntQueue.readQueue(
+           instanceId_q.vec,
+           instanceId_q.tail,
+           instanceId_q.head);
+        testOwnerIdTemp :=
+          RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.IntQueue.readQueue(
+           ownerId_q.vec,
+           ownerId_q.tail,
+           ownerId_q.head);
+         //test if message instance of the same owner is already in the queue
+         if (not (mailbox_input_port[i].instanceId == testInstanceIdTemp and i == testOwnerIdTemp)) then
+
+          if overwriteMessageWhenBufferIsFull then
+          (ownerId_q.vec,ownerId_q.tail,ownerId_q.head) :=
+            RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.IntQueue.enqueueOverwriteLastMessage(
+             ownerId_q.vec,
+             i,
+             ownerId_q.tail,
+             ownerId_q.head);
+         //enqueue  metavariables
+          (instanceId_q.vec,instanceId_q.tail,instanceId_q.head) :=
+            RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.IntQueue.enqueueOverwriteLastMessage(
+             instanceId_q.vec,
+             mailbox_input_port[i].instanceId,
+             instanceId_q.tail,
+             instanceId_q.head);
+
+          (time_q.vec,time_q.tail,time_q.head) :=
+            RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.RealQueue.enqueueOverwriteLastMessage(
+             time_q.vec,
+             mailbox_input_port[i].t,
+             time_q.tail,
+             time_q.head);
+         //enqueue  parameters
+           for j in 1:numberOfMessageIntegers loop
+            (int_q.vec,int_q.tail,int_q.head) :=
+              RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.IntQueue.enqueueOverwriteLastMessage(
+               int_q.vec,
+               mailbox_input_port[i].integers[j],
+               int_q.tail,
+               int_q.head);
+           end for;
+           for j in 1:numberOfMessageReals loop
+            (real_q.vec,real_q.tail,real_q.head) :=
+              RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.RealQueue.enqueueOverwriteLastMessage(
+               real_q.vec,
+               mailbox_input_port[i].reals[j],
+               real_q.tail,
+               real_q.head);
+           end for;
+           for j in 1:numberOfMessageBooleans loop
+            (boolean_q.vec,boolean_q.tail,boolean_q.head) :=
+              RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.BooleanQueue.enqueueOverwriteLastMessage(
+               boolean_q.vec,
+               mailbox_input_port[i].booleans[j],
+               boolean_q.tail,
+               boolean_q.head);
+           end for;
+          else
+          (ownerId_q.vec,ownerId_q.tail,ownerId_q.head) :=
+            RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.IntQueue.enqueueDenyNewestMessage(
+             ownerId_q.vec,
+             i,
+             ownerId_q.tail,
+             ownerId_q.head);
+         //enqueue  metavariables
+          (instanceId_q.vec,instanceId_q.tail,instanceId_q.head) :=
+            RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.IntQueue.enqueueDenyNewestMessage(
+             instanceId_q.vec,
+             mailbox_input_port[i].instanceId,
+             instanceId_q.tail,
+             instanceId_q.head);
+
+          (time_q.vec,time_q.tail,time_q.head) :=
+            RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.RealQueue.enqueueDenyNewestMessage(
+             time_q.vec,
+             mailbox_input_port[i].t,
+             time_q.tail,
+             time_q.head);
+         //enqueue  parameters
+           for j in 1:numberOfMessageIntegers loop
+            (int_q.vec,int_q.tail,int_q.head) :=
+              RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.IntQueue.enqueueDenyNewestMessage(
+               int_q.vec,
+               mailbox_input_port[i].integers[j],
+               int_q.tail,
+               int_q.head);
+           end for;
+           for j in 1:numberOfMessageReals loop
+            (real_q.vec,real_q.tail,real_q.head) :=
+              RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.RealQueue.enqueueDenyNewestMessage(
+               real_q.vec,
+               mailbox_input_port[i].reals[j],
+               real_q.tail,
+               real_q.head);
+           end for;
+           for j in 1:numberOfMessageBooleans loop
+            (boolean_q.vec,boolean_q.tail,boolean_q.head) :=
+              RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.BooleanQueue.enqueueDenyNewestMessage(
+               boolean_q.vec,
+               mailbox_input_port[i].booleans[j],
+               boolean_q.tail,
+               boolean_q.head);
+           end for;
+
+          end if;
+
+ end if;
+       end if;
+    end for;
+
+   annotation (Diagram(graphics), Icon(graphics={
+         Rectangle(
+           extent={{-80,60},{80,-100}},
+           lineColor={0,0,0},
+           fillColor={255,255,0},
+           fillPattern=FillPattern.Solid),
+         Rectangle(
+           extent={{-60,-4},{60,-16}},
+           lineColor={0,0,0},
+           fillColor={0,0,0},
+           fillPattern=FillPattern.Solid),                                                Text(extent={{
+               96,-86},{-92,-38}},                                                                                          lineColor=
+               {0,0,255},
+           textString="%name"),
+         Polygon(
+           points={{-16,-4},{-40,20},{20,80},{60,40},{16,-4},{-16,-4},{-16,-4},{-16,
+               -4}},
+           lineColor={0,0,0},
+           smooth=Smooth.None,
+           fillColor={255,255,255},
+           fillPattern=FillPattern.Solid),
+         Polygon(
+           points={{60,40},{16,40},{2,26},{2,-4},{16,-4},{60,40}},
+           lineColor={0,0,0},
+           smooth=Smooth.None,
+           fillColor={255,255,255},
+           fillPattern=FillPattern.Solid),
+         Polygon(
+           points={{-40,20},{16,28},{20,80},{-40,20}},
+           lineColor={0,0,0},
+           smooth=Smooth.None,
+           fillColor={255,255,255},
+           fillPattern=FillPattern.Solid),
+         Text(
+           extent={{30,46},{100,100}},
+           lineColor={0,0,255},
+           textString=String(filling_level))}),
+     Documentation(info="<html>
+<p>The mailbox of the State Graph2 model stores incoming message-events. The mailbox is a FIFO queue. The queue size is determined by the parameter <b>queueSize</b>.</p>
+<p>Futher the user must specify how many integer, boolean, and real parameters the messages which should be buffered have. Therefore, the parameters <b>numberofMessageIntegers</b>, <b>numberOfMessageBooleans</b>, and <b>numberOfMessageReals</b> must be set. </p>
+<p><img src=\"modelica://RealTimeCoordinationLibrary/images/mailbox.jpg\"/> </p>
+</html>"));
+ end MailboxChanged;
+
+ model Mailbox2 "Receives and stores message instances in a FIFO queue."
+
+    import RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.IntQueue;
+    import RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.RealQueue;
+    import
+      RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.BooleanQueue;
+    import
+      RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.StringQueue;
+
+   parameter Integer nOut(min=0)=0 "Number of output connections"
+                                                             annotation(Dialog(__Dymola_connectorSizing=true), HideResult=false);
+   parameter Integer nIn(min=0)=0 "Number of input connections"
+                                                             annotation(Dialog(__Dymola_connectorSizing=true), HideResult=false);
+
+   parameter Real delayTime=0;
+   parameter Integer queueSize = 20 "The maximal size of the Queue"
+     annotation(Dialog(enable=not use_conditionPort));
+   Integer filling_level(start=0) "Result of the current filling level";
+
+   // Size of the parameter arrays
+   parameter Integer numberOfMessageIntegers(min=0)=0
+      "number of integer parameters of a message";
+   parameter Integer numberOfMessageBooleans(min=0)=0
+      "number of boolean parameters of a message";
+   parameter Integer numberOfMessageReals(min=0)=0
+      "number of real parameters of a message";
+
+   parameter Boolean overwriteMessageWhenBufferIsFull = false "determines the behavior in case of message buffer overflow. 'True' means overwriting the last message with the new incoming message.
+     If this parameter is set to 'false', the incoming messages are dropped in case of buffer overflow";
+
+   RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.mailbox_output_port
+      mailbox_output_port[nOut](
+      redeclare Integer integers[numberOfMessageIntegers],
+      redeclare Boolean booleans[numberOfMessageBooleans],
+      redeclare Real reals[numberOfMessageReals])
+      "Interface for sending messages with parameters"
+     annotation (Placement(transformation(extent={{80,0},{100,20}}),
+          iconTransformation(extent={{80,-20},{100,0}})));
+ // Queues which are required for storing message elements like parameters, sendng time, instanceId, and ownerId
+   RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.IntQueue.Queue int_q(queueSize=
+         queueSize*numberOfMessageIntegers);
+   RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.RealQueue.Queue real_q(queueSize=
+         queueSize*numberOfMessageReals);
+   RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.RealQueue.Queue time_q(queueSize=
+         queueSize);
+   RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.BooleanQueue.Queue
+      boolean_q(queueSize=queueSize*numberOfMessageBooleans);
+      RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.IntQueue.Queue instanceId_q(queueSize=
+         queueSize);
+      RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.IntQueue.Queue ownerId_q(queueSize=
+         queueSize);
+
+ //Temp Variables which are used for dequeuing
+   Integer intTemp[nOut*numberOfMessageIntegers];
+   Real realTemp[nOut*numberOfMessageReals];
+   Real timeTemp[nOut];
+   Boolean booleanTemp[nOut*numberOfMessageBooleans];
+   Integer instaceIdTemp[nOut];
+   Integer ownerIdTemp[nOut];
+
+  //Temp variables which are used to test if the messageInstance is already in the queue.
+   Integer testInstanceIdTemp;
+   Integer testOwnerIdTemp;
+
+   Boolean fire_out[nOut]
+      "Tells the transition that a message has been dequeud";
+   Boolean output_active[nOut]
+      "Stores if a message receiving transition is enable to fire";
+
+    RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.mailbox_input_port
+      mailbox_input_port[nIn](
+      redeclare Integer integers[numberOfMessageIntegers],
+      redeclare Boolean booleans[numberOfMessageBooleans],
+      redeclare Real reals[numberOfMessageReals])
+      "Interface for receiving messages with parameters"                                                           annotation (Placement(transformation(extent=
+              {{-100,0},{-80,20}}), iconTransformation(extent={{-100,-20},{-80,0}})));
+ equation
+ // Stores if a connected message receiving transition is enable to fire
+   for i in 1:nOut loop
+       output_active[i] = mailbox_output_port[i].active;
+   end for;
+ //Forward parameters from the temp variables to the connected message receiving transition
+   for i in 1:nOut loop
+     for j in 1:numberOfMessageIntegers loop
+       mailbox_output_port[i].integers[j] = intTemp[numberOfMessageIntegers*(i-1)+j];
+     end for;
+     for j in 1:numberOfMessageReals loop
+       mailbox_output_port[i].reals[j] = realTemp[numberOfMessageReals*(i-1)+j];
+     end for;
+    for j in 1:numberOfMessageBooleans loop
+       mailbox_output_port[i].booleans[j] = booleanTemp[numberOfMessageBooleans*(i-1)+j];
+     end for;
+     mailbox_output_port[i].t = timeTemp[i];
+
+     // Signals the receiving enabled transitions that it can fire
+     mailbox_output_port[i].fire =  fire_out[i];
+     // Signals the receiving transitions that a message is in the queue
+     mailbox_output_port[i].hasMessage = if time_q.filling_level > 0  and      time - RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.RealQueue.readQueue(
+           time_q.vec,
+           time_q.tail,
+           time_q.head) >=delayTime  then true else false;
+   end for;
+
+ algorithm
+   //calculate the current filling level
+   if (int_q.head <=int_q.tail) then
+     int_q.filling_level := integer(abs(int_q.tail-int_q.head));
+   else
+     int_q.filling_level := (queueSize*numberOfMessageIntegers)-(int_q.head-int_q.tail);
+   end if;
+
+   if (real_q.head <=real_q.tail) then
+     real_q.filling_level := integer(abs(real_q.tail-real_q.head));
+   else
+     real_q.filling_level := (queueSize*numberOfMessageReals)-(real_q.head-real_q.tail);
+   end if;
+
+   if (boolean_q.head <=boolean_q.tail) then
+     boolean_q.filling_level := integer(abs(boolean_q.tail-boolean_q.head));
+   else
+     boolean_q.filling_level := (queueSize*numberOfMessageBooleans)-(boolean_q.head-boolean_q.tail);
+   end if;
+
+     if (instanceId_q.head <=instanceId_q.tail) then
+     instanceId_q.filling_level := integer(abs(instanceId_q.tail-instanceId_q.head));
+   else
+     instanceId_q.filling_level := (queueSize)-(instanceId_q.head-instanceId_q.tail);
+     end if;
+
+         if (ownerId_q.head <=ownerId_q.tail) then
+     ownerId_q.filling_level := integer(abs(ownerId_q.tail-ownerId_q.head));
+   else
+     ownerId_q.filling_level := (queueSize)-(ownerId_q.head-ownerId_q.tail);
+   end if;
+
+   if (time_q.head <=time_q.tail) then
+     time_q.filling_level := integer(abs(time_q.tail-time_q.head));
+   else
+     time_q.filling_level := (queueSize)-(time_q.head-time_q.tail);
+   end if;
+   filling_level := time_q.filling_level;
+
+ //Dequeue available and required event parameter
+  for i in 1:nOut loop
+       if pre(output_active[i]) and Modelica_StateGraph2.Blocks.BooleanFunctions.firstTrueIndex(pre(output_active)) == i and not fire_out[i] and time_q.filling_level > 0 then
+         if ((numberOfMessageIntegers > 0 and int_q.filling_level > 0)
+                                   or (numberOfMessageBooleans > 0 and boolean_q.filling_level > 0)
+                                   or (numberOfMessageReals > 0 and real_q.filling_level > 0)) then
+         for j in 1:numberOfMessageIntegers loop
+
+            (int_q.vec,intTemp[numberOfMessageIntegers*(i - 1) + j],int_q.tail,
+              int_q.head) :=
+              RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.IntQueue.dequeue(
+               int_q.vec,
+               int_q.tail,
+               int_q.head);
+
+         end for;
+         for j in 1:numberOfMessageReals loop
+            (real_q.vec,realTemp[numberOfMessageReals*(i - 1) + j],real_q.tail,
+              real_q.head) :=
+              RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.RealQueue.dequeue(
+               real_q.vec,
+               real_q.tail,
+               real_q.head);
+         end for;
+         for j in 1:numberOfMessageBooleans loop
+            (boolean_q.vec,booleanTemp[numberOfMessageBooleans*(i - 1) + j],
+              boolean_q.tail,boolean_q.head) :=
+              RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.BooleanQueue.dequeue(
+               boolean_q.vec,
+               boolean_q.tail,
+               boolean_q.head);
+         end for;
+         end if;
+
+       fire_out[i] := true; // Stores that a message has just been dequeued
+
+ //Dequeue available and required meta variables
+        (time_q.vec,timeTemp[i],time_q.tail,time_q.head) :=
+          RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.RealQueue.dequeue(
+           time_q.vec,
+           time_q.tail,
+           time_q.head);
+
+        (instanceId_q.vec,instaceIdTemp[i],instanceId_q.tail,instanceId_q.head)
+          :=
+          RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.IntQueue.dequeue(
+           instanceId_q.vec,
+           instanceId_q.tail,
+           instanceId_q.head);
+
+        (ownerId_q.vec,ownerIdTemp[i],ownerId_q.tail,ownerId_q.head) :=
+          RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.IntQueue.dequeue(
+           ownerId_q.vec,
+           ownerId_q.tail,
+           ownerId_q.head);
+        else
+         fire_out[i] := false; // Stores that no message has just been dequeued
+       end if;
+    end for;
+
+ //Enqueue new available event parameters
+    for i in 1:nIn loop
+       if mailbox_input_port[i].fire then
+         //read message instanceId and ownerId from the head of the queue
+        testInstanceIdTemp :=
+          RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.IntQueue.readQueue(
+           instanceId_q.vec,
+           instanceId_q.tail,
+           instanceId_q.head);
+        testOwnerIdTemp :=
+          RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.IntQueue.readQueue(
+           ownerId_q.vec,
+           ownerId_q.tail,
+           ownerId_q.head);
+         //test if message instance of the same owner is already in the queue
+         if (not (mailbox_input_port[i].instanceId == testInstanceIdTemp and i == testOwnerIdTemp)) then
+
+          if overwriteMessageWhenBufferIsFull then
+          (ownerId_q.vec,ownerId_q.tail,ownerId_q.head) :=
+            RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.IntQueue.enqueueOverwriteLastMessage(
+             ownerId_q.vec,
+             i,
+             ownerId_q.tail,
+             ownerId_q.head);
+         //enqueue  metavariables
+          (instanceId_q.vec,instanceId_q.tail,instanceId_q.head) :=
+            RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.IntQueue.enqueueOverwriteLastMessage(
+             instanceId_q.vec,
+             mailbox_input_port[i].instanceId,
+             instanceId_q.tail,
+             instanceId_q.head);
+
+          (time_q.vec,time_q.tail,time_q.head) :=
+            RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.RealQueue.enqueueOverwriteLastMessage(
+             time_q.vec,
+             mailbox_input_port[i].t,
+             time_q.tail,
+             time_q.head);
+         //enqueue  parameters
+           for j in 1:numberOfMessageIntegers loop
+            (int_q.vec,int_q.tail,int_q.head) :=
+              RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.IntQueue.enqueueOverwriteLastMessage(
+               int_q.vec,
+               mailbox_input_port[i].integers[j],
+               int_q.tail,
+               int_q.head);
+           end for;
+           for j in 1:numberOfMessageReals loop
+            (real_q.vec,real_q.tail,real_q.head) :=
+              RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.RealQueue.enqueueOverwriteLastMessage(
+               real_q.vec,
+               mailbox_input_port[i].reals[j],
+               real_q.tail,
+               real_q.head);
+           end for;
+           for j in 1:numberOfMessageBooleans loop
+            (boolean_q.vec,boolean_q.tail,boolean_q.head) :=
+              RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.BooleanQueue.enqueueOverwriteLastMessage(
+               boolean_q.vec,
+               mailbox_input_port[i].booleans[j],
+               boolean_q.tail,
+               boolean_q.head);
+           end for;
+          else
+          (ownerId_q.vec,ownerId_q.tail,ownerId_q.head) :=
+            RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.IntQueue.enqueueDenyNewestMessage(
+             ownerId_q.vec,
+             i,
+             ownerId_q.tail,
+             ownerId_q.head);
+         //enqueue  metavariables
+          (instanceId_q.vec,instanceId_q.tail,instanceId_q.head) :=
+            RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.IntQueue.enqueueDenyNewestMessage(
+             instanceId_q.vec,
+             mailbox_input_port[i].instanceId,
+             instanceId_q.tail,
+             instanceId_q.head);
+
+          (time_q.vec,time_q.tail,time_q.head) :=
+            RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.RealQueue.enqueueDenyNewestMessage(
+             time_q.vec,
+             mailbox_input_port[i].t,
+             time_q.tail,
+             time_q.head);
+         //enqueue  parameters
+           for j in 1:numberOfMessageIntegers loop
+            (int_q.vec,int_q.tail,int_q.head) :=
+              RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.IntQueue.enqueueDenyNewestMessage(
+               int_q.vec,
+               mailbox_input_port[i].integers[j],
+               int_q.tail,
+               int_q.head);
+           end for;
+           for j in 1:numberOfMessageReals loop
+            (real_q.vec,real_q.tail,real_q.head) :=
+              RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.RealQueue.enqueueDenyNewestMessage(
+               real_q.vec,
+               mailbox_input_port[i].reals[j],
+               real_q.tail,
+               real_q.head);
+           end for;
+           for j in 1:numberOfMessageBooleans loop
+            (boolean_q.vec,boolean_q.tail,boolean_q.head) :=
+              RealTimeCoordinationLibrary.Internal.Interfaces.Asynchron.BooleanQueue.enqueueDenyNewestMessage(
+               boolean_q.vec,
+               mailbox_input_port[i].booleans[j],
+               boolean_q.tail,
+               boolean_q.head);
+           end for;
+
+          end if;
+
+ end if;
+       end if;
+    end for;
+
+   annotation (Diagram(graphics), Icon(graphics={
+         Rectangle(
+           extent={{-80,60},{80,-100}},
+           lineColor={0,0,0},
+           fillColor={255,255,0},
+           fillPattern=FillPattern.Solid),
+         Rectangle(
+           extent={{-60,-4},{60,-16}},
+           lineColor={0,0,0},
+           fillColor={0,0,0},
+           fillPattern=FillPattern.Solid),                                                Text(extent={{
+               96,-86},{-92,-38}},                                                                                          lineColor=
+               {0,0,255},
+           textString="%name"),
+         Polygon(
+           points={{-16,-4},{-40,20},{20,80},{60,40},{16,-4},{-16,-4},{-16,-4},{-16,
+               -4}},
+           lineColor={0,0,0},
+           smooth=Smooth.None,
+           fillColor={255,255,255},
+           fillPattern=FillPattern.Solid),
+         Polygon(
+           points={{60,40},{16,40},{2,26},{2,-4},{16,-4},{60,40}},
+           lineColor={0,0,0},
+           smooth=Smooth.None,
+           fillColor={255,255,255},
+           fillPattern=FillPattern.Solid),
+         Polygon(
+           points={{-40,20},{16,28},{20,80},{-40,20}},
+           lineColor={0,0,0},
+           smooth=Smooth.None,
+           fillColor={255,255,255},
+           fillPattern=FillPattern.Solid),
+         Text(
+           extent={{30,46},{100,100}},
+           lineColor={0,0,255},
+           textString=String(filling_level))}),
+     Documentation(info="<html>
+<p>The mailbox of the State Graph2 model stores incoming message-events. The mailbox is a FIFO queue. The queue size is determined by the parameter <b>queueSize</b>.</p>
+<p>Futher the user must specify how many integer, boolean, and real parameters the messages which should be buffered have. Therefore, the parameters <b>numberofMessageIntegers</b>, <b>numberOfMessageBooleans</b>, and <b>numberOfMessageReals</b> must be set. </p>
+<p><img src=\"modelica://RealTimeCoordinationLibrary/images/mailbox.jpg\"/> </p>
+</html>"));
+ end Mailbox2;
+end test;

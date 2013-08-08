@@ -1,0 +1,292 @@
+within RealTimeCoordinationLibrary;
+package EnableTest
+  model PatternA
+  parameter Boolean enable = true;
+    Step step1(nOut=1, initialStep=true) if enable
+      annotation (Placement(transformation(extent={{-44,48},{-36,56}})));
+    Transition T1(use_firePort=true) if enable
+      annotation (Placement(transformation(extent={{-42,26},{-34,34}})));
+    Message message(nIn=1) if enable
+      annotation (Placement(transformation(extent={{26,22},{46,42}})));
+    MessageInterface.OutputDelegationPort outputDelegationPort(
+      redeclare Integer integers[0] "integers[0]",
+      redeclare Boolean booleans[0] "booelans[0]",
+      redeclare Real reals[0] "reals[0]") if enable
+      annotation (Placement(transformation(extent={{84,24},{104,44}})));
+    Step step2(nIn=1) if enable
+      annotation (Placement(transformation(extent={{-42,6},{-34,14}})));
+
+  algorithm
+  equation
+
+    connect(step1.outPort[1], T1.inPort) annotation (Line(
+        points={{-40,47.4},{-38,47.4},{-38,34}},
+        color={0,0,0},
+        smooth=Smooth.None));
+    connect(T1.outPort, step2.inPort[1]) annotation (Line(
+        points={{-38,25},{-38,14}},
+        color={0,0,0},
+        smooth=Smooth.None));
+    connect(T1.firePort, message.conditionPort[1]) annotation (Line(
+        points={{-33.8,30},{-4,30},{-4,22.4},{24,22.4}},
+        color={255,0,255},
+        smooth=Smooth.None));
+    connect(message.message_output_port, outputDelegationPort) annotation (Line(
+        points={{45,31},{67.5,31},{67.5,34},{94,34}},
+        color={0,0,0},
+        smooth=Smooth.None));
+
+    annotation (Diagram(graphics));
+  end PatternA;
+
+  model PatternB
+
+  parameter Boolean enable = true;
+   Real c = 1;
+    Step step1(initialStep=true, nOut=1) if enable
+      annotation (Placement(transformation(extent={{-4,66},{4,74}})));
+    Transition T1(use_messageReceive=true, numberOfMessageReceive=1) if
+                                                                       enable
+      annotation (Placement(transformation(extent={{-4,34},{4,42}})));
+    Step step2(nIn=1) if
+                        enable
+      annotation (Placement(transformation(extent={{-4,-10},{4,-2}})));
+    MessageInterface.InputDelegationPort inputDelegationPort(
+      redeclare Integer integers[0] "integers[0]",
+      redeclare Boolean booleans[0] "booelans[0]",
+      redeclare Real reals[0] "reals[0]") if
+                                            enable
+      annotation (Placement(transformation(extent={{-94,32},{-74,52}})));
+    Mailbox mailbox(nIn=1, nOut=1) if
+                                     enable
+      annotation (Placement(transformation(extent={{-58,36},{-38,56}})));
+  equation
+
+    connect(step1.outPort[1], T1.inPort) annotation (Line(
+        points={{0,65.4},{0,42}},
+        color={0,0,0},
+        smooth=Smooth.None));
+    connect(T1.outPort, step2.inPort[1]) annotation (Line(
+        points={{0,33},{0,-2}},
+        color={0,0,0},
+        smooth=Smooth.None));
+    connect(inputDelegationPort, mailbox.mailbox_input_port[1]) annotation (Line(
+        points={{-84,42},{-72,42},{-72,45},{-57,45}},
+        color={0,0,255},
+        smooth=Smooth.None));
+    connect(mailbox.mailbox_output_port[1], T1.transition_input_port[1])
+      annotation (Line(
+        points={{-39,45},{-22.5,45},{-22.5,40.12},{-4.9,40.12}},
+        color={0,0,0},
+        smooth=Smooth.None));
+
+    annotation (Diagram(graphics));
+  end PatternB;
+
+  model TestBebot
+  parameter Boolean isFront = true;
+    PatternA patternA(enable = isFront)
+      annotation (Placement(transformation(extent={{2,54},{-18,74}})));
+    PatternB patternB(enable=isFront)
+      annotation (Placement(transformation(extent={{54,-2},{34,18}})));
+    MessageInterface.OutputDelegationPort outputDelegationPort(
+      redeclare Integer integers[0] "integers[0]",
+      redeclare Boolean booleans[0] "booelans[0]",
+      redeclare Real reals[0] "reals[0]") if isFront
+      annotation (Placement(transformation(extent={{-112,10},{-92,30}})));
+    MessageInterface.InputDelegationPort inputDelegationPort(
+      redeclare Integer integers[0] "integers[0]",
+      redeclare Boolean booleans[0] "booelans[0]",
+      redeclare Real reals[0] "reals[0]") if not isFront
+      annotation (Placement(transformation(extent={{94,24},{114,44}})));
+  equation
+    connect(patternA.outputDelegationPort, outputDelegationPort) annotation (Line(
+        points={{-17.4,67.4},{-36.3,67.4},{-36.3,20},{-102,20}},
+        color={0,0,0},
+        smooth=Smooth.None));
+    connect(patternB.inputDelegationPort, inputDelegationPort) annotation (Line(
+        points={{52.4,12.2},{66.8,12.2},{66.8,34},{104,34}},
+        color={0,0,255},
+        smooth=Smooth.None));
+    annotation (Diagram(graphics));
+  end TestBebot;
+
+  model FullSystem
+    TestBebot testBebot(isFront=false,
+      patternA(enable=false),
+      patternB(enable=true))
+      annotation (Placement(transformation(extent={{-54,38},{-34,58}})));
+    TestBebot testBebot1(isFront=true,
+      patternA(enable=true),
+      patternB(enable=false))
+      annotation (Placement(transformation(extent={{12,36},{32,56}})));
+  equation
+    connect(testBebot.inputDelegationPort, testBebot1.outputDelegationPort)
+      annotation (Line(
+        points={{-33.6,51.4},{-10.8,51.4},{-10.8,48},{11.8,48}},
+        color={0,0,255},
+        smooth=Smooth.None));
+    annotation (Diagram(graphics));
+  end FullSystem;
+
+  block Controller
+
+  input Boolean simple=true;
+  input Real e;
+  output Real y;
+
+  protected
+  Controller1 c1(u=e, enable=simple);
+  Controller2 c2(u=e, enable=not simple);
+
+  equation
+  y = if simple then c1.y else c2.y;
+
+  end Controller;
+
+  block Controller1
+
+  output Real y;
+
+  parameter Real u;
+
+  equation
+  y = 2*u;
+
+  end Controller1;
+
+  block Controller2
+
+  output Real y;
+
+  parameter Real u;
+
+  equation
+  y = 4*u;
+
+  end Controller2;
+
+  package PendulumTest
+    record PendulumData
+    parameter Real m;
+      parameter Real g;
+      parameter Real L;
+    end PendulumData;
+
+    partial model BasePendulum
+    PendulumData p;
+    input Real u;
+    output Real pos[2];
+      output Real vel[2];
+    equation
+
+    end BasePendulum;
+
+    block Pendulum
+      extends BasePendulum;
+      constant Real PI=3.141592653589793;
+    output Real phi(start=PI/4);
+      output Real phid;
+    equation
+     phid = der(phi);
+     p.m*p.L*p.L*der(phid) + p.m*p.g*p.L*sin(phi) = u;
+     pos = {p.L*sin(phi), -p.L*cos(phi)};
+     vel = der(pos);
+    end Pendulum;
+
+    block BrokenPendulum
+      extends BasePendulum;
+    equation
+     vel = der(pos);
+     p.m*der(vel) = p.m*{0, -p.g};
+    end BrokenPendulum;
+
+    model BrokenPendulum2
+      extends BasePendulum;
+      input Boolean Broken;
+    protected
+     Pendulum pend( p=p, u=u, enable=not Broken);
+     BrokenPendulum bpend(p=p, u=u, enable=Broken);
+    equation
+    when Broken then
+     reinit(bpend.pos, pend.pos);
+     reinit(bpend.vel, pend.vel);
+    end when;
+     pos = if not Broken then pend.pos else bpend.pos;
+     vel = if not Broken then pend.vel else bpend.vel;
+    end BrokenPendulum2;
+  end PendulumTest;
+
+  model PatternAB
+  parameter Boolean isFront;
+
+    Step step1(initialStep=true, nOut=2)
+      annotation (Placement(transformation(extent={{-2,58},{6,66}})));
+    Step step2(nIn=1)
+      annotation (Placement(transformation(extent={{-56,0},{-48,8}})));
+    PatternA patternA(enable=isFront)
+      annotation (Placement(transformation(extent={{-10,-10},{10,10}},
+          rotation=90,
+          origin={-74,44})));
+    PatternB patternB(enable=not isFront)
+      annotation (Placement(transformation(extent={{-10,-10},{10,10}},
+          rotation=270,
+          origin={80,8})));
+    Step step3(nIn=1)
+      annotation (Placement(transformation(extent={{34,-2},{42,6}})));
+    SelfTransition T1(condition=isFront)
+      annotation (Placement(transformation(extent={{-46,26},{-38,34}})));
+    Transition T2(condition=not isFront)
+                  annotation (Placement(transformation(extent={{32,24},{40,32}})));
+    MessageInterface.OutputDelegationPort outputDelegationPort(
+      redeclare Integer integers[0] "integers[0]",
+      redeclare Boolean booleans[0] "booelans[0]",
+      redeclare Real reals[0] "reals[0]") if                      isFront
+      annotation (Placement(transformation(extent={{-110,72},{-90,92}})));
+    MessageInterface.InputDelegationPort inputDelegationPort(
+      redeclare Integer integers[0] "integers[0]",
+      redeclare Boolean booleans[0] "booelans[0]",
+      redeclare Real reals[0] "reals[0]") if                    not isFront
+      annotation (Placement(transformation(extent={{98,70},{118,90}})));
+  equation
+    connect(step1.outPort[1], T1.inPort) annotation (Line(
+        points={{1,57.4},{-8,57.4},{-8,34.4},{-42,34.4}},
+        color={0,0,0},
+        smooth=Smooth.None));
+    connect(T1.outPort, step2.inPort[1]) annotation (Line(
+        points={{-42,25.4},{-54,25.4},{-52,10},{-52,8}},
+        color={0,0,0},
+        smooth=Smooth.None));
+    connect(step1.outPort[2], T2.inPort) annotation (Line(
+        points={{3,57.4},{20,57.4},{20,32},{36,32}},
+        color={0,0,0},
+        smooth=Smooth.None));
+    connect(T2.outPort, step3.inPort[1]) annotation (Line(
+        points={{36,23},{38,23},{38,6}},
+        color={0,0,0},
+        smooth=Smooth.None));
+    connect(patternA.outputDelegationPort, outputDelegationPort) annotation (Line(
+        points={{-77.4,53.4},{-77.3,53.4},{-77.3,82},{-100,82}},
+        color={0,0,0},
+        smooth=Smooth.None));
+    connect(patternB.inputDelegationPort, inputDelegationPort) annotation (Line(
+        points={{84.2,16.4},{84.2,57.1},{108,57.1},{108,80}},
+        color={0,0,255},
+        smooth=Smooth.None));
+    annotation (Diagram(graphics));
+  end PatternAB;
+
+  model PatternABTest
+    PatternAB patternAB(isFront=false)
+      annotation (Placement(transformation(extent={{-78,42},{-58,62}})));
+    PatternAB patternAB1(isFront=true)
+      annotation (Placement(transformation(extent={{18,40},{38,60}})));
+  equation
+    connect(patternAB1.outputDelegationPort, patternAB.inputDelegationPort)
+      annotation (Line(
+        points={{18,58.2},{-20,58.2},{-20,60},{-57.2,60}},
+        color={0,0,0},
+        smooth=Smooth.None));
+    annotation (Diagram(graphics));
+  end PatternABTest;
+end EnableTest;

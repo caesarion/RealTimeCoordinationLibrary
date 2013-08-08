@@ -1,0 +1,221 @@
+within RealTimeCoordinationLibrary;
+package InnerOuterTest
+
+
+
+
+  package test1
+    model M1
+
+    inner Real c;
+    Real k= 2;
+    M2 m2;
+      Step step1(initialStep=true, nOut=1)
+        annotation (Placement(transformation(extent={{-46,44},{-38,52}})));
+      Transition T1
+        annotation (Placement(transformation(extent={{-40,26},{-32,34}})));
+      Step step2(nIn=1)
+        annotation (Placement(transformation(extent={{12,46},{20,54}})));
+    equation
+    c= time *3;
+    //m2.d = c;
+      connect(step1.outPort[1], T1.inPort) annotation (Line(
+          points={{-42,43.4},{-40,43.4},{-40,34},{-36,34}},
+          color={0,0,0},
+          smooth=Smooth.None));
+      connect(T1.outPort, step2.inPort[1]) annotation (Line(
+          points={{-36,25},{-10,25},{-10,54},{16,54}},
+          color={0,0,0},
+          smooth=Smooth.None));
+      annotation (Diagram(graphics));
+    end M1;
+
+    model M2 "Inner class"
+    Real d;
+    inner outer Real c = c + d;
+    equation
+      d = 2;
+
+    end M2;
+  end test1;
+
+  model test2
+    model InncerComponent
+      Step step1(nOut=1, initialStep=true)
+        annotation (Placement(transformation(extent={{-58,62},{-50,70}})));
+      Transition T1(use_syncSend=true)
+        annotation (Placement(transformation(extent={{-58,34},{-50,42}})));
+      Step step2(nIn=1)
+        annotation (Placement(transformation(extent={{-54,2},{-46,10}})));
+    equation
+      connect(step1.outPort[1], T1.inPort) annotation (Line(
+          points={{-54,61.4},{-54,42}},
+          color={0,0,0},
+          smooth=Smooth.None));
+      connect(T1.outPort, step2.inPort[1]) annotation (Line(
+          points={{-54,33},{-52,33},{-52,10},{-50,10}},
+          color={0,0,0},
+          smooth=Smooth.None));
+      annotation (Diagram(graphics));
+    end InncerComponent;
+
+    model OuterComponent
+
+      Step step1(nOut=1, initialStep=true)
+        annotation (Placement(transformation(extent={{-32,64},{-24,72}})));
+      Step step2(nIn=1)
+        annotation (Placement(transformation(extent={{-32,10},{-24,18}})));
+      Transition T1(use_syncReceive=true,
+        use_after=true,
+        afterTime=1)
+        annotation (Placement(transformation(extent={{-32,36},{-24,44}})));
+      InncerComponent innerComponent
+        annotation (Placement(transformation(extent={{-86,42},{-66,62}})));
+    equation
+      connect(T1.receiver, innerComponent.T1.sender);
+      connect(step1.outPort[1], T1.inPort) annotation (Line(
+          points={{-28,63.4},{-28,44}},
+          color={0,0,0},
+          smooth=Smooth.None));
+      connect(T1.outPort, step2.inPort[1]) annotation (Line(
+          points={{-28,35},{-28,18}},
+          color={0,0,0},
+          smooth=Smooth.None));
+      annotation (Diagram(graphics));
+    end OuterComponent;
+  end test2;
+
+  package test3
+    model PatternA
+
+      Step step1(nOut=1, initialStep=true)
+        annotation (Placement(transformation(extent={{-44,48},{-36,56}})));
+      Transition T1(use_firePort=true,
+        use_after=true,
+        afterTime=1)
+        annotation (Placement(transformation(extent={{-42,26},{-34,34}})));
+      Message message(nIn=1)
+        annotation (Placement(transformation(extent={{26,22},{46,42}})));
+      MessageInterface.OutputDelegationPort outputDelegationPort(
+        redeclare Integer integers[0] "integers[0]",
+        redeclare Boolean booleans[0] "booelans[0]",
+        redeclare Real reals[0] "reals[0]")
+        annotation (Placement(transformation(extent={{84,24},{104,44}})));
+      Step step2(nIn=1)
+        annotation (Placement(transformation(extent={{-42,6},{-34,14}})));
+
+    equation
+      connect(step1.outPort[1], T1.inPort) annotation (Line(
+          points={{-40,47.4},{-38,47.4},{-38,34}},
+          color={0,0,0},
+          smooth=Smooth.None));
+      connect(T1.outPort, step2.inPort[1]) annotation (Line(
+          points={{-38,25},{-38,14}},
+          color={0,0,0},
+          smooth=Smooth.None));
+      connect(T1.firePort, message.conditionPort[1]) annotation (Line(
+          points={{-33.8,30},{-4,30},{-4,22.4},{24,22.4}},
+          color={255,0,255},
+          smooth=Smooth.None));
+      connect(message.message_output_port, outputDelegationPort) annotation (Line(
+          points={{45,31},{67.5,31},{67.5,34},{94,34}},
+          color={0,0,0},
+          smooth=Smooth.None));
+      annotation (Diagram(graphics));
+    end PatternA;
+
+    model PatternB
+
+    Real velB = 1;
+    //outer Real velocity;
+
+      Step step1(initialStep=true, nOut=1)
+        annotation (Placement(transformation(extent={{-4,66},{4,74}})));
+      Transition T1(
+        use_after=true,
+        afterTime=1,
+        use_messageReceive=false)
+        annotation (Placement(transformation(extent={{-4,34},{4,42}})));
+      Step step2(nIn=1, nOut=1)
+        annotation (Placement(transformation(extent={{-4,-10},{4,-2}})));
+      MessageInterface.InputDelegationPort inputDelegationPort(
+        redeclare Integer integers[0] "integers[0]",
+        redeclare Boolean booleans[0] "booelans[0]",
+        redeclare Real reals[0] "reals[0]")
+        annotation (Placement(transformation(extent={{-94,32},{-74,52}})));
+      Mailbox mailbox(nIn=1, nOut=1)
+        annotation (Placement(transformation(extent={{-58,36},{-38,56}})));
+      Step step3(nIn=1)
+        annotation (Placement(transformation(extent={{-44,-50},{-36,-42}})));
+      Transition T2(use_messageReceive=true, numberOfMessageReceive=1)
+        annotation (Placement(transformation(extent={{-40,-20},{-32,-12}})));
+    algorithm
+      velB := 1;
+    equation
+
+      connect(step1.outPort[1], T1.inPort) annotation (Line(
+          points={{0,65.4},{0,42}},
+          color={0,0,0},
+          smooth=Smooth.None));
+      connect(T1.outPort, step2.inPort[1]) annotation (Line(
+          points={{0,33},{0,-2}},
+          color={0,0,0},
+          smooth=Smooth.None));
+      connect(inputDelegationPort, mailbox.mailbox_input_port[1]) annotation (Line(
+          points={{-84,42},{-72,42},{-72,45},{-57,45}},
+          color={0,0,255},
+          smooth=Smooth.None));
+
+      connect(step2.outPort[1], T2.inPort) annotation (Line(
+          points={{0,-10.6},{-18,-10.6},{-18,-12},{-36,-12}},
+          color={0,0,0},
+          smooth=Smooth.None));
+      connect(T2.outPort, step3.inPort[1]) annotation (Line(
+          points={{-36,-21},{-38,-21},{-38,-42},{-40,-42}},
+          color={0,0,0},
+          smooth=Smooth.None));
+      connect(mailbox.mailbox_output_port[1], T2.transition_input_port[1])
+        annotation (Line(
+          points={{-39,45},{-39,15.5},{-40.9,15.5},{-40.9,-13.88}},
+          color={0,0,0},
+          smooth=Smooth.None));
+      annotation (Diagram(graphics));
+    end PatternB;
+
+    model TestBebot
+    parameter Boolean isFront = true;
+
+    Real velocity;
+      RealTimeCoordinationLibrary.InnerOuterTest.test3.PatternA
+                              patternA
+        annotation (Placement(transformation(extent={{2,54},{-18,74}})));
+      RealTimeCoordinationLibrary.InnerOuterTest.test3.PatternB
+                              patternB
+        annotation (Placement(transformation(extent={{54,-2},{34,18}})));
+      MessageInterface.OutputDelegationPort outputDelegationPort(
+        redeclare Integer integers[0] "integers[0]",
+        redeclare Boolean booleans[0] "booelans[0]",
+        redeclare Real reals[0] "reals[0]")
+        annotation (Placement(transformation(extent={{-112,10},{-92,30}})));
+      MessageInterface.InputDelegationPort inputDelegationPort(
+        redeclare Integer integers[0] "integers[0]",
+        redeclare Boolean booleans[0] "booelans[0]",
+        redeclare Real reals[0] "reals[0]")
+        annotation (Placement(transformation(extent={{94,24},{114,44}})));
+
+    algorithm
+    equation
+
+      connect(patternA.outputDelegationPort, outputDelegationPort) annotation (Line(
+          points={{-17.4,67.4},{-36.3,67.4},{-36.3,20},{-102,20}},
+          color={0,0,0},
+          smooth=Smooth.None));
+      connect(patternB.inputDelegationPort, inputDelegationPort) annotation (Line(
+          points={{52.4,12.2},{66.8,12.2},{66.8,34},{104,34}},
+          color={0,0,255},
+          smooth=Smooth.None));
+    velocity =  time;
+      annotation (Diagram(graphics));
+    end TestBebot;
+  end test3;
+end InnerOuterTest;
