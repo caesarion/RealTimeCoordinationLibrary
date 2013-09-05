@@ -4193,7 +4193,7 @@ this class contains a timing constraint that the state PlatoonProposed is no lon
           startTime=25)
           annotation (Placement(transformation(extent={{38,38},{34,42}})));
         Parts.Robot_V3 robot_V3a
-          annotation (Placement(transformation(extent={{36,-10},{66,-30}})));
+          annotation (Placement(transformation(extent={{36,-12},{66,-32}})));
         Parts.Robot_V3 Front_robot_V3a1(xstart_wmr=0.5)
           annotation (Placement(transformation(extent={{-34,-12},{-64,-32}})));
         inner Modelica.Mechanics.MultiBody.World world(label2="z", n={0,0,-1})
@@ -4320,11 +4320,11 @@ this class contains a timing constraint that the state PlatoonProposed is no lon
             color={255,0,255},
             smooth=Smooth.None));
         connect(rear.speed, robot_V3a.omegaL_des) annotation (Line(
-            points={{31.2,10},{31.2,8},{32,8},{32,-20},{37,-20}},
+            points={{31.2,10},{31.2,8},{32,8},{32,-22},{37,-22}},
             color={0,0,127},
             smooth=Smooth.None));
         connect(rear.speed, robot_V3a.omegaR_des) annotation (Line(
-            points={{31.2,10},{58,10},{58,-10},{66,-10},{66,-20},{65,-20}},
+            points={{31.2,10},{58,10},{58,-10},{66,-10},{66,-22},{65,-22}},
             color={0,0,127},
             smooth=Smooth.None));
         connect(front.speed, Front_robot_V3a1.omegaL_des)
@@ -4343,7 +4343,7 @@ this class contains a timing constraint that the state PlatoonProposed is no lon
             thickness=0.5,
             smooth=Smooth.None));
         connect(robot_V3a.Frame, distance1.xpos2) annotation (Line(
-            points={{51,-26},{34,-26},{34,-32},{8,-32}},
+            points={{51,-28},{34,-28},{34,-32},{8,-32}},
             color={95,95,95},
             thickness=0.5,
             smooth=Smooth.None));
@@ -4591,7 +4591,7 @@ The brake-message is transmitted to the rear driving Be Bot that is going to bra
               color={0,0,0},
               smooth=Smooth.None));
           annotation (Diagram(coordinateSystem(preserveAspectRatio=true, extent={{-100,
-                    -100},{100,100}}),
+                  -100},{100,100}}),
                               graphics), Icon(coordinateSystem(preserveAspectRatio=true,
                   extent={{-100,-100},{100,100}}),
                                               graphics={
@@ -10433,7 +10433,7 @@ The provider has the parameter $worktime, which specifies the number of time uni
       model Observer
         RealTimeCoordinationLibrary.Step Waiting(initialStep=true, nOut=2)
           annotation (Placement(transformation(extent={{-10,56},{-2,64}})));
-        RealTimeCoordinationLibrary.Step LimiRedeemed(nOut=1, nIn=2)
+        RealTimeCoordinationLibrary.Step LimitRedeemed(nOut=1, nIn=2)
           annotation (Placement(transformation(extent={{44,-6},{52,2}})));
         RealTimeCoordinationLibrary.Step LimitViolated(nIn=2, nOut=1)
           annotation (Placement(transformation(
@@ -10483,19 +10483,22 @@ The provider has the parameter $worktime, which specifies the number of time uni
           In_LimitRedeemed
           annotation (Placement(transformation(extent={{110,22},{130,42}})));
       equation
-        connect(LimiRedeemed.outPort[1], T4.inPort) annotation (Line(
+        connect(LimitRedeemed.outPort[1], T4.inPort)
+                                                    annotation (Line(
             points={{48,-6.6},{48,-28},{-6,-28}},
             color={0,0,0},
             smooth=Smooth.None));
-        connect(T2.outPort, LimiRedeemed.inPort[1]) annotation (Line(
-            points={{-5,2},{22,2},{22,2},{47,2}},
+        connect(T2.outPort, LimitRedeemed.inPort[1])
+                                                    annotation (Line(
+            points={{-5,2},{21,2},{21,2},{47,2}},
             color={0,0,0},
             smooth=Smooth.None));
         connect(Waiting.outPort[1], T3.inPort) annotation (Line(
             points={{-7,55.4},{-2,54},{-2,48},{48,48},{48,26}},
             color={0,0,0},
             smooth=Smooth.None));
-        connect(T3.outPort, LimiRedeemed.inPort[2]) annotation (Line(
+        connect(T3.outPort, LimitRedeemed.inPort[2])
+                                                    annotation (Line(
             points={{48,17},{48,2},{49,2}},
             color={0,0,0},
             smooth=Smooth.None));
@@ -10998,6 +11001,7 @@ if value redeems the limit.
 <p><small>Figure 2: Parmaters of the role slave.</small></p>
 </html>"));
       end Safe_Delegation_Slave;
+
       annotation (Documentation(info="<html>
 <p><b></font><font style=\"font-size: 10pt; \">Fail-Safe Delegation</b></p>
 <p>This pattern realizes a delegation of a task from a role master to a role slave. The slave executes the task in a certain time and answers regarding success or failure. If the execution fails, no other task may be delegated until the master ensures that the failure has been corrected. Moreover, only one delegation at a time is allowed. </p>
@@ -13845,17 +13849,17 @@ There are two components that use a shared memory. One component (the WritingCom
           extends
             CoordinationPatternRepository.CoordinationPattern.Periodic_Transmission.Sender(
             timeInvariantLessOrEqual(bound=30),
-            T1(use_syncReceive=false),
-            Data_Message(numberOfMessageReals=1),
             Out_Data(
               redeclare Integer integers[0] "integers[0]",
               redeclare Boolean booleans[0] "booelans[0]",
-              redeclare Real reals[1] "reals[1]"));
-          Modelica.Blocks.Interfaces.RealInput velocity
-            annotation (Placement(transformation(extent={{-120,-74},{-90,-44}})));
+              redeclare Real reals[1] "reals[1]"),
+            Data_Message(numberOfMessageReals=1));
+
+          Modelica.Blocks.Interfaces.RealInput acceleration annotation (
+              Placement(transformation(extent={{-116,-90},{-76,-50}})));
         equation
-          connect(velocity, Data_Message.u_reals[1]) annotation (Line(
-              points={{-105,-59},{3.5,-59},{3.5,22},{21,22}},
+          connect(acceleration, Data_Message.u_reals[1]) annotation (Line(
+              points={{-96,-70},{-38,-70},{-38,22},{21,22}},
               color={0,0,127},
               smooth=Smooth.None));
           annotation (Diagram(graphics));
@@ -13864,28 +13868,35 @@ There are two components that use a shared memory. One component (the WritingCom
         model Receiver
           extends
             CoordinationPatternRepository.CoordinationPattern.Periodic_Transmission.Receicer(
-            T1(use_syncSend=true, numberOfSyncSend=1),
-            Mailbox_Data(overwriteMessageWhenBufferIsFull=false, numberOfMessageReals=1),
+            Mailbox_Data(                        overwriteMessageWhenBufferIsFull=true,
+                numberOfMessageReals=1),
             T3(numberOfMessageReals=1),
             T2(numberOfMessageReals=1),
             In_Data(
               redeclare Integer integers[0] "integers[0]",
               redeclare Boolean booleans[0] "booelans[0]",
               redeclare Real reals[1] "reals[1]"),
-            timeInvariantLessOrEqual(bound=timeout + 1e-8));
-          Internal.Interfaces.Synchron.sender sender if enabled
-            annotation (Placement(transformation(extent={{-110,-8},{-90,12}})));
+            timeInvariantLessOrEqual(bound=timeout + 1e-8),
+            Timeout(use_activePort=true));
 
-        Modelica.Blocks.Interfaces.RealOutput receivedVelocity;
-
+          Modelica.Blocks.Interfaces.RealOutput receivedAcceleration annotation (
+              Placement(transformation(
+                extent={{-10,-10},{10,10}},
+                rotation=180,
+                origin={-74,-64})));
+          Modelica.Blocks.Interfaces.BooleanOutput timeoutActive annotation (
+              Placement(transformation(
+                extent={{-10,-10},{10,10}},
+                rotation=180,
+                origin={-24,-78})));
         equation
           when T2.fire or T3.fire then
-              receivedVelocity = T2.transition_input_port[1].reals[1];
+              receivedAcceleration = T2.transition_input_port[1].reals[1];
 
           end when;
-          connect(T1.sender[1], sender) annotation (Line(
-              points={{-11.4,30.06},{6.3,30.06},{6.3,2},{-100,2}},
-              color={255,128,0},
+          connect(Timeout.activePort, timeoutActive) annotation (Line(
+              points={{-9.28,-4},{-12,-4},{-12,-78},{-24,-78}},
+              color={255,0,255},
               smooth=Smooth.None));
           annotation (Diagram(graphics));
         end Receiver;
@@ -13903,19 +13914,45 @@ There are two components that use a shared memory. One component (the WritingCom
                  bebotFront(
             receiver(enabled=false),
             timeOut=0.2,
-            sendFrequence=0.01,
-            isFront=true)
-            annotation (Placement(transformation(extent={{12,16},{32,36}})));
+            isFront=true,
+            sendFrequence=0.05)
+            annotation (Placement(transformation(extent={{14,16},{34,36}})));
           Modelica.Blocks.Sources.Sine sine(amplitude=20, freqHz=1)
             annotation (Placement(transformation(extent={{-94,14},{-74,34}})));
+          Examples.Application.Parts.Robot_V3 robot_V3_1(xstart_wmr=1)
+            annotation (Placement(transformation(extent={{-15,10},{15,-10}},
+                rotation=0,
+                origin={37,-16})));
+          Examples.Application.Parts.Robot_V3 robot_V3_2(xstart_wmr=0)
+            annotation (Placement(transformation(extent={{-15,10},{15,-10}},
+                rotation=0,
+                origin={81,60})));
+          inner Modelica.Mechanics.MultiBody.World world(label2="z", n={0,0,-1})
+            annotation (Placement(transformation(extent={{-32,-76},{-22,-66}})));
         equation
           connect(bebotFront.outputDelegationPort, bebotRear.inputDelegationPort)
             annotation (Line(
-              points={{12.2,29},{-14.9,29},{-14.9,83},{11.8,83}},
+              points={{14.2,29},{-14.9,29},{-14.9,83},{11.8,83}},
               color={0,0,0},
               smooth=Smooth.None));
-          connect(sine.y, bebotFront.velocityOfFront) annotation (Line(
-              points={{-73,24},{-32,24},{-32,22.8},{11.4,22.8}},
+          connect(sine.y, bebotFront.AccelerationOfFront) annotation (Line(
+              points={{-73,24},{-32,24},{-32,22.8},{13.4,22.8}},
+              color={0,0,127},
+              smooth=Smooth.None));
+          connect(bebotFront.velocity, robot_V3_1.omegaL_des) annotation (Line(
+              points={{34.2,18.8},{34.2,1.4},{23,1.4},{23,-16}},
+              color={0,0,127},
+              smooth=Smooth.None));
+          connect(bebotFront.velocity, robot_V3_1.omegaR_des) annotation (Line(
+              points={{34.2,18.8},{34.2,1.4},{51,1.4},{51,-16}},
+              color={0,0,127},
+              smooth=Smooth.None));
+          connect(bebotRear.velocity, robot_V3_2.omegaL_des) annotation (Line(
+              points={{11.8,72.8},{38.9,72.8},{38.9,60},{67,60}},
+              color={0,0,127},
+              smooth=Smooth.None));
+          connect(bebotRear.velocity, robot_V3_2.omegaR_des) annotation (Line(
+              points={{11.8,72.8},{54.9,72.8},{54.9,60},{95,60}},
               color={0,0,127},
               smooth=Smooth.None));
           annotation (Diagram(graphics));
@@ -13926,11 +13963,18 @@ There are two components that use a shared memory. One component (the WritingCom
         parameter Real sendFrequence;
         parameter Real timeOut;
 
-           Modelica.Blocks.Interfaces.RealOutput localVelocity;
+        Modelica.Blocks.Sources.BooleanExpression dummyExpression(y=false) if isFront;
+
+        Modelica.Blocks.Sources.RealExpression emergencyBreak(y=-10.0);
+
+        Modelica.Blocks.Interfaces.RealOutput localAcceleration annotation (Placement(transformation(extent={{94,-38},
+                    {114,-18}})));
            //components of rear bebot
+
           Sender sender(enabled=isFront, period=sendFrequence) if
                                                         isFront
             annotation (Placement(transformation(extent={{-74,-6},{-54,14}})));
+
           Receiver receiver(enabled=not isFront, timeout=timeOut) if
                                                                  not isFront
             annotation (Placement(transformation(extent={{52,20},{72,40}})));
@@ -13945,35 +13989,41 @@ There are two components that use a shared memory. One component (the WritingCom
             redeclare Real reals[1] "reals[1]") if                    not isFront
             annotation (Placement(transformation(extent={{92,20},{112,40}})));
 
-         // Modelica.Blocks.Interfaces.RealOutput localVelocity;
-
           //components of front bebot
-          Modelica.Blocks.Interfaces.RealInput velocityOfFront if
+          Modelica.Blocks.Interfaces.RealInput AccelerationOfFront if
                                                     isFront
             annotation (Placement(transformation(extent={{-126,-52},{-86,-12}})));
-          Transition T1(use_syncReceive=true, numberOfSyncReceive=1) if not isFront
-            annotation (Placement(transformation(extent={{20,-10},{12,-2}})));
-          Step Initial(initialStep=true, nOut=1)
-            annotation (Placement(transformation(extent={{12,22},{20,30}})));
-          Step TimedOut(nIn=1) if not isFront
-            annotation (Placement(transformation(extent={{14,-40},{22,-32}})));
 
-          Step Dummy(nIn=1) if isFront;
-          Transition T2 if isFront;
+          Modelica.Blocks.Interfaces.BooleanOutput transmissionTimedOut
+            annotation (Placement(transformation(extent={{-12,-12},{12,12}},
+                rotation=180,
+                origin={-92,82})));
 
+          Modelica.Blocks.Interfaces.RealOutput velocity
+            annotation (Placement(transformation(extent={{92,-82},{112,-62}})));
+
+        algorithm
         equation
+          if (not transmissionTimedOut and not isFront) or isFront then
+            der(velocity) = localAcceleration;
+          elseif velocity >0 then
+            der(velocity) = emergencyBreak.y;
+          else
+            der(velocity) = 0;
+          end if;
          // connections of front bebot
-          connect(Initial.outPort[1], T2.inPort);
-          connect(T2.outPort, Dummy.inPort[1]);
-          connect(localVelocity, velocityOfFront);
-          connect(velocityOfFront, sender.velocity) annotation (Line(
-              points={{-106,-32},{-91,-32},{-91,-1.9},{-74.5,-1.9}},
+         connect(transmissionTimedOut, dummyExpression.y);
+
+          connect(AccelerationOfFront, sender.acceleration)
+                                                    annotation (Line(
+              points={{-106,-32},{-91,-32},{-91,-3},{-73.6,-3}},
               color={0,0,127},
               smooth=Smooth.None));
-
+          connect(localAcceleration, AccelerationOfFront);
          // connections of rear bebot
+          connect(transmissionTimedOut,receiver.timeoutActive);
+          connect(localAcceleration, receiver.receivedAcceleration);
 
-        connect(localVelocity, receiver.receivedVelocity);
           connect(receiver.In_Data, inputDelegationPort) annotation (Line(
               points={{72.4,30.8},{84.2,30.8},{84.2,30},{102,30}},
               color={0,0,255},
@@ -13982,21 +14032,9 @@ There are two components that use a shared memory. One component (the WritingCom
               points={{-53.6,6},{-42,6},{-42,30},{-98,30}},
               color={0,0,0},
               smooth=Smooth.None));
-           connect(Initial.outPort[1], T1.inPort) annotation (Line(
-              points={{16,21.4},{16,-2}},
-              color={0,0,0},
-              smooth=Smooth.None));
-           connect(T1.outPort, TimedOut.inPort[1]) annotation (Line(
-              points={{16,-11},{18,-11},{18,-32}},
-              color={0,0,0},
-              smooth=Smooth.None));
-          connect(receiver.sender, T1.receiver[1]) annotation (Line(
-              points={{52,30.2},{34,30.2},{34,-1.98},{18.82,-1.98}},
-              color={255,128,0},
-              smooth=Smooth.None));
 
           annotation (Diagram(graphics), Documentation(info="<html>
-Two bebots are driving a line. The front bebot periodically transmitts its velocity to the rear bebot. The rear adapts its velocity to the front bebots's velocity, so that no accident can occur. 
+Two bebots are driving a line. The front bebot periodically transmitts its acceleration to the rear bebot. The rear adapts its acceleration to the front bebots's acceleration, so that no accident can occur. 
 </html>"));
         end Bebot;
       end TwoBebotsInARowExample;
@@ -14042,78 +14080,18 @@ Two bebots are driving a line. The front bebot periodically transmitts its veloc
               redeclare Integer integers[0] "integers[0]",
               redeclare Boolean booleans[0] "booelans[0]",
               redeclare Real reals[0] "reals[0]"),
-            Waiting(initialStep=false, nIn=1));
-          Internal.Interfaces.Synchron.sender SendLimitViolated annotation (
-              Placement(transformation(extent={{-150,-98},{-130,-78}})));
-          Internal.Interfaces.Synchron.sender SendLimitRedeemed annotation (
-              Placement(transformation(extent={{110,-80},{130,-60}})));
-          SelfTransition T5(
-            use_syncSend=true,
-            numberOfSyncSend=1,
-            condition=T1.fire or T4.fire,
-            use_after=true,
-            afterTime=1e-8)               annotation (Placement(transformation(
-                extent={{-4,-4},{4,4}},
-                rotation=270,
-                origin={-112,-86})));
-          SelfTransition T6(
-            use_syncSend=true,
-            numberOfSyncSend=1,
-            condition=T3.fire or T2.fire,
-            use_after=true,
-            afterTime=1e-8)               annotation (Placement(transformation(
-                extent={{-4,-4},{4,4}},
-                rotation=270,
-                origin={28,-82})));
-          Step step1(nOut=1, nIn=2) annotation (Placement(transformation(
-                extent={{-4,-4},{4,4}},
-                rotation=90,
-                origin={-108,-66})));
-          Step step2(nOut=1, nIn=2) annotation (Placement(transformation(
-                extent={{-4,-4},{4,4}},
-                rotation=90,
-                origin={26,-66})));
-          Modelica_StateGraph2.Parallel step3(initialStep=true, nEntry=3)
+            Waiting(initialStep=false, nIn=1),
+            LimitViolated(use_activePort=true),
+            LimitRedeemed(use_activePort=true));
+          Modelica_StateGraph2.Parallel step3(initialStep=true, nEntry=1)
             annotation (Placement(transformation(extent={{-158,-114},{142,106}})));
         equation
-          connect(step1.outPort[1], T5.inPort) annotation (Line(
-              points={{-103.4,-66},{-96,-66},{-96,-86},{-107.6,-86}},
-              color={0,0,0},
-              smooth=Smooth.None));
-          connect(T5.outPort, step1.inPort[1]) annotation (Line(
-              points={{-116.6,-86},{-116.6,-67},{-112,-67}},
-              color={0,0,0},
-              smooth=Smooth.None));
-          connect(T5.sender[1], SendLimitViolated) annotation (Line(
-              points={{-107.94,-88.6},{-120.97,-88.6},{-120.97,-88},{-140,-88}},
-              color={255,128,0},
-              smooth=Smooth.None));
 
-          connect(T6.inPort, step2.outPort[1]) annotation (Line(
-              points={{32.4,-82},{46,-82},{46,-66},{30.6,-66}},
-              color={0,0,0},
-              smooth=Smooth.None));
-          connect(T6.outPort, step2.inPort[1]) annotation (Line(
-              points={{23.4,-82},{14,-82},{14,-67},{22,-67}},
-              color={0,0,0},
-              smooth=Smooth.None));
-          connect(T6.sender[1], SendLimitRedeemed) annotation (Line(
-              points={{32.06,-84.6},{75.03,-84.6},{75.03,-70},{120,-70}},
-              color={255,128,0},
-              smooth=Smooth.None));
           connect(step3.entry[1], Waiting.inPort[1]) annotation (Line(
-              points={{-18,95},{-18,80.5},{-6,80.5},{-6,64}},
-              color={0,0,0},
-              smooth=Smooth.None));
-          connect(step3.entry[2], step1.inPort[2]) annotation (Line(
-              points={{-8,95},{-8,86},{-126,86},{-126,-64},{-112,-64},{-112,-65}},
+              points={{-8,95},{-8,80.5},{-6,80.5},{-6,64}},
               color={0,0,0},
               smooth=Smooth.None));
 
-          connect(step3.entry[3], step2.inPort[2]) annotation (Line(
-              points={{2,95},{102,95},{102,-54},{102,-54},{22,-54},{22,-65}},
-              color={0,0,0},
-              smooth=Smooth.None));
           annotation (Diagram(coordinateSystem(preserveAspectRatio=true, extent={{-140,
                     -100},{120,100}}),
                                  graphics));
@@ -14123,22 +14101,14 @@ Two bebots are driving a line. The front bebot periodically transmitts its veloc
         parameter Boolean isFront = true
             "if the Bebot should be the front Bebot, this parameter should be true, else false";
         parameter Real startpos = 0;
-        Real velocity;
-        Real varpos;
-        Real pos;
 
-          // Components of Front and Rear Bebot "=" no conditional components:
-          Step LimitOk(
-            initialStep=true,
-            nOut=1,
-            nIn=1,
-            use_activePort=false)
-                   annotation (Placement(transformation(
-                extent={{-4,-4},{4,4}},
-                rotation=90,
-                origin={-72,-46})));
-          Step LimitViolated(nIn=1, nOut=1)
-            annotation (Placement(transformation(extent={{56,-50},{64,-42}})));
+        Modelica.Blocks.Interfaces.BooleanOutput ok;
+        Modelica.Blocks.Interfaces.BooleanOutput violated;
+        Modelica.Blocks.Sources.BooleanExpression dummyExpression(y=false) if isFront;
+
+        Modelica.Blocks.Interfaces.RealOutput velocity
+            annotation (Placement(transformation(extent={{96,28},{116,48}})));
+
         Modelica.Blocks.Interfaces.RealInput acceleration
             annotation (Placement(transformation(extent={{-118,-44},{-88,-14}})));
           // Components of Front Bebot:
@@ -14151,8 +14121,6 @@ Two bebots are driving a line. The front bebot periodically transmitts its veloc
             annotation (Placement(transformation(extent={{-120,38},{-90,68}})));
           Modelica.Blocks.Interfaces.RealInput limit if isFront
             annotation (Placement(transformation(extent={{-118,14},{-90,42}})));
-          Transition T3(use_after= true, afterTime = 0.1, condition = false) if   isFront;
-          Transition T4(condition = false) if   isFront;
 
           MessageInterface.OutputDelegationPort outpuLimitViolated(
             redeclare Integer integers[0] "integers[0]",
@@ -14171,18 +14139,6 @@ Two bebots are driving a line. The front bebot periodically transmitts its veloc
           Obs obs if not isFront
              annotation (Placement(transformation(extent={{-26,-12},{0,8}})));
 
-          Transition T1(use_syncReceive=true, numberOfSyncReceive=1,
-            use_after=true,
-            afterTime=0.01) if                                           not isFront
-                        annotation (Placement(transformation(
-                extent={{-4,-4},{4,4}},
-                rotation=90,
-                origin={-4,-32})));
-          Transition T2(use_syncReceive=true, numberOfSyncReceive=1) if not isFront
-                        annotation (Placement(transformation(
-                extent={{-4,-4},{4,4}},
-                rotation=270,
-                origin={-6,-66})));
           MessageInterface.InputDelegationPort inputLimitViolated(
             redeclare Integer integers[0] "integers[0]",
             redeclare Boolean booleans[0] "booelans[0]",
@@ -14195,15 +14151,14 @@ Two bebots are driving a line. The front bebot periodically transmitts its veloc
             annotation (Placement(transformation(extent={{88,-12},{108,8}})));
 
         equation
-          if LimitOk.active then
+          if  ok or (not ok and not violated) then
           der(velocity) = acceleration;
+          elseif violated and velocity >0 then
+            der(velocity) = -20;
           else
-            der(velocity) = -2;
+            der(velocity) = 0;
           end if;
-          der(varpos) = velocity;
-          pos = varpos + startpos;
 
-          //Front Connections
           connect(pr.Out_Limit_Violated, outpuLimitViolated) annotation (Line(
               points={{-14.2,75.4},{-58.1,75.4},{-58.1,76},{-98,76}},
               color={0,0,0},
@@ -14212,10 +14167,7 @@ Two bebots are driving a line. The front bebot periodically transmitts its veloc
               points={{14,75},{60,75},{60,74},{100,74}},
               color={0,0,0},
               smooth=Smooth.None));
-          connect(LimitOk.outPort[1], T3.inPort);
-          connect(T3.outPort, LimitViolated.inPort[1]);
-          connect(T4.outPort, LimitOk.inPort[1]);
-          connect(LimitViolated.outPort[1], T4.inPort);
+
           connect(limit, pr.limit) annotation (Line(
               points={{-104,28},{-60,28},{-60,78.5},{-15.1,78.5}},
               color={0,0,127},
@@ -14224,36 +14176,12 @@ Two bebots are driving a line. The front bebot periodically transmitts its veloc
               points={{-105,53},{-60.5,53},{-60.5,82.5},{-15.3,82.5}},
               color={0,0,127},
               smooth=Smooth.None));
+          connect(dummyExpression.y, violated);
+          connect(dummyExpression.y, ok);
 
-          // not Front Connections
-          connect(LimitOk.outPort[1], T1.inPort)
-                                               annotation (Line(
-              points={{-67.4,-46},{-38,-46},{-38,-32},{-8,-32}},
-              color={0,0,0},
-              smooth=Smooth.None));
-          connect(T1.outPort, LimitViolated.inPort[1])
-                                               annotation (Line(
-              points={{1,-32},{60,-32},{60,-42}},
-              color={0,0,0},
-              smooth=Smooth.None));
-          connect(LimitViolated.outPort[1], T2.inPort)
-                                               annotation (Line(
-              points={{60,-50.6},{30,-50.6},{30,-66},{-2,-66}},
-              color={0,0,0},
-              smooth=Smooth.None));
-          connect(T2.outPort, LimitOk.inPort[1])
-                                               annotation (Line(
-              points={{-11,-66},{-90,-66},{-90,-50},{-78,-50},{-78,-46},{-76,-46}},
-              color={0,0,0},
-              smooth=Smooth.None));
-          connect(obs.SendLimitViolated, T1.receiver[1]) annotation (Line(
-              points={{-26,-10.8},{-16,-10.8},{-16,-34.82},{-8.02,-34.82}},
-              color={255,128,0},
-              smooth=Smooth.None));
-          connect(obs.SendLimitRedeemed, T2.receiver[1]) annotation (Line(
-              points={{0,-9},{-1.98,-9},{-1.98,-63.18}},
-              color={255,128,0},
-              smooth=Smooth.None));
+          connect(ok, obs.LimitRedeemed.activePort);
+          connect(violated, obs.LimitViolated.activePort);
+
           connect(inputLimitViolated, obs.In_LimitViolated) annotation (Line(
               points={{-100,4},{-64,4},{-64,1.4},{-26.2,1.4}},
               color={0,0,255},
@@ -14278,15 +14206,27 @@ Two bebots are driving a line. The front bebot periodically transmitts its veloc
             annotation (Placement(transformation(
                 extent={{-10,-10},{10,10}},
                 rotation=0,
-                origin={-100,-56})));
-          Modelica.Blocks.Sources.RealExpression accFront(y=if time > 1 then
-                0 else 1) annotation (Placement(transformation(extent={{-58,
-                    -82},{-38,-62}})));
-          Modelica.Blocks.Sources.Constant accRear(k=1) annotation (Placement(
+                origin={-102,-30})));
+          Modelica.Blocks.Sources.RealExpression accFront(y=if time > 1 then 0
+                 else 2)  annotation (Placement(transformation(extent={{-112,
+                    -56},{-92,-36}})));
+          Modelica.Blocks.Sources.Constant accRear(k=6) annotation (Placement(
                 transformation(extent={{-126,34},{-106,54}})));
-          Modelica.Blocks.Sources.RealExpression DistanceBetweenFrontRear(y=
-                Front.pos - Rear.pos) annotation (Placement(transformation(
-                  extent={{-126,-34},{-106,-14}})));
+          Examples.Application.Parts.Robot_V3 robot_V3_1(xstart_wmr=1)
+            annotation (Placement(transformation(extent={{-15,10},{15,-10}},
+                rotation=90,
+                origin={49,-36})));
+          Examples.Application.distance
+                   distance1
+            annotation (Placement(transformation(extent={{-10,-10},{10,10}},
+                rotation=0,
+                origin={78,-16})));
+          Examples.Application.Parts.Robot_V3 robot_V3_2(xstart_wmr=0)
+            annotation (Placement(transformation(extent={{-15,10},{15,-10}},
+                rotation=90,
+                origin={57,46})));
+          inner Modelica.Mechanics.MultiBody.World world(label2="z", n={0,0,-1})
+            annotation (Placement(transformation(extent={{-42,-86},{-32,-76}})));
         equation
           connect(Front.outputLimitRedeemed, Rear.inputLimitRedeemed)
             annotation (Line(
@@ -14299,20 +14239,46 @@ Two bebots are driving a line. The front bebot periodically transmitts its veloc
               color={0,0,255},
               smooth=Smooth.None));
           connect(DistanceLimit.y, Front.limit) annotation (Line(
-              points={{-89,-56},{-58,-56},{-58,-29.2},{-26.4,-29.2}},
+              points={{-91,-30},{-58,-30},{-58,-29.2},{-26.4,-29.2}},
               color={0,0,127},
               smooth=Smooth.None));
           connect(accFront.y, Front.acceleration) annotation (Line(
-              points={{-37,-72},{-32,-72},{-32,-34.9},{-26.3,-34.9}},
+              points={{-91,-46},{-32,-46},{-32,-34.9},{-26.3,-34.9}},
               color={0,0,127},
               smooth=Smooth.None));
           connect(accRear.y, Rear.acceleration) annotation (Line(
               points={{-105,44},{-68,44},{-68,53.1},{-28.3,53.1}},
               color={0,0,127},
               smooth=Smooth.None));
-          connect(DistanceBetweenFrontRear.y, Front.distance) annotation (
-              Line(
-              points={{-105,-24},{-65.75,-24},{-65.75,-26.7},{-26.5,-26.7}},
+          connect(Front.velocity, robot_V3_1.omegaL_des) annotation (Line(
+              points={{-5.4,-28.2},{18,-36},{18,-52},{49,-52},{49,-50}},
+              color={0,0,127},
+              smooth=Smooth.None));
+          connect(Front.velocity, robot_V3_1.omegaR_des) annotation (Line(
+              points={{-5.4,-28.2},{23.3,-28.2},{23.3,-22},{49,-22}},
+              color={0,0,127},
+              smooth=Smooth.None));
+          connect(Rear.velocity, robot_V3_2.omegaL_des) annotation (Line(
+              points={{-7.4,59.8},{38.3,59.8},{38.3,32},{57,32}},
+              color={0,0,127},
+              smooth=Smooth.None));
+          connect(Rear.velocity, robot_V3_2.omegaR_des) annotation (Line(
+              points={{-7.4,59.8},{17.3,59.8},{17.3,60},{57,60}},
+              color={0,0,127},
+              smooth=Smooth.None));
+          connect(robot_V3_2.Frame, distance1.xpos1) annotation (Line(
+              points={{63,46},{66,46},{66,-10.2},{68,-10.2}},
+              color={95,95,95},
+              thickness=0.5,
+              smooth=Smooth.None));
+          connect(robot_V3_1.Frame, distance1.xpos2) annotation (Line(
+              points={{55,-36},{62,-36},{62,-20},{68,-20}},
+              color={95,95,95},
+              thickness=0.5,
+              smooth=Smooth.None));
+          connect(distance1.y, Front.distance) annotation (Line(
+              points={{88.6,-16.4},{114,-16.4},{114,-64},{-72,-64},{-72,-26},{
+                  -26.5,-26.7}},
               color={0,0,127},
               smooth=Smooth.None));
           annotation (
@@ -14347,23 +14313,44 @@ Two bebots drive in a line, so there is a RearBebot and a FrontBebot. So that no
           In_Fail(
             redeclare Integer integers[0] "integers[0]",
             redeclare Boolean booleans[0] "booelans[0]",
-            redeclare Real reals[0] "reals[0]"),
+            redeclare Real reals[1] "reals[1]"),
           T1(
-            use_conditionPort=false,
             use_firePort=true,
-            use_syncReceive=true,numberOfSyncReceive=1),
-          T4(use_syncSend=true,numberOfSyncSend=1),
-          T3(use_syncSend=true,numberOfSyncSend=1),
-          T2(use_syncSend=true,numberOfSyncSend=1),
-          Order_Message(numberOfMessageReals=1));
+            afterTime=timeOfBreakRequest,
+            use_conditionPort=true),
+          T4(numberOfMessageReals=1),
+          Order_Message(numberOfMessageReals=1),
+          mailbox_Fail(numberOfMessageReals=1),
+          T3(use_firePort=true),
+          Idle(use_activePort=true));
       parameter Real breakForce;
-
+      parameter Real timeOfBreakRequest;
         Modelica.Blocks.Sources.RealExpression realExpression(y=breakForce)
           annotation (Placement(transformation(extent={{34,-10},{54,10}})));
+        Modelica.Blocks.Interfaces.RealOutput possibleBreakForceOfRear annotation (
+            Placement(transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=270,
+              origin={-104,-38})));
+
+        Modelica.Blocks.Interfaces.BooleanOutput FailSafeActive annotation (Placement(
+              transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=270,
+              origin={-142,-38})));
+      algorithm
+      when T4.fire then
+            possibleBreakForceOfRear :=T4.transition_input_port[1].reals[1];
+      end when;
+
       equation
         connect(realExpression.y, Order_Message.u_reals[1]) annotation (Line(
             points={{55,0},{72,0},{72,38},{91,38}},
             color={0,0,127},
+            smooth=Smooth.None));
+        connect(T5.firePort, FailSafeActive) annotation (Line(
+            points={{-102.2,58},{-142,58},{-142,-38}},
+            color={255,0,255},
             smooth=Smooth.None));
         annotation (Diagram(coordinateSystem(preserveAspectRatio=true, extent={{-180,
                   -40},{140,160}}),       graphics));
@@ -14387,92 +14374,130 @@ Two bebots drive in a line, so there is a RearBebot and a FrontBebot. So that no
           Out_Fail(
             redeclare Integer integers[0] "integers[0]",
             redeclare Boolean booleans[0] "booelans[0]",
-            redeclare Real reals[0] "reals[0]"),
-          T4(use_syncReceive=false,use_syncSend=false),
-          T1(use_syncSend=true,use_syncReceive=false, numberOfSyncSend=1,
-            numberOfMessageReals=1),
-          T2(use_syncReceive=true, numberOfSyncReceive=1),
-          T3(use_syncReceive=true, numberOfSyncReceive=1),
+            redeclare Real reals[1] "reals[1]"),
+          T1(numberOfMessageReals=1),
           mailbox_Order(numberOfMessageReals=1),
-          T5(numberOfMessageReals=1));
-       Modelica.Blocks.Interfaces.RealOutput breakForce
-          annotation (Placement(transformation(extent={{-154,-52},{-134,-32}})));
+          T5(numberOfMessageReals=1, use_firePort=true),
+          message1(numberOfMessageReals=1),
+          T2(use_conditionPort=true),
+          T3(use_conditionPort=true),
+          Idle(use_activePort=true));
+       Modelica.Blocks.Interfaces.RealOutput breakForceOfMaster
+          annotation (Placement(transformation(extent={{-10,-10},{10,10}},
+              rotation=180,
+              origin={-186,-52})));
 
+        Modelica.Blocks.Interfaces.RealInput possibleBreakForce annotation (
+            Placement(transformation(
+              extent={{-20,-20},{20,20}},
+              rotation=90,
+              origin={20,-104})));
+        Modelica.Blocks.Interfaces.BooleanOutput T2_Triggered annotation (Placement(
+              transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=90,
+              origin={-24,144})));
+        Modelica.Blocks.Interfaces.BooleanOutput T3_Triggered annotation (Placement(
+              transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=270,
+              origin={64,-110})));
+        Modelica.Blocks.Interfaces.BooleanOutput FailsafeActive annotation (Placement(
+              transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=270,
+              origin={-8,-108})));
+        Modelica.Blocks.Interfaces.BooleanInput breakPossible annotation (Placement(
+              transformation(
+              extent={{-14,-14},{14,14}},
+              rotation=90,
+              origin={-70,-106})));
+        Modelica.Blocks.Logical.Not not1
+          annotation (Placement(transformation(extent={{12,-66},{32,-46}})));
       algorithm
          when T1.fire then
-            breakForce :=T1.transition_input_port[1].reals[1];
+            breakForceOfMaster :=T1.transition_input_port[1].reals[1];
         end when;
        when T5.fire then
-            breakForce :=T5.transition_input_port[1].reals[1];
+            breakForceOfMaster :=T5.transition_input_port[1].reals[1];
         end when;
       equation
 
-        annotation (Diagram(coordinateSystem(preserveAspectRatio=true, extent={{-180,-100},
-                  {140,140}}),             graphics));
+        connect(possibleBreakForce, message1.u_reals[1]) annotation (Line(
+            points={{20,-104},{46,-104},{46,-22},{71,-22}},
+            color={0,0,127},
+            smooth=Smooth.None));
+        connect(T2.firePort, T2_Triggered) annotation (Line(
+            points={{-8,72.2},{-24,72.2},{-24,144}},
+            color={255,0,255},
+            smooth=Smooth.None));
+        connect(T3.firePort, T3_Triggered) annotation (Line(
+            points={{54.2,10},{64,10},{64,-110}},
+            color={255,0,255},
+            smooth=Smooth.None));
+        connect(T5.firePort, FailsafeActive) annotation (Line(
+            points={{-30.4,-31.4},{-8.2,-31.4},{-8.2,-108},{-8,-108}},
+            color={255,0,255},
+            smooth=Smooth.None));
+        connect(breakPossible, T2.conditionPort) annotation (Line(
+            points={{-70,-106},{-46,-106},{-46,63},{-8,63}},
+            color={255,0,255},
+            smooth=Smooth.None));
+        connect(breakPossible, not1.u) annotation (Line(
+            points={{-70,-106},{-23,-106},{-23,-56},{10,-56}},
+            color={255,0,255},
+            smooth=Smooth.None));
+        connect(not1.y, T3.conditionPort) annotation (Line(
+            points={{33,-56},{40,-56},{40,10},{45,10}},
+            color={255,0,255},
+            smooth=Smooth.None));
+        annotation (Diagram(coordinateSystem(preserveAspectRatio=true, extent={{-180,
+                  -100},{140,140}}),       graphics));
       end FSD_Slave;
 
       model Bebot
       //numberOfSyncReceive numberOfSyncSend
-      parameter Boolean isFront = true
+      parameter Boolean isFront = false
           "This parameter defines, which role the Bebot plays: If it is set to 'true', the Bebot configurates as a front Bebot, if it is 'false', the Bebot plays the rear role.";
       parameter Real startPos = 0
           "The one dimensional starting position of the bebot";
       parameter Boolean breakingPossible = true
           "This parameter has no effect if the Bebot is in front. Otherwise it defines, wether the rear bebot is able to break or nota after the break request of the front bebot";
-      parameter Real  timeOfBreakRequest = 1.5
+      inner parameter Real  timeOfBreakRequest = 1.5
           "This parameteris has only an effect if the bebot is in front. It defines the time when the front bebot should send the break request.";
       parameter Real breakForce = -1;
 
-      Real velocity;
-      Real varPos;
-      Real pos;
+      Modelica.Blocks.Interfaces.RealOutput velocity annotation (Placement(transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=270,
+              origin={44,-192})));
+
+      //Real varPos;
+      //Real pos;
       //components of all Bebots:
+       Modelica.Blocks.Interfaces.RealOutput localBreakForceOfMaster; // breakForce of Master Bebot
+       Modelica.Blocks.Interfaces.RealOutput localBreakForceOfSlave; // breakForce of Slave Bebot
+       Modelica.Blocks.Interfaces.RealOutput localBreakForce;
+       Modelica.Blocks.Interfaces.BooleanOutput localBreakInitiated;
+
+       Modelica.Blocks.Interfaces.BooleanOutput localBreakPossibleWithBreakForceOfMaster;
+
+       //discrete variables for initiation and possibility of break with break force of the front/master bebot
+       Boolean breakInitiated;
+       Boolean breakPossibleWithBreakForceOfMaster;
+       Modelica.Blocks.Interfaces.BooleanOutput notYetBreaked( start = true);
+       //Modelica.Blocks.Interfaces.RealOutput possibleBreakForceOfSlave(start= 0);
+
        Modelica.Blocks.Interfaces.RealInput acceleration
           annotation (Placement(transformation(extent={{-20,-20},{20,20}},
               rotation=270,
               origin={2,108})));
 
-       Step Initial(nOut=2, initialStep=true) annotation (Placement(transformation(
-              extent={{-4,-4},{4,4}},
-              rotation=90,
-              origin={-70,10})));
-
-        Step AskRearForBreak(nIn=1, nOut=3) annotation (Placement(transformation(
-              extent={{-4,-4},{4,4}},
-              rotation=90,
-              origin={0,14})));
-
-        Step BreakNotPossible(nIn=2)
-                                  annotation (Placement(transformation(
-              extent={{-4,-4},{4,4}},
-              rotation=90,
-              origin={96,10})));
-
-        Step BreakPossible(nIn=1)    annotation (Placement(transformation(
-              extent={{-4,-4},{4,4}},
-              rotation=90,
-              origin={100,-18})));
-
-        Step TryToBreak(nIn=1, nOut=2) annotation (Placement(transformation(
-              extent={{4,-4},{-4,4}},
-              rotation=90,
-              origin={-50,-74})));
-
-        Step Break(nIn=1) annotation (Placement(transformation(
-              extent={{-4,-4},{4,4}},
-              rotation=90,
-              origin={58,-76})));
-
-        Step Failure(nIn=1) annotation (Placement(transformation(
-              extent={{-4,-4},{4,4}},
-              rotation=90,
-              origin={58,-106})));
-
       //components of front bebot "isFront == true"
         MessageInterface.InputDelegationPort InFail(
           redeclare Integer integers[0] "integers[0]",
           redeclare Boolean booleans[0] "booelans[0]",
-          redeclare Real reals[0] "reals[0]") if isFront
+          redeclare Real reals[1] "reals[1]") if isFront
           annotation (Placement(transformation(extent={{-110,0},{-90,20}}),
               iconTransformation(extent={{-110,0},{-90,20}})));
         MessageInterface.InputDelegationPort InDone(
@@ -14482,7 +14507,8 @@ Two bebots drive in a line, so there is a RearBebot and a FrontBebot. So that no
           annotation (Placement(transformation(extent={{-108,42},{-88,62}}),
               iconTransformation(extent={{-108,42},{-88,62}})));
 
-        FSD_Master fSD_Master(              breakForce=breakForce, timeout=0.03) if
+        FSD_Master fSD_Master(              breakForce=breakForce, timeout=0.03,
+          timeOfBreakRequest=timeOfBreakRequest) if
                                                isFront
           annotation (Placement(transformation(extent={{-8,60},{-40,80}})));
 
@@ -14499,41 +14525,6 @@ Two bebots drive in a line, so there is a RearBebot and a FrontBebot. So that no
           annotation (Placement(transformation(extent={{176,-2},{196,18}}),
               iconTransformation(extent={{176,-2},{196,18}})));
 
-        Transition T1(
-          use_conditionPort=false,
-          use_syncSend=true,
-          use_syncReceive=false,numberOfSyncSend=1,
-          use_after=true,
-          condition=isFront,
-          afterTime=timeOfBreakRequest) if
-                                isFront
-                     annotation (Placement(transformation(
-              extent={{4,-4},{-4,4}},
-              rotation=90,
-              origin={-30,12})));
-
-        Transition T2(use_syncReceive=true, numberOfSyncReceive=1) if isFront
-                     annotation (Placement(transformation(
-              extent={{-4,-4},{4,4}},
-              rotation=90,
-              origin={50,12})));
-
-        Transition T3(use_syncReceive=true, numberOfSyncReceive=1) if isFront
-                     annotation (Placement(transformation(
-              extent={{-4,-4},{4,4}},
-              rotation=90,
-              origin={50,-18})));
-
-        Transition T4(use_syncReceive=true,numberOfSyncReceive=1) if isFront
-                     annotation (Placement(transformation(
-              extent={{-4,-4},{4,4}},
-              rotation=90,
-              origin={30,-38})));
-
-        Transition T8(condition = false) if isFront; // replaces T5
-        Transition T9(condition = false) if isFront; // replaces T6
-        Transition T10(condition = false) if isFront; // replaces T7
-
         Modelica.Blocks.Sources.RealExpression breakOfFrontBebot(y=breakForce) if isFront;
 
       // components of rear bebot "isFront == false"
@@ -14549,7 +14540,7 @@ Two bebots drive in a line, so there is a RearBebot and a FrontBebot. So that no
         MessageInterface.OutputDelegationPort Out_Fail(
           redeclare Integer integers[0] "integers[0]",
           redeclare Boolean booleans[0] "booelans[0]",
-          redeclare Real reals[0] "reals[0]") if not isFront
+          redeclare Real reals[1] "reals[1]") if not isFront
           annotation (Placement(transformation(extent={{174,-168},{194,-148}}),
               iconTransformation(extent={{174,-168},{194,-148}})));
         MessageInterface.InputDelegationPort In_Continue(
@@ -14565,40 +14556,90 @@ Two bebots drive in a line, so there is a RearBebot and a FrontBebot. So that no
           annotation (Placement(transformation(extent={{-112,-112},{-92,-92}}),
               iconTransformation(extent={{-112,-112},{-92,-92}})));
 
-        Transition T5(condition=not isFront, use_syncReceive=true, numberOfSyncReceive=1) if not isFront
-         annotation (Placement(transformation(extent={{-72,-38},{-64,-30}})));
-        Transition T6(condition=breakingPossible, use_syncSend=true,numberOfSyncSend=1) if not isFront
-           annotation (Placement(transformation(
-              extent={{-4,-4},{4,4}},
+        Modelica.Blocks.Sources.RealExpression breakOfSlaveBebot(y=breakForce) if not isFront
+          annotation (Placement(transformation(
+              extent={{-10,-10},{10,10}},
               rotation=90,
-              origin={2,-76})));
-        Transition T7(condition=not breakingPossible, use_syncSend=true,numberOfSyncSend=1) if not isFront
-         annotation (
-            Placement(transformation(
-              extent={{-4,-4},{4,4}},
+              origin={-24,-202})));
+
+      Modelica.Blocks.Interfaces.BooleanOutput WaitingOrWorking;
+      Modelica.Blocks.Interfaces.BooleanOutput Initial;
+      //Modelica.Blocks.Interfaces.BooleanOutput FailSafe;
+
+        Modelica.Blocks.Sources.BooleanExpression breakForcePossible(y=
+              localBreakForceOfSlave <= localBreakForceOfMaster)                                                           annotation (Placement(
+              transformation(
+              extent={{-10,-10},{10,10}},
               rotation=90,
-              origin={2,-106})));
-
-        Transition T11(condition = false) if not isFront; // replaces T1
-        Transition T12(condition = false) if not isFront; // replaces T2
-        Transition T13(condition = false) if not isFront; // replaces T3
-        Transition T14(condition = false) if not isFront; // replaces T4
-
-        Modelica.Blocks.Interfaces.RealOutput localBreak;
-
+              origin={-48,-202})));
       equation
-        der(varPos) = velocity;
-        pos = varPos + startPos;
 
-        if (BreakPossible.active or Break.active)  and velocity > 0 then
-          der(velocity) = localBreak;
-        elseif (BreakPossible.active or Break.active)  and velocity <= 0 then
-          der(velocity) = 0;
+        when localBreakInitiated then
+          breakInitiated = true;
+        end when;
+        /*when not localBreakInitiated then
+    breakInitiated = false;
+  end when;*/
+
+        if  time > timeOfBreakRequest then
+          notYetBreaked = false;
         else
-          der(velocity) = acceleration;
+          notYetBreaked = true;
         end if;
 
-        // connections of front bebot:
+        when localBreakPossibleWithBreakForceOfMaster then
+          breakPossibleWithBreakForceOfMaster = true;
+        end when;
+        /*when not localBreakPossibleWithBreakForceOfMaster then
+    breakPossibleWithBreakForceOfMaster = false;
+  end when;*/
+
+        if isFront then
+           localBreakForce = localBreakForceOfMaster;
+        else
+           localBreakForce = localBreakForceOfSlave;
+        end if;
+
+        if Initial and not breakInitiated then // the break has not been initiated, so accelerate with the given acceleration
+          der(velocity) = acceleration;
+        elseif Initial and breakInitiated and breakPossibleWithBreakForceOfMaster then // the break was initiated and it is possible to break with the breakforce of the master
+          //break only until velocity is zero, cause otherwise bebots will drive backwards
+          if velocity > 0 then
+            der(velocity) = localBreakForceOfMaster;
+          else
+             der(velocity) = 0;
+          end if;
+        elseif Initial and breakInitiated and not breakPossibleWithBreakForceOfMaster then //the break was initiated and it is NOT possible to break with the breakforce of the master
+          //break only until velocity is zero, cause otherwise bebots will drive backwards
+          if velocity > 0 then
+            der(velocity) = localBreakForceOfSlave;
+          else
+            der(velocity) = 0;
+          end if;
+        elseif WaitingOrWorking then
+            der(velocity) = localBreakForce; // bebots break with their own break force
+        else // should never be reached
+            der(velocity) = acceleration;
+        end if;
+      //connections to the ports
+        //case Slave/Rear:
+          connect(fSD_Slave.In_Order, In_Order) annotation (Line(
+            points={{-40.2,-157.6},{-71.1,-157.6},{-71.1,-102},{-102,-102}},
+            color={0,0,255},
+            smooth=Smooth.None));
+        connect(fSD_Slave.In_Continue, In_Continue) annotation (Line(
+            points={{-39.8,-166.1},{-58,-166},{-58,-204},{-102,-204},{-102,-160}},
+            color={0,0,255},
+            smooth=Smooth.None));
+        connect(fSD_Slave.Out_Fail, Out_Fail) annotation (Line(
+            points={{-7.8,-168.2},{7.1,-168.2},{7.1,-158},{184,-158}},
+            color={0,0,0},
+            smooth=Smooth.None));
+        connect(fSD_Slave.Out_Done, Out_Done) annotation (Line(
+            points={{-8,-156.2},{44,-156.2},{44,-106},{184,-106}},
+            color={0,0,0},
+            smooth=Smooth.None));
+        //case Master/Front:
         connect(InDone, fSD_Master.In_Done) annotation (Line(
             points={{-98,52},{-52,52},{-52,86},{-8,86},{-8,78.2}},
             color={0,0,255},
@@ -14616,127 +14657,46 @@ Two bebots drive in a line, so there is a RearBebot and a FrontBebot. So that no
             color={0,0,255},
             smooth=Smooth.None));
 
-        connect(T1.sender[1], fSD_Master.T1.receiver[1]);
-        connect(T3.receiver[1], fSD_Master.T3.sender[1]);
-        connect(T2.receiver[1], fSD_Master.T4.sender[1]);
-        connect(T4.receiver[1], fSD_Master.T2.sender[1]);
+      //localBreakForceOfMaster:
 
-        connect(breakOfFrontBebot.y, localBreak);
-        // transitions of front bebot:
-        connect(Initial.outPort[1], T1.inPort) annotation (Line(
-            points={{-65.4,9},{-50,9},{-50,12},{-34,12}},
-            color={0,0,0},
-            smooth=Smooth.None));
-        connect(Initial.outPort[1], T11.inPort);
+        //case Slave/Rear:
+        connect(localBreakForceOfMaster, fSD_Slave.breakForceOfMaster);
+        //case Master/Front:
+        connect(breakOfFrontBebot.y, localBreakForceOfMaster);
 
-        connect(T1.outPort, AskRearForBreak.inPort[1]) annotation (Line(
-            points={{-25,12},{-14,12},{-14,14},{-4,14}},
-            color={0,0,0},
+      //localBreakForceOfSlave:
+        //case Slave:
+        connect(breakOfSlaveBebot.y, localBreakForceOfSlave);
+        connect(breakOfSlaveBebot.y, fSD_Slave.possibleBreakForce) annotation (Line(
+            points={{-24,-191},{-22,-191},{-22,-176.4},{-20,-176.4}},
+            color={0,0,127},
             smooth=Smooth.None));
-        connect(T11.outPort, AskRearForBreak.inPort[1]);
+        //case Master:
+        connect(localBreakForceOfSlave, fSD_Master.possibleBreakForceOfRear);
 
-        connect(AskRearForBreak.outPort[1], T2.inPort) annotation (Line(
-            points={{4.6,12.6667},{18,12.6667},{18,12},{46,12}},
-            color={0,0,0},
+        connect(breakForcePossible.y, fSD_Slave.breakPossible) annotation (Line(
+            points={{-48,-191},{-38,-191},{-38,-176.6},{-29,-176.6}},
+            color={255,0,255},
             smooth=Smooth.None));
-        connect(AskRearForBreak.outPort[1], T12.inPort);
+      //localBreakInitiated
+        connect(localBreakInitiated, fSD_Slave.T1.firePort);
+        connect(localBreakInitiated, fSD_Master.T1.firePort);
 
-        connect(T2.outPort, BreakNotPossible.inPort[1])
-                                                     annotation (Line(
-            points={{55,12},{82,12},{82,9},{92,9}},
-            color={0,0,0},
-            smooth=Smooth.None));
-        connect(T12.outPort, BreakNotPossible.inPort[1]);
+      //localBreakPossibleWithBreakForceOfMaster
+        connect(localBreakPossibleWithBreakForceOfMaster, fSD_Slave.T2.firePort);
+        connect(localBreakPossibleWithBreakForceOfMaster, fSD_Master.T3.firePort);
 
-        connect(AskRearForBreak.outPort[2], T3.inPort) annotation (Line(
-            points={{4.6,14},{16,14},{16,-18},{46,-18}},
-            color={0,0,0},
-            smooth=Smooth.None));
-        connect(AskRearForBreak.outPort[2], T13.inPort);
+        connect(notYetBreaked, fSD_Master.T1.conditionPort);
 
-        connect(T3.outPort, BreakPossible.inPort[1])    annotation (Line(
-            points={{55,-18},{75.5,-18},{75.5,-18},{96,-18}},
-            color={0,0,0},
-            smooth=Smooth.None));
-        connect(T13.outPort, BreakPossible.inPort[1]);
+        connect(Initial, fSD_Master.Idle.activePort);
+        connect(Initial, fSD_Slave.Idle.activePort);
 
-        connect(AskRearForBreak.outPort[3], T4.inPort) annotation (Line(
-            points={{4.6,15.3333},{10,15.3333},{10,-38},{26,-38}},
-            color={0,0,0},
-            smooth=Smooth.None));
-        connect(AskRearForBreak.outPort[3], T14.inPort);
+        connect(WaitingOrWorking, fSD_Slave.Working.activePort);
+        connect(WaitingOrWorking, fSD_Master.Waiting.activePort);
 
-        connect(T14.outPort, BreakNotPossible.inPort[2]);
-        connect(T4.outPort, BreakNotPossible.inPort[2]) annotation (Line(
-            points={{35,-38},{64,-38},{64,11},{92,11}},
-            color={0,0,0},
-            smooth=Smooth.None));
-        // connections of rear bebot:
-        connect(fSD_Slave.In_Order, In_Order) annotation (Line(
-            points={{-40.2,-157.6},{-71.1,-157.6},{-71.1,-102},{-102,-102}},
-            color={0,0,255},
-            smooth=Smooth.None));
-        connect(fSD_Slave.In_Continue, In_Continue) annotation (Line(
-            points={{-39.8,-166.1},{-58,-166},{-58,-204},{-102,-204},{-102,-160}},
-            color={0,0,255},
-            smooth=Smooth.None));
-        connect(fSD_Slave.Out_Fail, Out_Fail) annotation (Line(
-            points={{-7.8,-168.2},{7.1,-168.2},{7.1,-158},{184,-158}},
-            color={0,0,0},
-            smooth=Smooth.None));
-        connect(fSD_Slave.Out_Done, Out_Done) annotation (Line(
-            points={{-8,-156.2},{44,-156.2},{44,-106},{184,-106}},
-            color={0,0,0},
-            smooth=Smooth.None));
-
-        connect(fSD_Slave.T2.receiver[1],  T6.sender[1]); // Breaking Possible
-        connect(fSD_Slave.T3.receiver[1], T7.sender[1]); // no Breaking Possible
-        connect(fSD_Slave.T1.sender[1], T5.receiver[1]);
-
-        //transitons of rear bebot:
-
-        connect(localBreak, fSD_Slave.breakForce);
-        connect(Initial.outPort[2], T5.inPort) annotation (Line(
-            points={{-65.4,11},{-68,11},{-68,-30}},
-            color={0,0,0},
-            smooth=Smooth.None));
-         connect(Initial.outPort[2], T8.inPort);
-
-        connect(T5.outPort, TryToBreak.inPort[1]) annotation (Line(
-            points={{-68,-39},{-62,-39},{-62,-74},{-54,-74}},
-            color={0,0,0},
-            smooth=Smooth.None));
-        connect(T8.outPort, TryToBreak.inPort[1]);
-
-        connect(T6.outPort,Break. inPort[1]) annotation (Line(
-            points={{7,-76},{54,-76}},
-            color={0,0,0},
-            smooth=Smooth.None));
-        connect(T9.outPort,Break. inPort[1]);
-
-        connect(TryToBreak.outPort[1], T6.inPort) annotation (Line(
-            points={{-45.4,-73},{-45.4,-75.3},{-2,-75.3},{-2,-76}},
-            color={0,0,0},
-            smooth=Smooth.None));
-        connect(TryToBreak.outPort[1], T9.inPort);
-
-        connect(TryToBreak.outPort[2], T7.inPort) annotation (Line(
-            points={{-45.4,-75},{-28,-75},{-28,-106},{-2,-106}},
-            color={0,0,0},
-            smooth=Smooth.None));
-        connect(TryToBreak.outPort[2], T10.inPort);
-
-        connect(T7.outPort, Failure.inPort[1]) annotation (Line(
-            points={{7,-106},{54,-106}},
-            color={0,0,0},
-            smooth=Smooth.None));
-        connect(T10.outPort, Failure.inPort[1]);
-
-      when breakForce >=0 then
+            when breakForce >=0 then
         Modelica.Utilities.Streams.error("The break force must be smaller than zero!");
       end when;
-
-      //annotation of whole model:
 
         annotation (Diagram(coordinateSystem(extent={{-100,-200},{200,100}},
                 preserveAspectRatio=true),
@@ -14766,18 +14726,28 @@ Two bebots drive in a line, so there is a RearBebot and a FrontBebot. So that no
 
       model FinalSystemMain
 
-        Bebot RearBebot(isFront=false, timeOfBreakRequest=1)
+        Bebot RearBebot(isFront=false, timeOfBreakRequest=1,
+          breakingPossible=false,
+          breakForce=-1)
           annotation (Placement(transformation(extent={{-32,-16},{-12,20}})));
         Bebot FrontBebot(
           isFront=true,
-          startPos=1,
-          breakingPossible=true)
+          breakingPossible=true,
+          startPos=0.5,
+          timeOfBreakRequest=4,
+          breakForce=-20)
           annotation (Placement(transformation(extent={{18,-16},{38,20}})));
-        Modelica.Blocks.Sources.RealExpression AccelerationOfBebots(y=if time
-               > 1 then 0 else 1) annotation (Placement(transformation(
+        Modelica.Blocks.Sources.RealExpression AccelerationOfBebots(y=if time > 1
+               then 0 else 10)    annotation (Placement(transformation(
               extent={{-10,-10},{10,10}},
               rotation=270,
               origin={2,80})));
+        inner Modelica.Mechanics.MultiBody.World world(label2="z", n={0,0,-1})
+          annotation (Placement(transformation(extent={{-60,-88},{-50,-78}})));
+        Examples.Application.Parts.Robot_V3 robot_V3_1
+          annotation (Placement(transformation(extent={{-52,-62},{-22,-42}})));
+        Examples.Application.Parts.Robot_V3 robot_V3_2(xstart_wmr=0.5)
+          annotation (Placement(transformation(extent={{14,-62},{44,-42}})));
       equation
         connect(AccelerationOfBebots.y, RearBebot.acceleration) annotation (
             Line(
@@ -14808,9 +14778,25 @@ Two bebots drive in a line, so there is a RearBebot and a FrontBebot. So that no
                 -32.1333,-4.24}},
             color={0,0,0},
             smooth=Smooth.None));
-      when FrontBebot.startPos <= RearBebot.startPos then
-        Modelica.Utilities.Streams.error("The position of the FrontBebot must be greater then the position of the RearBebot!");
-      end when;
+      //when FrontBebot.startPos <= RearBebot.startPos then
+       // Modelica.Utilities.Streams.error("The position of the FrontBebot must be greater then the position of the RearBebot!");
+      //end when;
+        connect(RearBebot.velocity, robot_V3_1.omegaL_des) annotation (Line(
+            points={{-22.4,-15.04},{-22.4,-33.52},{-51,-33.52},{-51,-52}},
+            color={0,0,127},
+            smooth=Smooth.None));
+        connect(RearBebot.velocity, robot_V3_1.omegaR_des) annotation (Line(
+            points={{-22.4,-15.04},{-22.4,-33.52},{-23,-33.52},{-23,-52}},
+            color={0,0,127},
+            smooth=Smooth.None));
+        connect(FrontBebot.velocity, robot_V3_2.omegaL_des) annotation (Line(
+            points={{27.6,-15.04},{27.6,-33.52},{15,-33.52},{15,-52}},
+            color={0,0,127},
+            smooth=Smooth.None));
+        connect(FrontBebot.velocity, robot_V3_2.omegaR_des) annotation (Line(
+            points={{27.6,-15.04},{27.6,-33.52},{43,-33.52},{43,-52}},
+            color={0,0,127},
+            smooth=Smooth.None));
         annotation (Diagram(graphics), Documentation(info="<html>
 <head>
 
@@ -14828,67 +14814,67 @@ Two Bebots drive in a line, so one is in front, namely the \"FrontBebot\", and t
 
 <table border=\"0\" align=\"center\">
 <tr>
-	<td>
-		<h3>Case breaking possible:</h3>
-	</td>
-	<td width=\"100\">         &#160; </td>
-	<td>
-		<h3>Case breaking not possible:</h3>
-	</td>
+        <td>
+                <h3>Case breaking possible:</h3>
+        </td>
+        <td width=\"100\">         &#160; </td>
+        <td>
+                <h3>Case breaking not possible:</h3>
+        </td>
 </tr>
 <tr>
-	<td>
-		The RearBebot answers the request with 'yes':
-	</td>
-	<td width=\"100\">         &#160; </td>
-	<td>
-		The RearBebot answers the request with 'no':
-	</td>
+        <td>
+                The RearBebot answers the request with 'yes':
+        </td>
+        <td width=\"100\">         &#160; </td>
+        <td>
+                The RearBebot answers the request with 'no':
+        </td>
 </tr>
 <tr>
-	<td>
-		<img src=\"modelica://RealTimeCoordinationLibrary/images/Fail_Safe_Delegation/examplesForPatternUse/example1/possible1.jpg\" align=\"left\"/>
-	</td>
-	<td>  </td>
-	<td>
-		<img src=\"modelica://RealTimeCoordinationLibrary/images/Fail_Safe_Delegation/examplesForPatternUse/example1/notPossible1.jpg\" align=\"right\"/>
-	</td>
+        <td>
+                <img src=\"modelica://RealTimeCoordinationLibrary/images/Fail_Safe_Delegation/examplesForPatternUse/example1/possible1.jpg\" align=\"left\"/>
+        </td>
+        <td>  </td>
+        <td>
+                <img src=\"modelica://RealTimeCoordinationLibrary/images/Fail_Safe_Delegation/examplesForPatternUse/example1/notPossible1.jpg\" align=\"right\"/>
+        </td>
 </tr>
 <tr>
-	<td>
-		Both can start breaking:
-	</td>
-	<td width=\"100\">         &#160; </td>
-	<td>
-		The Front Bebot has to break anyway:
-	</td>
+        <td>
+                Both can start breaking:
+        </td>
+        <td width=\"100\">         &#160; </td>
+        <td>
+                The Front Bebot has to break anyway:
+        </td>
 </tr>
 <tr>
-	<td>
-		<img src=\"modelica://RealTimeCoordinationLibrary/images/Fail_Safe_Delegation/examplesForPatternUse/example1/possible2.jpg\" align=\"left\"/>
-	</td>
-	<td>  </td>
-	<td>
-		<img src=\"modelica://RealTimeCoordinationLibrary/images/Fail_Safe_Delegation/examplesForPatternUse/example1/notPossible2.jpg\" align=\"right\"/>
-	</td>
+        <td>
+                <img src=\"modelica://RealTimeCoordinationLibrary/images/Fail_Safe_Delegation/examplesForPatternUse/example1/possible2.jpg\" align=\"left\"/>
+        </td>
+        <td>  </td>
+        <td>
+                <img src=\"modelica://RealTimeCoordinationLibrary/images/Fail_Safe_Delegation/examplesForPatternUse/example1/notPossible2.jpg\" align=\"right\"/>
+        </td>
 </tr>
 <tr>
-	<td>
-		
-	</td>
-	<td width=\"100\">         &#160; </td>
-	<td>
-		A crash may happen, since the RearBebot might not be able to break:
-	</td>
+        <td>
+                
+        </td>
+        <td width=\"100\">         &#160; </td>
+        <td>
+                A crash may happen, since the RearBebot might not be able to break:
+        </td>
 </tr>
 <tr>
-	<td>
-		
-	</td>
-	<td>  </td>
-	<td>
-		<img src=\"modelica://RealTimeCoordinationLibrary/images/Fail_Safe_Delegation/examplesForPatternUse/example1/notPossible3.jpg\" align=\"left\"/>
-	</td>
+        <td>
+                
+        </td>
+        <td>  </td>
+        <td>
+                <img src=\"modelica://RealTimeCoordinationLibrary/images/Fail_Safe_Delegation/examplesForPatternUse/example1/notPossible3.jpg\" align=\"left\"/>
+        </td>
 </tr>
 </table>
 </p>
@@ -14929,8 +14915,8 @@ Two Bebots drive in a line, so one is in front, namely the \"FrontBebot\", and t
       model Guard
         extends
           CoordinationPatternRepository.CoordinationPattern.Block_Execution.Guard(
-          T1(use_syncReceive=true, numberOfSyncReceive=1),
-          T2(use_syncReceive=true, numberOfSyncReceive=1),
+          T1(use_conditionPort=true, use_syncReceive=false),
+          T2(use_conditionPort=true, use_syncReceive=false),
           Out_Free(
             redeclare Integer integers[0] "integers[0]",
             redeclare Boolean booleans[0] "booelans[0]",
@@ -14939,18 +14925,21 @@ Two Bebots drive in a line, so one is in front, namely the \"FrontBebot\", and t
             redeclare Integer integers[0] "integers[0]",
             redeclare Boolean booleans[0] "booelans[0]",
             redeclare Real reals[0] "reals[0]"));
-        Internal.Interfaces.Synchron.receiver free
-          annotation (Placement(transformation(extent={{-146,-16},{-126,4}})));
-        Internal.Interfaces.Synchron.receiver blocked
-          annotation (Placement(transformation(extent={{108,-18},{128,2}})));
+        Modelica.Blocks.Interfaces.BooleanInput free
+          annotation (Placement(transformation(extent={{-174,-10},{-134,30}})));
+        Modelica.Blocks.Interfaces.BooleanInput blocked annotation (Placement(
+              transformation(
+              extent={{-20,-20},{20,20}},
+              rotation=180,
+              origin={130,-42})));
       equation
-        connect(T2.receiver[1], blocked) annotation (Line(
-            points={{39.18,31.98},{30.59,31.98},{30.59,-8},{118,-8}},
-            color={255,128,0},
+        connect(blocked, T2.conditionPort) annotation (Line(
+            points={{130,-42},{8,-42},{8,36},{37,36}},
+            color={255,0,255},
             smooth=Smooth.None));
-        connect(T1.receiver[1], free) annotation (Line(
-            points={{-63.18,42.02},{-51.59,42.02},{-51.59,-6},{-136,-6}},
-            color={255,128,0},
+        connect(free, T1.conditionPort) annotation (Line(
+            points={{-154,10},{-56,10},{-56,38},{-61,38}},
+            color={255,0,255},
             smooth=Smooth.None));
         annotation (Diagram(coordinateSystem(preserveAspectRatio=true, extent={{-140,
                   -100},{120,100}}),       graphics));
@@ -14966,14 +14955,14 @@ Two Bebots drive in a line, so one is in front, namely the \"FrontBebot\", and t
                                                                                                       executors[nrOfTrackSections];
 
       //RealTimeCoordinationLibrary.CoordinationProtocols.ExamplesForPatternUse.BlockExecution.Executor
-      Step steps[nrOfTrackSections](each nIn = 1, each nOut=1);
-      Transition transitions[nrOfTrackSections](each use_conditionPort=true, each use_after=true, each afterTime=1e-8);
-      Transition transitionsToInitialStep[nrOfTrackSections](each use_conditionPort=true);
-      Modelica.Blocks.MathBoolean.Not nots[nrOfTrackSections];
+      //Step steps[nrOfTrackSections](each nIn = 1, each nOut=1);
+      //Transition transitions[nrOfTrackSections](each use_conditionPort=true, each use_after=true, each afterTime=1e-8);
+      //Transition transitionsToInitialStep[nrOfTrackSections](each use_conditionPort=true);
+      //Modelica.Blocks.MathBoolean.Not nots[nrOfTrackSections];
 
-        Step initialStep(initialStep=true, nOut=nrOfTrackSections,
-          nIn=nrOfTrackSections)         annotation (Placement(transformation(extent={{-20,74},{-12,82}})));
-
+      /*  Step initialStep(initialStep=true, nOut=nrOfTrackSections,
+    nIn=nrOfTrackSections)         annotation (Placement(transformation(extent={{-20,74},{-12,82}})));
+*/
         MessageInterface.InputDelegationPort delegationPortsBlocked[nrOfTrackSections](
           redeclare Integer integers[0] "integers[0]",
           redeclare Boolean booleans[0] "booelans[0]",
@@ -15000,19 +14989,21 @@ Two Bebots drive in a line, so one is in front, namely the \"FrontBebot\", and t
         // for i in 1:nrOfTrackSections loop executors.Blocked.active
 
         for i in 1:nrOfTrackSections loop
-          connect(steps[i].inPort[1], transitions[i].outPort);
-          connect(transitions[i].inPort, initialStep.outPort[i]);
-          connect(transitionsToInitialStep[i].inPort, steps[i].outPort[1]);
-          connect(transitionsToInitialStep[i].outPort, initialStep.inPort[i]);
-          connect(transitions[i].conditionPort, executors[i].blocked);
-          connect(transitionsToInitialStep[i].conditionPort, nots[i].y);
-          connect(nots[i].u, executors[i].blocked);
-
+         /* connect(steps[i].inPort[1], transitions[i].outPort);
+    connect(transitions[i].inPort, initialStep.outPort[i]);
+    connect(transitionsToInitialStep[i].inPort, steps[i].outPort[1]);
+    connect(transitionsToInitialStep[i].outPort, initialStep.inPort[i]);
+    connect(transitions[i].conditionPort, executors[i].blocked);
+    connect(transitionsToInitialStep[i].conditionPort, nots[i].y);
+    connect(nots[i].u, executors[i].blocked);
+*/
           connect(delegationPortsBlocked[i], executors[i].In_Blocked);
           connect(delegationPortsFree[i], executors[i].In_Free);
+
         end for;
 
         //connect(executor.In_Free, delegationPort)
+
         annotation (Line(
             points={{4,44.2},{-22,44.2},{-22,42},{-48,42}},
             color={0,0,255},
@@ -15042,37 +15033,14 @@ Two Bebots drive in a line, so one is in front, namely the \"FrontBebot\", and t
 
       model TrackSectionControl
 
-        Step accident(
-          initialStep=true,
-          nOut=1,
-          nIn=1)
-          annotation (Placement(transformation(extent={{-10,60},{-2,68}})));
-        Step noAccident(nIn=1, nOut=1)
-          annotation (Placement(transformation(extent={{-10,2},{-2,10}})));
-        Transition T1(use_conditionPort=true,
-          use_after=true,
-          use_messageReceive=false,
-          use_syncSend=true,
-          use_syncReceive=false,
-          numberOfSyncSend=1,
-          afterTime=0.01)
-          annotation (Placement(transformation(extent={{-2,30},{-10,38}})));
-
-        Transition T2(use_conditionPort=true,
-          use_syncSend=true,
-          use_syncReceive=false,
-          numberOfSyncSend=1)                 annotation (Placement(transformation(
-              extent={{4,-4},{-4,4}},
-              rotation=180,
-              origin={-40,34})));
         Modelica.Blocks.Interfaces.BooleanInput accidentOccured
           annotation (Placement(transformation(extent={{-13,-13},{13,13}},
               rotation=180,
               origin={103,89})));
         Modelica.Blocks.Logical.Not not1
           annotation (Placement(transformation(extent={{-6,-6},{6,6}},
-              rotation=180,
-              origin={32,58})));
+              rotation=270,
+              origin={38,90})));
         Guard guard annotation (Placement(transformation(
               extent={{-13,-10},{13,10}},
               rotation=270,
@@ -15093,29 +15061,6 @@ Two Bebots drive in a line, so one is in front, namely the \"FrontBebot\", and t
 
       equation
 
-        connect(accident.outPort[1], T1.inPort)
-                                             annotation (Line(
-            points={{-6,59.4},{-6,38}},
-            color={0,0,0},
-            smooth=Smooth.None));
-        connect(T1.outPort, noAccident.inPort[1])
-                                             annotation (Line(
-            points={{-6,29},{-6,10}},
-            color={0,0,0},
-            smooth=Smooth.None));
-        connect(noAccident.outPort[1], T2.inPort)
-                                                annotation (Line(
-            points={{-6,1.4},{-6,-10},{-40,-10},{-40,30}},
-            color={0,0,0},
-            smooth=Smooth.None));
-        connect(T2.outPort, accident.inPort[1])   annotation (Line(
-            points={{-40,39},{-40,82},{-6,82},{-6,68}},
-            color={0,0,0},
-            smooth=Smooth.None));
-        connect(accidentOccured, not1.u) annotation (Line(
-            points={{103,89},{74,76},{39.2,58}},
-            color={255,0,255},
-            smooth=Smooth.None));
         connect(guard.Out_Blocked, blocked) annotation (Line(
             points={{55.6,-0.4},{56,0},{56,-14},{98,-14}},
             color={0,0,0},
@@ -15124,20 +15069,16 @@ Two Bebots drive in a line, so one is in front, namely the \"FrontBebot\", and t
             points={{56.4,25.8},{55.1,25.8},{55.1,54},{100,54}},
             color={0,0,0},
             smooth=Smooth.None));
-        connect(T1.sender[1], guard.free) annotation (Line(
-            points={{-8.6,38.06},{21.7,38.06},{21.7,25.6},{51.4,25.6}},
-            color={255,128,0},
-            smooth=Smooth.None));
-        connect(T2.sender[1], guard.blocked) annotation (Line(
-            points={{-37.4,29.94},{7.3,29.94},{7.3,0.2},{51.2,0.2}},
-            color={255,128,0},
-            smooth=Smooth.None));
-        connect(not1.y, T1.conditionPort) annotation (Line(
-            points={{25.4,58},{-1,58},{-1,34}},
+        connect(accidentOccured, guard.blocked) annotation (Line(
+            points={{103,89},{103,87.5},{47.8,87.5},{47.8,-1}},
             color={255,0,255},
             smooth=Smooth.None));
-        connect(accidentOccured, T2.conditionPort) annotation (Line(
-            points={{103,89},{-79.5,89},{-79.5,34},{-45,34}},
+        connect(accidentOccured, not1.u) annotation (Line(
+            points={{103,89},{75.5,89},{75.5,97.2},{38,97.2}},
+            color={255,0,255},
+            smooth=Smooth.None));
+        connect(not1.y, guard.free) annotation (Line(
+            points={{38,83.4},{40,83.4},{40,27.4},{53,27.4}},
             color={255,0,255},
             smooth=Smooth.None));
         annotation (Diagram(coordinateSystem(extent={{-100,-100},{100,100}},
@@ -15215,13 +15156,13 @@ Two Bebots drive in a line, so one is in front, namely the \"FrontBebot\", and t
             Placement(transformation(
               extent={{-10,-10},{10,10}},
               rotation=90,
-              origin={22,-36})));
+              origin={22,-30})));
         Modelica.Blocks.Sources.BooleanPulse accidentOnSection1(period=2, width=50,
           startTime=0)
           annotation (Placement(transformation(
               extent={{-10,-10},{10,10}},
               rotation=90,
-              origin={-6,-38})));
+              origin={-28,-30})));
       equation
          //section1.
 
@@ -15231,11 +15172,11 @@ Two Bebots drive in a line, so one is in front, namely the \"FrontBebot\", and t
         connect(bebot.delegationPortsFree[2], section2.free);
 
         connect(accidentOnSection2.y, section2.accidentOccured) annotation (Line(
-            points={{22,-25},{20,-2},{20,23.7},{20.9,23.7}},
+            points={{22,-19},{20,-2},{20,23.7},{20.9,23.7}},
             color={255,0,255},
             smooth=Smooth.None));
         connect(accidentOnSection1.y, section1.accidentOccured) annotation (Line(
-            points={{-6,-27},{0,-27},{0,23.7},{0.9,23.7}},
+            points={{-28,-19},{0,-19},{0,23.7},{0.9,23.7}},
             color={255,0,255},
             smooth=Smooth.None));
         annotation (Diagram(graphics), Documentation(info="<html>
@@ -15351,7 +15292,14 @@ Two Bebots drive in a line, so one is in front, namely the \"FrontBebot\", and t
           annotation (Placement(transformation(extent={{-17,-17},{17,17}},
               rotation=270,
               origin={3,-95})));
+        Modelica.Blocks.Interfaces.RealInput acceleration
+          annotation (Placement(transformation(extent={{-122,-10},{-92,20}})));
+        Modelica.Blocks.Interfaces.RealOutput velocity
+          annotation (Placement(transformation(extent={{92,-10},{112,10}})));
       equation
+
+        //if convoy then
+
         connect(convoy, master.CollaborationActive.activePort);
         connect(convoy, slave.CollaborationActive.activePort);
         connect(slave.activationProposalInputPort, activation) annotation (Line(
