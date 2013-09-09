@@ -8340,32 +8340,20 @@ In order to distinguish between the two partners in this section, they are calle
           numberOfMessageIntegers=0)
           annotation (Placement(transformation(extent={{-80,26},{-60,46}})));
         RealTimeCoordinationLibrary.MessageInterface.InputDelegationPort
-          activationProposalInputPort(
-          redeclare Boolean booleans[0] "booelans[0]",
-          redeclare Real reals[0] "reals[0]",
-          redeclare Integer integers[0] "integers[0]")
+          activationProposalInputPort
           annotation (Placement(transformation(extent={{-110,24},{-90,44}})));
         RealTimeCoordinationLibrary.MessageInterface.InputDelegationPort
-          deactivationInputPort(
-          redeclare Integer integers[0] "integers[0]",
-          redeclare Boolean booleans[0] "booelans[0]",
-          redeclare Real reals[0] "reals[0]")
+          deactivationInputPort
           annotation (Placement(transformation(extent={{-110,0},{-90,20}})));
         RealTimeCoordinationLibrary.Mailbox deactivation(nIn=1, nOut=1)
           annotation (Placement(transformation(extent={{-88,-2},{-68,18}})));
         RealTimeCoordinationLibrary.Message actiavtionAccepted(nIn=1)
           annotation (Placement(transformation(extent={{64,0},{84,20}})));
         RealTimeCoordinationLibrary.MessageInterface.OutputDelegationPort
-          activationAcceptedOutputPort(
-          redeclare Integer integers[0] "integers[0]",
-          redeclare Boolean booleans[0] "booelans[0]",
-          redeclare Real reals[0] "reals[0]")
+          activationAcceptedOutputPort
           annotation (Placement(transformation(extent={{92,-2},{112,18}})));
         RealTimeCoordinationLibrary.MessageInterface.OutputDelegationPort
-          activationRejectedOutputPort(
-          redeclare Integer integers[0] "integers[0]",
-          redeclare Boolean booleans[0] "booelans[0]",
-          redeclare Real reals[0] "reals[0]")
+          activationRejectedOutputPort
           annotation (Placement(transformation(extent={{92,42},{112,62}})));
         RealTimeCoordinationLibrary.Message activationRejected(nIn=1)
           annotation (Placement(transformation(extent={{42,72},{62,92}})));
@@ -8551,10 +8539,7 @@ The corresponding Realtime Statechart is shown in the following figure: </p>
               rotation=0,
               origin={60,60})));
         RealTimeCoordinationLibrary.MessageInterface.OutputDelegationPort
-          activationProposalOutputPort(
-          redeclare Boolean booleans[0] "booelans[0]",
-          redeclare Real reals[0] "reals[0]",
-          redeclare Integer integers[0] "integers[0]")
+          activationProposalOutputPort
           annotation (Placement(transformation(extent={{90,50},{110,70}})));
         RealTimeCoordinationLibrary.Mailbox activationRejected(nIn=1, nOut=1) annotation (
             Placement(transformation(
@@ -8562,10 +8547,7 @@ The corresponding Realtime Statechart is shown in the following figure: </p>
               rotation=0,
               origin={-99,85})));
         RealTimeCoordinationLibrary.MessageInterface.InputDelegationPort
-          activationRejectedInputPort(
-          redeclare Integer integers[0] "integers[0]",
-          redeclare Boolean booleans[0] "booelans[0]",
-          redeclare Real reals[0] "reals[0]")
+          activationRejectedInputPort
           annotation (Placement(transformation(extent={{-110,52},{-90,72}})));
         RealTimeCoordinationLibrary.Transition T1(use_firePort=true,
           afterTime=0.1,
@@ -8583,16 +8565,10 @@ The corresponding Realtime Statechart is shown in the following figure: </p>
               rotation=180,
               origin={-100,-16})));
         RealTimeCoordinationLibrary.MessageInterface.InputDelegationPort
-          actiavtionAcceptedInputPort(
-          redeclare Integer integers[0] "integers[0]",
-          redeclare Boolean booleans[0] "booelans[0]",
-          redeclare Real reals[0] "reals[0]")
+          actiavtionAcceptedInputPort
           annotation (Placement(transformation(extent={{-110,-50},{-90,-30}})));
         RealTimeCoordinationLibrary.MessageInterface.OutputDelegationPort
-          deactivationOutputPort(
-          redeclare Integer integers[0] "integers[0]",
-          redeclare Boolean booleans[0] "booelans[0]",
-          redeclare Real reals[0] "reals[0]")
+          deactivationOutputPort
           annotation (Placement(transformation(extent={{92,4},{112,24}})));
         RealTimeCoordinationLibrary.Message deactivation(nIn=1) annotation (Placement(
               transformation(
@@ -14292,6 +14268,228 @@ Two bebots drive in a line, so there is a RearBebot and a FrontBebot. So that no
 </html>"));
         end FinalSystemMain;
       end Distance_Sensor;
+
+      package Velocity_Observation
+        model Bebot
+
+          parameter Integer nrOfTrackSections= 1 annotation(Dialog(__Dymola_connectorSizing=true), HideResult=true);
+
+          Observer observer[nrOfTrackSections]
+            annotation (Placement(transformation(extent={{-8,28},{18,48}})));
+          MessageInterface.InputDelegationPort In_Limit_Violated[nrOfTrackSections](
+            redeclare Integer integers[0] "integers[0]",
+            redeclare Boolean booleans[0] "booelans[0]",
+            redeclare Real reals[0] "reals[0]")
+            annotation (Placement(transformation(extent={{-110,34},{-90,54}})));
+          MessageInterface.InputDelegationPort In_Limit_Redeemed[nrOfTrackSections](
+            redeclare Integer integers[0] "integers[0]",
+            redeclare Boolean booleans[0] "booelans[0]",
+            redeclare Real reals[0] "reals[0]")
+            annotation (Placement(transformation(extent={{92,36},{112,56}})));
+          Modelica.Blocks.Interfaces.RealInput accelerationOfBebot
+            annotation (Placement(transformation(extent={{-126,-46},{-86,-6}})));
+          Modelica.Blocks.Interfaces.RealOutput velocityOfBebot
+            annotation (Placement(transformation(extent={{96,-36},{124,-8}})));
+        Boolean breaking;
+
+        Integer currentTrackSection;
+        Integer counter;
+        algorithm
+           when sample(0,1) then
+            counter :=counter + 1;
+          end when;
+
+        for i in 1:nrOfTrackSections loop
+            if not observer[i].LimitRedeemed.active and currentTrackSection == i then
+               breaking :=true; // if the limit of the currentTrackSection is violated, start breaking
+            else
+               breaking :=false;   // if the limit is not violated, accelerate as the Bebots likes
+            end if;
+        end for;
+
+        equation
+          if breaking then
+            der(velocityOfBebot) = -5;
+          else
+            der(velocityOfBebot) = accelerationOfBebot;
+          end if;
+
+          currentTrackSection = mod(counter, nrOfTrackSections);
+
+          for j in 1:nrOfTrackSections loop
+            connect(observer[j].In_LimitRedeemed, In_Limit_Redeemed[j]) annotation (Line(
+              points={{18,41.2},{59,41.2},{59,46},{102,46}},
+              color={0,0,255},
+              smooth=Smooth.None));
+            connect(observer[j].In_LimitViolated, In_Limit_Violated[j]) annotation (Line(
+              points={{-8.2,41.4},{-53.1,41.4},{-53.1,44},{-100,44}},
+              color={0,0,255},
+              smooth=Smooth.None));
+          end for;
+          annotation (Diagram(graphics));
+
+        end Bebot;
+
+        model TrackSectionControl
+
+        parameter Real toleranceOfSpeedLimit = 0.2;
+
+        parameter Real worktime = 0.1;
+        parameter Real speedLimitOfTrackSection = 10
+            "The speed limit of the track section that may not be violated due to safety conditions";
+
+          Provider provider(
+            tolerance=toleranceOfSpeedLimit,
+            worktime=worktime,
+            limit=speedLimitOfTrackSection)
+            annotation (Placement(transformation(extent={{-18,60},{26,88}})));
+          MessageInterface.OutputDelegationPort LimitOK(
+            redeclare Integer integers[0] "integers[0]",
+            redeclare Boolean booleans[0] "booelans[0]",
+            redeclare Real reals[0] "reals[0]")
+            annotation (Placement(transformation(extent={{90,64},{110,84}})));
+          MessageInterface.OutputDelegationPort LimitViolated(
+            redeclare Integer integers[0] "integers[0]",
+            redeclare Boolean booleans[0] "booelans[0]",
+            redeclare Real reals[0] "reals[0]")
+            annotation (Placement(transformation(extent={{-110,66},{-90,86}})));
+          Modelica.Blocks.Interfaces.RealInput velocityOfBebot annotation (Placement(
+                transformation(
+                extent={{-20,-20},{20,20}},
+                rotation=270,
+                origin={-40,108})));
+        equation
+          connect(LimitViolated, provider.Out_Limit_Violated) annotation (Line(
+              points={{-100,76},{-60,76},{-60,74.6222},{-18.3143,74.6222}},
+              color={0,0,0},
+              smooth=Smooth.None));
+          connect(provider.Out_LimitRedeemed, LimitOK) annotation (Line(
+              points={{26,74},{100,74}},
+              color={0,0,0},
+              smooth=Smooth.None));
+          connect(velocityOfBebot, provider.currentVelocity) annotation (Line(
+              points={{-40,108},{-40,83.0222},{-18.9429,83.0222}},
+              color={0,0,127},
+              smooth=Smooth.None));
+          annotation (Diagram(graphics));
+        end TrackSectionControl;
+
+        model Provider
+          extends
+            CoordinationPatternRepository.CoordinationPattern.Limit_Observation.Provider(
+            T1(condition=currentVelocity > limit),
+            T3(condition=currentVelocity <= limit),
+            T2(condition=currentVelocity <= limit - tolerance),
+            T4(condition=currentVelocity > limit + tolerance),
+            Out_Limit_Violated(
+              redeclare Integer integers[0] "integers[0]",
+              redeclare Boolean booleans[0] "booelans[0]",
+              redeclare Real reals[0] "reals[0]"),
+            Out_LimitRedeemed(
+              redeclare Integer integers[0] "integers[0]",
+              redeclare Boolean booleans[0] "booelans[0]",
+              redeclare Real reals[0] "reals[0]"));
+            parameter Real limit;
+            parameter Real tolerance;
+
+          Modelica.Blocks.Interfaces.RealInput currentVelocity annotation (
+              Placement(transformation(extent={{-186,108},{-146,148}})));
+          annotation (Diagram(coordinateSystem(preserveAspectRatio=true, extent
+                  ={{-160,-20},{120,160}}), graphics));
+        end Provider;
+
+        model Observer
+          extends
+            CoordinationPatternRepository.CoordinationPattern.Limit_Observation.Observer(
+            LimitViolated(use_activePort=false),
+            LimitRedeemed(use_activePort=false),
+            In_LimitViolated(
+              redeclare Integer integers[0] "integers[0]",
+              redeclare Boolean booleans[0] "booelans[0]",
+              redeclare Real reals[0] "reals[0]"),
+            In_LimitRedeemed(
+              redeclare Integer integers[0] "integers[0]",
+              redeclare Boolean booleans[0] "booelans[0]",
+              redeclare Real reals[0] "reals[0]"));
+          annotation (Diagram(coordinateSystem(preserveAspectRatio=true, extent
+                  ={{-140,-100},{120,100}}), graphics));
+        end Observer;
+
+        model FinalSystemMain
+
+          TrackSectionControl trackSectionControl(
+            toleranceOfSpeedLimit=0.1,
+            speedLimitOfTrackSection=5,
+            worktime=1)
+            annotation (Placement(transformation(extent={{-54,-4},{-34,16}})));
+          Bebot bebot(nrOfTrackSections=3)
+            annotation (Placement(transformation(extent={{-50,64},{-30,84}})));
+          TrackSectionControl trackSectionControl1(toleranceOfSpeedLimit=0.5, worktime=1)
+            annotation (Placement(transformation(extent={{48,-30},{68,-10}})));
+          TrackSectionControl trackSectionControl2(
+            toleranceOfSpeedLimit=0,
+            worktime=0.1,
+            speedLimitOfTrackSection=3) annotation (Placement(transformation(
+                extent={{10,-10},{-10,10}},
+                rotation=90,
+                origin={98,80})));
+          Modelica.Blocks.Sources.Ramp ramp(
+            height=6,
+            duration=3,
+            offset=1) annotation (Placement(transformation(extent={{-94,42},{-74,62}})));
+        equation
+          connect(bebot.velocityOfBebot, trackSectionControl.velocityOfBebot)
+            annotation (Line(
+              points={{-29,71.8},{-29,24.9},{-48,24.9},{-48,16.8}},
+              color={0,0,127},
+              smooth=Smooth.None));
+          connect(bebot.velocityOfBebot, trackSectionControl1.velocityOfBebot)
+            annotation (Line(
+              points={{-29,71.8},{-29,30.9},{54,30.9},{54,-9.2}},
+              color={0,0,127},
+              smooth=Smooth.None));
+          connect(bebot.velocityOfBebot, trackSectionControl2.velocityOfBebot)
+            annotation (Line(
+              points={{-29,71.8},{-29,74},{86,74},{87.2,84}},
+              color={0,0,127},
+              smooth=Smooth.None));
+          connect(ramp.y, bebot.accelerationOfBebot) annotation (Line(
+              points={{-73,52},{-66,52},{-66,71.4},{-50.6,71.4}},
+              color={0,0,127},
+              smooth=Smooth.None));
+          connect(trackSectionControl.LimitViolated, bebot.In_Limit_Violated[1])
+            annotation (Line(
+              points={{-54,13.6},{-54,77.7333},{-50,77.7333}},
+              color={0,0,0},
+              smooth=Smooth.None));
+          connect(trackSectionControl.LimitOK, bebot.In_Limit_Redeemed[1]) annotation (
+              Line(
+              points={{-34,13.4},{-18,14},{-14,77.9333},{-29.8,77.9333}},
+              color={0,0,0},
+              smooth=Smooth.None));
+          connect(trackSectionControl1.LimitViolated, bebot.In_Limit_Violated[2])
+            annotation (Line(
+              points={{48,-12.4},{-100,-12.4},{-100,78.4},{-50,78.4}},
+              color={0,0,0},
+              smooth=Smooth.None));
+          connect(trackSectionControl1.LimitOK, bebot.In_Limit_Redeemed[2]) annotation (
+             Line(
+              points={{68,-12.6},{84,-12.6},{84,78.6},{-29.8,78.6}},
+              color={0,0,0},
+              smooth=Smooth.None));
+          connect(trackSectionControl2.LimitViolated, bebot.In_Limit_Violated[3])
+            annotation (Line(
+              points={{90.4,90},{-72,90},{-72,79.0667},{-50,79.0667}},
+              color={0,0,0},
+              smooth=Smooth.None));
+          connect(trackSectionControl2.LimitOK, bebot.In_Limit_Redeemed[3]) annotation (
+             Line(
+              points={{90.6,70},{28,70},{28,79.2667},{-29.8,79.2667}},
+              color={0,0,0},
+              smooth=Smooth.None));
+          annotation (Diagram(graphics));
+        end FinalSystemMain;
+      end Velocity_Observation;
     end Limit_Observation;
 
     package Fail_Safe_Delegation
@@ -14946,7 +15144,7 @@ Two Bebots drive in a line, so one is in front, namely the \"FrontBebot\", and t
       end Guard;
 
       model Bebot
-      parameter Integer nrOfTrackSections = 1;
+      parameter Integer nrOfTrackSections = 1 annotation(Dialog(__Dymola_connectorSizing=true), HideResult=true);
 
       Integer currentTrackSection(start = 0);
       Boolean stopped;
@@ -14966,11 +15164,15 @@ Two Bebots drive in a line, so one is in front, namely the \"FrontBebot\", and t
         MessageInterface.InputDelegationPort delegationPortsBlocked[nrOfTrackSections](
           redeclare Integer integers[0] "integers[0]",
           redeclare Boolean booleans[0] "booelans[0]",
-          redeclare Real reals[0] "reals[0]");
+          redeclare Real reals[0] "reals[0]")
+                                             annotation (Placement(transformation(extent={{90,52},
+                  {110,72}})));
          MessageInterface.InputDelegationPort delegationPortsFree[nrOfTrackSections](
           redeclare Integer integers[0] "integers[0]",
           redeclare Boolean booleans[0] "booelans[0]",
-          redeclare Real reals[0] "reals[0]");
+          redeclare Real reals[0] "reals[0]")
+                                             annotation (Placement(transformation(extent={{90,0},{
+                  110,20}})));
 
       algorithm
         when sample(0, 1) and not stopped then
@@ -14979,7 +15181,7 @@ Two Bebots drive in a line, so one is in front, namely the \"FrontBebot\", and t
          currentTrackSection :=mod(counter, nrOfTrackSections) +1;
          stopped := false;
          for i in 1:nrOfTrackSections loop
-         if ( currentTrackSection == i and executors[i].blocked) then
+         if ( currentTrackSection == mod(i-1, nrOfTrackSections) and executors[i].blocked) then
              //stopped :=stopped or executors[i].blocked;
              stopped := true;
          end if;
@@ -15141,7 +15343,7 @@ Two Bebots drive in a line, so one is in front, namely the \"FrontBebot\", and t
       model FinalSystemMain
 
         Bebot bebot(nrOfTrackSections=2)
-          annotation (Placement(transformation(extent={{-18,42},{-4,56}})));
+          annotation (Placement(transformation(extent={{-20,44},{-6,58}})));
         TrackSectionControl section1 annotation (Placement(transformation(
               extent={{-10,-10},{10,10}},
               rotation=270,
@@ -15157,8 +15359,9 @@ Two Bebots drive in a line, so one is in front, namely the \"FrontBebot\", and t
               extent={{-10,-10},{10,10}},
               rotation=90,
               origin={22,-30})));
-        Modelica.Blocks.Sources.BooleanPulse accidentOnSection1(period=2, width=50,
-          startTime=0)
+        Modelica.Blocks.Sources.BooleanPulse accidentOnSection1(          width=50,
+          startTime=0,
+          period=1.5)
           annotation (Placement(transformation(
               extent={{-10,-10},{10,10}},
               rotation=90,
@@ -15166,10 +15369,10 @@ Two Bebots drive in a line, so one is in front, namely the \"FrontBebot\", and t
       equation
          //section1.
 
-        connect(bebot.delegationPortsBlocked[1], section1.blocked);
-        connect(bebot.delegationPortsFree[1], section1.free);
-        connect(bebot.delegationPortsBlocked[2], section2.blocked);
-        connect(bebot.delegationPortsFree[2], section2.free);
+        /*connect(bebot.delegationPortsBlocked[1], section1.blocked);
+  connect(bebot.delegationPortsFree[1], section1.free);
+  connect(bebot.delegationPortsBlocked[2], section2.blocked);
+  connect(bebot.delegationPortsFree[2], section2.free);*/
 
         connect(accidentOnSection2.y, section2.accidentOccured) annotation (Line(
             points={{22,-19},{20,-2},{20,23.7},{20.9,23.7}},
@@ -15178,6 +15381,24 @@ Two Bebots drive in a line, so one is in front, namely the \"FrontBebot\", and t
         connect(accidentOnSection1.y, section1.accidentOccured) annotation (Line(
             points={{-28,-19},{0,-19},{0,23.7},{0.9,23.7}},
             color={255,0,255},
+            smooth=Smooth.None));
+        connect(bebot.delegationPortsBlocked[1], section1.blocked) annotation (
+            Line(
+            points={{-6,54.99},{-6,24.2},{-9.4,24.2}},
+            color={0,0,255},
+            smooth=Smooth.None));
+        connect(section1.free, bebot.delegationPortsFree[1]) annotation (Line(
+            points={{-2.6,24},{-2.6,36},{-6,36},{-6,51.35}},
+            color={0,0,0},
+            smooth=Smooth.None));
+        connect(section2.blocked, bebot.delegationPortsBlocked[2]) annotation (
+            Line(
+            points={{10.6,24.2},{10.6,58.1},{-6,58.1},{-6,55.69}},
+            color={0,0,0},
+            smooth=Smooth.None));
+        connect(section2.free, bebot.delegationPortsFree[2]) annotation (Line(
+            points={{17.4,24},{22,24},{22,52.05},{-6,52.05}},
+            color={0,0,0},
             smooth=Smooth.None));
         annotation (Diagram(graphics), Documentation(info="<html>
 <p>A bebot is driving on track sections that are ordered in a circle. Every track section is controlled by a TrackSectionControl. The TrackSectionControl and the bebot can communicate via messages. </p>
@@ -15191,7 +15412,36 @@ Two Bebots drive in a line, so one is in front, namely the \"FrontBebot\", and t
       model Slave
         extends
           CoordinationPatternRepository.CoordinationPattern.SynchronizedCollaboration.Collaboration_Slave(
-            CollaborationActive(use_activePort=true));
+            CollaborationActive(use_activePort=true),
+          activationProposal(numberOfMessageReals=1),
+          T1(numberOfMessageReals=1),
+          activationProposalInputPort(
+            redeclare Integer integers[0] "integers[0]",
+            redeclare Boolean booleans[0] "booelans[0]",
+            redeclare Real reals[1] "reals[1]"),
+          deactivationInputPort(
+            redeclare Integer integers[0] "integers[0]",
+            redeclare Boolean booleans[0] "booelans[0]",
+            redeclare Real reals[0] "reals[0]"),
+          activationAcceptedOutputPort(
+            redeclare Integer integers[0] "integers[0]",
+            redeclare Boolean booleans[0] "booelans[0]",
+            redeclare Real reals[0] "reals[0]"),
+          activationRejectedOutputPort(
+            redeclare Integer integers[0] "integers[0]",
+            redeclare Boolean booleans[0] "booelans[0]",
+            redeclare Real reals[0] "reals[0]"));
+        Modelica.Blocks.Interfaces.RealOutput accelerationOfMaster annotation (
+            Placement(transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=270,
+              origin={10,-106})));
+
+      equation
+        when T1.fire then
+          accelerationOfMaster =  T1.transition_input_port[1].reals[1];
+        end when;
+
         annotation (Diagram(graphics));
       end Slave;
 
@@ -15199,9 +15449,36 @@ Two Bebots drive in a line, so one is in front, namely the \"FrontBebot\", and t
         extends
           CoordinationPatternRepository.CoordinationPattern.SynchronizedCollaboration.Collaboration_Master(
            T1(use_after=true, afterTime=0.1), CollaborationActive(
-              use_activePort=true));
+              use_activePort=true),
+          activationProposal(numberOfMessageReals=1),
+          activationRejectedInputPort(
+            redeclare Integer integers[0] "integers[0]",
+            redeclare Boolean booleans[0] "booelans[0]",
+            redeclare Real reals[0] "reals[0]"),
+          activationProposalOutputPort(
+            redeclare Integer integers[0] "integers[0]",
+            redeclare Boolean booleans[0] "booelans[0]",
+            redeclare Real reals[1] "reals[1]"),
+          actiavtionAcceptedInputPort(
+            redeclare Integer integers[0] "integers[0]",
+            redeclare Boolean booleans[0] "booelans[0]",
+            redeclare Real reals[0] "reals[0]"),
+          deactivationOutputPort(
+            redeclare Integer integers[0] "integers[0]",
+            redeclare Boolean booleans[0] "booelans[0]",
+            redeclare Real reals[0] "reals[0]"));
+        Modelica.Blocks.Interfaces.RealInput accelerationOfMaster annotation (
+            Placement(transformation(
+              extent={{-20,-20},{20,20}},
+              rotation=270,
+              origin={46,106})));
+      equation
+        connect(accelerationOfMaster, activationProposal.u_reals[1])
+          annotation (Line(
+            points={{46,106},{36,106},{36,60},{49,60}},
+            color={0,0,127},
+            smooth=Smooth.None));
         annotation (Diagram(graphics));
-
       end Master;
 
       model Bebot
@@ -15216,13 +15493,13 @@ Two Bebots drive in a line, so one is in front, namely the \"FrontBebot\", and t
                          isFront
           annotation (Placement(transformation(extent={{-2,-24},{18,-4}})));
 
-        Modelica.Blocks.Interfaces.BooleanInput startTransmission if isFront annotation (
+        Modelica.Blocks.Interfaces.BooleanInput startConvoy if       isFront annotation (
             Placement(transformation(
               extent={{-14,-14},{14,14}},
               rotation=270,
               origin={-14,104})));
 
-        Modelica.Blocks.Interfaces.BooleanInput stopTransmission if isFront annotation (
+        Modelica.Blocks.Interfaces.BooleanInput stopConvoy if       isFront annotation (
             Placement(transformation(
               extent={{-14,-14},{14,14}},
               rotation=270,
@@ -15242,7 +15519,7 @@ Two Bebots drive in a line, so one is in front, namely the \"FrontBebot\", and t
         MessageInterface.OutputDelegationPort activationProposal(
           redeclare Integer integers[0] "integers[0]",
           redeclare Boolean booleans[0] "booelans[0]",
-          redeclare Real reals[0] "reals[0]") if
+          redeclare Real reals[1] "reals[1]") if
                                                 isFront
           annotation (Placement(transformation(extent={{90,-44},{110,-24}})));
         MessageInterface.OutputDelegationPort deactivationProposal(
@@ -15252,19 +15529,21 @@ Two Bebots drive in a line, so one is in front, namely the \"FrontBebot\", and t
          annotation (Placement(transformation(extent={{92,-98},{112,-78}})));
 
       // components of rear e.g. isFront = false:
-        Modelica.Blocks.Interfaces.BooleanInput ready if not isFront annotation (Placement(
+        Modelica.Blocks.Interfaces.BooleanInput readyForConvoy if
+                                                         not isFront annotation (Placement(
               transformation(
               extent={{-14,-14},{14,14}},
               rotation=270,
               origin={-48,104})));
 
         Slave slave(evaluationTime=evaluationTime) if
-                       not isFront annotation (Placement(transformation(extent={{-4,66},{16,86}})));
+                       not isFront annotation (Placement(transformation(extent={{0,66},{
+                  20,86}})));
 
         MessageInterface.InputDelegationPort activation(
           redeclare Integer integers[0] "integers[0]",
           redeclare Boolean booleans[0] "booelans[0]",
-          redeclare Real reals[0] "reals[0]") if
+          redeclare Real reals[1] "reals[1]") if
              not isFront
           annotation (Placement(transformation(extent={{-110,76},{-90,96}})));
 
@@ -15286,38 +15565,48 @@ Two Bebots drive in a line, so one is in front, namely the \"FrontBebot\", and t
           redeclare Boolean booleans[0] "booelans[0]",
           redeclare Real reals[0] "reals[0]") if
              not isFront
-          annotation (Placement(transformation(extent={{90,16},{110,36}})));
-
+          annotation (Placement(transformation(extent={{92,16},{112,36}})));
+      Modelica.Blocks.Interfaces.RealOutput  localAcceleration;
         Modelica.Blocks.Interfaces.BooleanOutput convoy
           annotation (Placement(transformation(extent={{-17,-17},{17,17}},
               rotation=270,
-              origin={3,-95})));
+              origin={7,-107})));
         Modelica.Blocks.Interfaces.RealInput acceleration
           annotation (Placement(transformation(extent={{-122,-10},{-92,20}})));
         Modelica.Blocks.Interfaces.RealOutput velocity
-          annotation (Placement(transformation(extent={{92,-10},{112,10}})));
+          annotation (Placement(transformation(extent={{98,-8},{118,12}})));
       equation
 
-        //if convoy then
+        if not convoy then
+          der(velocity) = acceleration;
+        else
+          der(velocity) = localAcceleration;
+        end if;
+
+        if isFront then
+          connect(localAcceleration, acceleration);
+        else
+          connect(localAcceleration, slave.accelerationOfMaster);
+        end if;
 
         connect(convoy, master.CollaborationActive.activePort);
         connect(convoy, slave.CollaborationActive.activePort);
         connect(slave.activationProposalInputPort, activation) annotation (Line(
-            points={{-4,79.4},{-72,79.4},{-72,86},{-100,86}},
+            points={{0,79.4},{-72,79.4},{-72,86},{-100,86}},
             color={0,0,255},
             smooth=Smooth.None));
         connect(slave.deactivationInputPort, deactivation) annotation (Line(
-            points={{-4,77},{-70,77},{-70,38},{-98,38}},
+            points={{0,77},{-70,77},{-70,38},{-98,38}},
             color={0,0,255},
             smooth=Smooth.None));
         connect(slave.activationRejectedOutputPort, activationRejected) annotation (
             Line(
-            points={{16.2,81.2},{55.1,81.2},{55.1,82},{98,82}},
+            points={{20.2,81.2},{55.1,81.2},{55.1,82},{98,82}},
             color={0,0,0},
             smooth=Smooth.None));
         connect(slave.activationAcceptedOutputPort, activationAccepted) annotation (
             Line(
-            points={{16.2,76.8},{57.1,76.8},{57.1,26},{100,26}},
+            points={{20.2,76.8},{57.1,76.8},{57.1,26},{102,26}},
             color={0,0,0},
             smooth=Smooth.None));
         connect(master.activationRejectedInputPort, activationRejectedIn) annotation (
@@ -15339,17 +15628,22 @@ Two Bebots drive in a line, so one is in front, namely the \"FrontBebot\", and t
             points={{18,-8},{54,-8},{54,-34},{100,-34}},
             color={0,0,0},
             smooth=Smooth.None));
-        connect(startTransmission, master.startTransmission) annotation (Line(
+        connect(startConvoy, master.startTransmission)       annotation (Line(
             points={{-14,104},{-14,60},{0,60},{0,-3.6},{1,-3.6}},
             color={255,0,255},
             smooth=Smooth.None));
-        connect(stopTransmission, master.stopTransmission) annotation (Line(
+        connect(stopConvoy, master.stopTransmission)       annotation (Line(
             points={{46,104},{46,60},{6,60},{6,-3.6},{6.2,-3.6}},
             color={255,0,255},
             smooth=Smooth.None));
-        connect(ready, slave.ready) annotation (Line(
-            points={{-48,104},{-48,86.4},{-1.2,86.4}},
+        connect(readyForConvoy, slave.ready)
+                                    annotation (Line(
+            points={{-48,104},{-48,86.4},{2.8,86.4}},
             color={255,0,255},
+            smooth=Smooth.None));
+        connect(acceleration, master.accelerationOfMaster) annotation (Line(
+            points={{-107,5},{12.5,5},{12.5,-3.4},{12.6,-3.4}},
+            color={0,0,127},
             smooth=Smooth.None));
         annotation (Diagram(graphics), Icon(graphics={
               Ellipse(
@@ -15382,62 +15676,106 @@ Two Bebots drive in a line, so one is in front, namely the \"FrontBebot\", and t
           isFront=true,
           evaluationTime=0.1,
           timeout=0.2)
-          annotation (Placement(transformation(extent={{14,36},{34,56}})));
-        Modelica.Blocks.Sources.BooleanStep stop(startTime=1) annotation (
+          annotation (Placement(transformation(extent={{78,44},{98,64}})));
+        Modelica.Blocks.Sources.BooleanStep stopConvoy(startTime=5)
+                                                              annotation (
             Placement(transformation(
               extent={{-10,-10},{10,10}},
               rotation=270,
               origin={42,94})));
-        Modelica.Blocks.Sources.BooleanStep start(startTime=0.1) annotation (
+        Modelica.Blocks.Sources.BooleanStep startConvoy(startTime=0.5)
+                                                                 annotation (
             Placement(transformation(
               extent={{-10,-10},{10,10}},
               rotation=270,
               origin={10,94})));
-        Modelica.Blocks.Sources.BooleanStep ready(startTime=0.5) annotation (
+        Modelica.Blocks.Sources.BooleanStep readyForConvoy(startTime=0.2)
+                                                                 annotation (
             Placement(transformation(
               extent={{-10,-10},{10,10}},
               rotation=270,
               origin={-60,94})));
+        Examples.Application.Parts.Robot_V3 robot_V3_1
+          annotation (Placement(transformation(extent={{-56,-56},{-26,-36}})));
+        Examples.Application.Parts.Robot_V3 robot_V3_2(xstart_wmr=1)
+          annotation (Placement(transformation(extent={{44,-58},{74,-38}})));
+        Modelica.Blocks.Sources.Ramp ramp(
+          duration=1,
+          offset=6,
+          height=4)
+          annotation (Placement(transformation(extent={{-150,42},{-130,62}})));
+        Modelica.Blocks.Sources.Constant const(k=3) annotation (Placement(
+              transformation(
+              extent={{-10,-10},{10,10}},
+              rotation=-90,
+              origin={140,78})));
+        inner Modelica.Mechanics.MultiBody.World world(label2="z", n={0,0,-1})
+          annotation (Placement(transformation(extent={{-50,-78},{-40,-68}})));
       equation
-        connect(start.y, bebotFront.startTransmission)
+        connect(startConvoy.y, bebotFront.startConvoy)
                                                    annotation (Line(
-            points={{10,83},{10,56.4},{22.6,56.4}},
+            points={{10,83},{10,64.4},{86.6,64.4}},
             color={255,0,255},
             smooth=Smooth.None));
-        connect(stop.y, bebotFront.stopTransmission)
+        connect(stopConvoy.y, bebotFront.stopConvoy)
                                                  annotation (Line(
-            points={{42,83},{42,56.4},{28.6,56.4}},
+            points={{42,83},{42,64.4},{92.6,64.4}},
             color={255,0,255},
             smooth=Smooth.None));
         connect(bebotFront.activationProposal, bebotRear.activation)
                                                              annotation (Line(
-            points={{34,42.6},{58,42.6},{58,62},{-68,62},{-68,52.6}},
+            points={{98,50.6},{106,50.6},{106,70},{-68,70},{-68,52.6}},
             color={0,0,0},
             smooth=Smooth.None));
         connect(bebotRear.deactivation, bebotFront.deactivationProposal)
                                                                  annotation (
             Line(
-            points={{-67.8,47.8},{-94,47.8},{-94,6},{68,6},{68,37.2},{34.2,37.2}},
+            points={{-67.8,47.8},{-102,47.8},{-102,-2},{108,-2},{108,45.2},{98.2,45.2}},
             color={0,0,255},
             smooth=Smooth.None));
 
         connect(bebotFront.activationAcceptedIn, bebotRear.activationAccepted)
           annotation (Line(
-            points={{14.2,37.2},{-16.9,37.2},{-16.9,46.6},{-48,46.6}},
+            points={{78.2,45.2},{48,48},{48,46},{-24,48},{-24,46.6},{-47.8,46.6}},
             color={0,0,255},
             smooth=Smooth.None));
         connect(bebotRear.activationRejected, bebotFront.activationRejectedIn)
           annotation (Line(
-            points={{-48.2,52.2},{2.9,52.2},{2.9,43.8},{14.2,43.8}},
+            points={{-48.2,52.2},{4.9,52.2},{4.9,51.8},{78.2,51.8}},
             color={0,0,0},
             smooth=Smooth.None));
-        connect(ready.y, bebotRear.ready) annotation (Line(
+        connect(readyForConvoy.y, bebotRear.readyForConvoy)
+                                                   annotation (Line(
             points={{-60,83},{-60,54.4},{-62.8,54.4}},
             color={255,0,255},
             smooth=Smooth.None));
+        connect(bebotRear.velocity, robot_V3_1.omegaL_des) annotation (Line(
+            points={{-47.2,44.2},{-52,44.2},{-52,-46},{-55,-46}},
+            color={0,0,127},
+            smooth=Smooth.None));
+        connect(bebotRear.velocity, robot_V3_1.omegaR_des) annotation (Line(
+            points={{-47.2,44.2},{-24,44.2},{-24,-46},{-27,-46}},
+            color={0,0,127},
+            smooth=Smooth.None));
+        connect(bebotFront.velocity, robot_V3_2.omegaL_des) annotation (Line(
+            points={{98.8,54.2},{32,54.2},{32,-48},{45,-48}},
+            color={0,0,127},
+            smooth=Smooth.None));
+        connect(bebotFront.velocity, robot_V3_2.omegaR_des) annotation (Line(
+            points={{98.8,54.2},{72,54.2},{72,-48},{73,-48}},
+            color={0,0,127},
+            smooth=Smooth.None));
+        connect(ramp.y, bebotRear.acceleration) annotation (Line(
+            points={{-129,52},{-86,52},{-86,44.5},{-68.7,44.5}},
+            color={0,0,127},
+            smooth=Smooth.None));
+        connect(const.y, bebotFront.acceleration) annotation (Line(
+            points={{140,67},{140,54.5},{77.3,54.5}},
+            color={0,0,127},
+            smooth=Smooth.None));
         annotation (Icon(graphics), Diagram(graphics),
           Documentation(info="<html>
-Two bebots drive in a line. The front bebot asks wether they should form a convoy. If the rear bebot is ready, they join an form a convoy, else if it is not ready, the front rebot will repeat its request.
+Two bebots drive in a line. The front bebot asks wether they should form a convoy. If the rear bebot is ready, they join an form a convoy, else if it is not ready, the front rebot will repeat its request later on, as long as the variable startTransmission equals true.
 </html>"));
       end FinalSystemMain;
     end Synchronized_Collaboration;
