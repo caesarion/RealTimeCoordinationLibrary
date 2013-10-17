@@ -8170,7 +8170,7 @@ end UsersGuide;
 
       parameter Real timeout;
 
-        RealTimeCoordinationLibrary.Step Inactive(nIn=3,
+        replaceable RealTimeCoordinationLibrary.Step Inactive(nIn=3,
           initialStep=true,
           nOut=2)
           annotation (Placement(transformation(extent={{-20,50},{-12,58}})));
@@ -8204,7 +8204,7 @@ end UsersGuide;
           annotation (Placement(transformation(extent={{-112,-18},{-92,2}})));
         RealTimeCoordinationLibrary.Message message(nIn=2)
           annotation (Placement(transformation(extent={{-72,-86},{-52,-66}})));
-        RealTimeCoordinationLibrary.Transition T1(
+        replaceable RealTimeCoordinationLibrary.Transition T1(
           use_messageReceive=true,
           numberOfMessageReceive=1,
           use_after=true,
@@ -8223,7 +8223,7 @@ end UsersGuide;
         RealTimeCoordinationLibrary.Transition T3(use_firePort=true,
           use_after=true,
           afterTime=0.1,
-          use_conditionPort=true)                                annotation (Placement(
+          use_conditionPort=false)                               annotation (Placement(
               transformation(
               extent={{4,-4},{-4,4}},
               rotation=180,
@@ -8279,13 +8279,6 @@ end UsersGuide;
               rotation=180,
               origin={6,-16})));
 
-        Modelica.Blocks.Interfaces.BooleanInput strike annotation (Placement(
-              transformation(
-              extent={{-11,-11},{11,11}},
-              rotation=270,
-              origin={-69,105})));
-        Modelica_StateGraph2.Blocks.MathBoolean.RisingEdge rising1
-          annotation (Placement(transformation(extent={{-110,66},{-102,74}})));
         RealTimeCoordinationLibrary.Transition T12 annotation (Placement(
               transformation(
               extent={{-4,-4},{4,4}},
@@ -8363,8 +8356,8 @@ end UsersGuide;
             color={255,0,255},
             smooth=Smooth.None));
         connect(clock.y, timeInvariantLessOrEqual.clockValue) annotation (Line(
-            points={{45,80},{50,80},{50,-28},{24,-28},{24,-28.56},{-2.6,-28.56},{-2.6,
-                -30.56}},
+            points={{45,80},{50,80},{50,-28},{24,-28},{24,-28.56},{-2.6,-28.56},
+                {-2.6,-30.56}},
             color={0,0,127},
             smooth=Smooth.None));
         connect(timeInvariantLessOrEqual.conditionPort, MyTurn.activePort)
@@ -8407,14 +8400,6 @@ end UsersGuide;
             smooth=Smooth.None));
         connect(T2.firePort, clock.u[4]) annotation (Line(
             points={{-36.2,8},{-50,8},{-50,77.45},{23.9,77.45}},
-            color={255,0,255},
-            smooth=Smooth.None));
-        connect(strike, rising1.u) annotation (Line(
-            points={{-69,105},{-69,91.5},{-111.2,91.5},{-111.2,70}},
-            color={255,0,255},
-            smooth=Smooth.None));
-        connect(rising1.y, T3.conditionPort) annotation (Line(
-            points={{-101.2,70},{-74,70},{-74,-12},{-69,-12}},
             color={255,0,255},
             smooth=Smooth.None));
         connect(T12.outPort, Inactive.inPort[3]) annotation (Line(
@@ -8523,9 +8508,9 @@ In order to distinguish between the two partners in this section, they are calle
               origin={-28,62})));
         RealTimeCoordinationLibrary.Transition T2(use_firePort=true,
           use_after=true,
-          condition=ready,
           use_syncSend=false,
-          afterTime=1e-8)
+          afterTime=1e-8,
+          condition=true)
           annotation (Placement(transformation(extent={{-30,-4},{-22,4}})));
         RealTimeCoordinationLibrary.Transition T3(use_messageReceive=true,
             numberOfMessageReceive=1,
@@ -8535,37 +8520,31 @@ In order to distinguish between the two partners in this section, they are calle
               extent={{-4,4},{4,-4}},
               rotation=0,
               origin={-58,8})));
-        RealTimeCoordinationLibrary.Mailbox activationProposal(nIn=1, nOut=1,
+        RealTimeCoordinationLibrary.Mailbox ProposalBox(
+          nIn=1,
+          nOut=1,
           numberOfMessageIntegers=0)
           annotation (Placement(transformation(extent={{-80,26},{-60,46}})));
-        RealTimeCoordinationLibrary.MessageInterface.InputDelegationPort
-          activationProposalInputPort
+        RealTimeCoordinationLibrary.MessageInterface.InputDelegationPort InProposal
           annotation (Placement(transformation(extent={{-110,24},{-90,44}})));
-        RealTimeCoordinationLibrary.MessageInterface.InputDelegationPort
-          deactivationInputPort
+        RealTimeCoordinationLibrary.MessageInterface.InputDelegationPort InDeact
           annotation (Placement(transformation(extent={{-110,0},{-90,20}})));
-        RealTimeCoordinationLibrary.Mailbox deactivation(nIn=1, nOut=1)
+        RealTimeCoordinationLibrary.Mailbox DeactBox(nIn=1, nOut=1)
           annotation (Placement(transformation(extent={{-88,-2},{-68,18}})));
-        RealTimeCoordinationLibrary.Message actiavtionAccepted(nIn=1)
+        RealTimeCoordinationLibrary.Message Accept(nIn=1)
           annotation (Placement(transformation(extent={{64,0},{84,20}})));
-        RealTimeCoordinationLibrary.MessageInterface.OutputDelegationPort
-          activationAcceptedOutputPort
-          annotation (Placement(transformation(extent={{92,-2},{112,18}})));
-        RealTimeCoordinationLibrary.MessageInterface.OutputDelegationPort
-          activationRejectedOutputPort
-          annotation (Placement(transformation(extent={{92,42},{112,62}})));
-        RealTimeCoordinationLibrary.Message activationRejected(nIn=1)
+        RealTimeCoordinationLibrary.MessageInterface.OutputDelegationPort OutAccept
+          annotation (Placement(transformation(extent={{92,-4},{112,16}})));
+        RealTimeCoordinationLibrary.MessageInterface.OutputDelegationPort OutReject
+          annotation (Placement(transformation(extent={{94,42},{114,62}})));
+        RealTimeCoordinationLibrary.Message Reject(nIn=1)
           annotation (Placement(transformation(extent={{42,72},{62,92}})));
-        Modelica.Blocks.Interfaces.BooleanInput ready annotation (Placement(
-              transformation(
-              extent={{-10,-10},{10,10}},
-              rotation=270,
-              origin={-72,104})));
-        RealTimeCoordinationLibrary.Transition T5(condition=not ready,
+        RealTimeCoordinationLibrary.Transition T5(
           use_conditionPort=false,
           use_after=true,
           use_firePort=true,
-          afterTime=1e-8)                                              annotation (
+          afterTime=1e-8,
+          condition=true)                                              annotation (
             Placement(transformation(
               extent={{4,-4},{-4,4}},
               rotation=180,
@@ -8603,38 +8582,38 @@ In order to distinguish between the two partners in this section, they are calle
             points={{-58,13},{-58,60},{-42,60},{-42,84},{-29,84}},
             color={0,0,0},
             smooth=Smooth.None));
-        connect(activationProposalInputPort, activationProposal.mailbox_input_port[1])
+        connect(InProposal, ProposalBox.mailbox_input_port[1])
           annotation (Line(
             points={{-100,34},{-88.5,34},{-88.5,35},{-79,35}},
             color={0,0,255},
             smooth=Smooth.None));
-        connect(activationProposal.mailbox_output_port[1], T1.transition_input_port[1])
+        connect(ProposalBox.mailbox_output_port[1], T1.transition_input_port[1])
           annotation (Line(
             points={{-61,35},{-32.02,35},{-32.02,60.04}},
             color={0,0,0},
             smooth=Smooth.None));
-        connect(deactivationInputPort, deactivation.mailbox_input_port[1])
+        connect(InDeact, DeactBox.mailbox_input_port[1])
           annotation (Line(
             points={{-100,10},{-94,10},{-94,7},{-87,7}},
             color={0,0,255},
             smooth=Smooth.None));
-        connect(deactivation.mailbox_output_port[1], T3.transition_input_port[1])
+        connect(DeactBox.mailbox_output_port[1], T3.transition_input_port[1])
           annotation (Line(
             points={{-69,7},{-69,7.5},{-62.9,7.5},{-62.9,5.88}},
             color={0,0,0},
             smooth=Smooth.None));
-        connect(T2.firePort, actiavtionAccepted.conditionPort[1]) annotation (Line(
+        connect(T2.firePort, Accept.conditionPort[1])             annotation (Line(
             points={{-21.8,0},{48,0},{48,0.4},{62,0.4}},
             color={255,0,255},
             smooth=Smooth.None));
-        connect(actiavtionAccepted.message_output_port, activationAcceptedOutputPort)
+        connect(Accept.message_output_port, OutAccept)
           annotation (Line(
-            points={{83,9},{82,9},{82,8},{102,8}},
+            points={{83,9},{82,9},{82,6},{102,6}},
             color={0,0,0},
             smooth=Smooth.None));
-        connect(activationRejected.message_output_port, activationRejectedOutputPort)
+        connect(Reject.message_output_port, OutReject)
           annotation (Line(
-            points={{61,81},{80.5,81},{80.5,52},{102,52}},
+            points={{61,81},{80.5,81},{80.5,52},{104,52}},
             color={0,0,0},
             smooth=Smooth.None));
         connect(EvaluatueProposal.outPort[2], T5.inPort) annotation (Line(
@@ -8645,7 +8624,7 @@ In order to distinguish between the two partners in this section, they are calle
             points={{-8,51},{-8,88},{-27,88},{-27,84}},
             color={0,0,0},
             smooth=Smooth.None));
-        connect(T5.firePort, activationRejected.conditionPort[1]) annotation (
+        connect(T5.firePort, Reject.conditionPort[1])             annotation (
             Line(
             points={{-3.8,46},{28,46},{28,72.4},{40,72.4}},
             color={255,0,255},
@@ -8718,9 +8697,9 @@ The corresponding Realtime Statechart is shown in the following figure: </p>
               rotation=0,
               origin={-60,-20})));
         RealTimeCoordinationLibrary.Transition T4(use_firePort=true,
-          condition=stopTransmission,
           afterTime=0.00001,
-          use_after=false)                 annotation (Placement(transformation(
+          use_after=false,
+          condition=true)                  annotation (Placement(transformation(
               extent={{-4,-4},{4,4}},
               rotation=180,
               origin={-80,28})));
@@ -8732,60 +8711,43 @@ The corresponding Realtime Statechart is shown in the following figure: </p>
               extent={{-4,-4},{4,4}},
               rotation=180,
               origin={-38,66})));
-        RealTimeCoordinationLibrary.Message activationProposal(nIn=1) annotation (Placement(
+        RealTimeCoordinationLibrary.Message Proposal(nIn=1)           annotation (Placement(
               transformation(
               extent={{-10,-10},{10,10}},
               rotation=0,
               origin={60,60})));
-        RealTimeCoordinationLibrary.MessageInterface.OutputDelegationPort
-          activationProposalOutputPort
+        RealTimeCoordinationLibrary.MessageInterface.OutputDelegationPort OutProposal
           annotation (Placement(transformation(extent={{90,50},{110,70}})));
-        RealTimeCoordinationLibrary.Mailbox activationRejected(nIn=1, nOut=1) annotation (
+        RealTimeCoordinationLibrary.Mailbox RejectBox(nIn=1, nOut=1)          annotation (
             Placement(transformation(
               extent={{-7,-5},{7,5}},
               rotation=0,
               origin={-99,85})));
-        RealTimeCoordinationLibrary.MessageInterface.InputDelegationPort
-          activationRejectedInputPort
+        RealTimeCoordinationLibrary.MessageInterface.InputDelegationPort InReject
           annotation (Placement(transformation(extent={{-110,52},{-90,72}})));
         RealTimeCoordinationLibrary.Transition T1(use_firePort=true,
           afterTime=0.1,
           use_after=false,
           use_syncSend=false,
-          condition=startTransmission and not stopTransmission)
-                                                              annotation (Placement(
+          condition=true)                                     annotation (Placement(
               transformation(
               extent={{-4,-4},{4,4}},
               rotation=0,
               origin={-62,50})));
-        RealTimeCoordinationLibrary.Mailbox activationAccepted(nIn=1, nOut=1) annotation (
+        RealTimeCoordinationLibrary.Mailbox AcceptBox(nIn=1, nOut=1)          annotation (
             Placement(transformation(
               extent={{10,10},{-10,-10}},
               rotation=180,
               origin={-100,-16})));
-        RealTimeCoordinationLibrary.MessageInterface.InputDelegationPort
-          actiavtionAcceptedInputPort
+        RealTimeCoordinationLibrary.MessageInterface.InputDelegationPort InAccept
           annotation (Placement(transformation(extent={{-110,-50},{-90,-30}})));
-        RealTimeCoordinationLibrary.MessageInterface.OutputDelegationPort
-          deactivationOutputPort
+        RealTimeCoordinationLibrary.MessageInterface.OutputDelegationPort OutDeact
           annotation (Placement(transformation(extent={{92,4},{112,24}})));
-        RealTimeCoordinationLibrary.Message deactivation(nIn=1) annotation (Placement(
+        RealTimeCoordinationLibrary.Message Deact(nIn=1)        annotation (Placement(
               transformation(
               extent={{-10,10},{10,-10}},
               rotation=180,
               origin={-104,38})));
-        Modelica.Blocks.Interfaces.BooleanInput startTransmission
-                                                         annotation (Placement(
-              transformation(
-              extent={{-12,-12},{12,12}},
-              rotation=270,
-              origin={-70,104})));
-        Modelica.Blocks.Interfaces.BooleanInput stopTransmission
-                                                        annotation (Placement(
-              transformation(
-              extent={{-12,-12},{12,12}},
-              rotation=270,
-              origin={-18,104})));
         RealTimeCoordinationLibrary.TimeElements.Clock Clock(nu=1)
           annotation (Placement(transformation(extent={{10,-10},{-10,10}},
               rotation=180,
@@ -8822,12 +8784,12 @@ The corresponding Realtime Statechart is shown in the following figure: </p>
             points={{-38,71},{-38,84},{-64,84},{-64,68},{-60.6667,68}},
             color={0,0,0},
             smooth=Smooth.None));
-        connect(activationProposal.message_output_port, activationProposalOutputPort)
+        connect(Proposal.message_output_port, OutProposal)
           annotation (Line(
             points={{69,59},{77.5,59},{77.5,60},{100,60}},
             color={0,0,0},
             smooth=Smooth.None));
-        connect(activationRejected.mailbox_input_port[1], activationRejectedInputPort)
+        connect(RejectBox.mailbox_input_port[1], InReject)
           annotation (Line(
             points={{-105.3,84.5},{-110,84.5},{-110,82},{-108,82},{-108,62},{-100,
                 62}},
@@ -8841,33 +8803,33 @@ The corresponding Realtime Statechart is shown in the following figure: </p>
             points={{-62,45},{-62,36}},
             color={0,0,0},
             smooth=Smooth.None));
-        connect(T1.firePort, activationProposal.conditionPort[1]) annotation (Line(
+        connect(T1.firePort, Proposal.conditionPort[1])           annotation (Line(
             points={{-57.8,50},{28,50},{28,50.4},{48,50.4}},
             color={255,0,255},
             smooth=Smooth.None));
-        connect(activationRejected.mailbox_output_port[1], T2.transition_input_port[1])
+        connect(RejectBox.mailbox_output_port[1], T2.transition_input_port[1])
           annotation (Line(
             points={{-92.7,84.5},{-86,84.5},{-86,84},{-84,84},{-84,84.12},{-82.9,
                 84.12}},
             color={0,0,0},
             smooth=Smooth.None));
-        connect(actiavtionAcceptedInputPort, activationAccepted.mailbox_input_port[1])
+        connect(InAccept, AcceptBox.mailbox_input_port[1])
           annotation (Line(
             points={{-100,-40},{-114,-40},{-114,-17},{-109,-17}},
             color={0,0,255},
             smooth=Smooth.None));
-        connect(T4.firePort, deactivation.conditionPort[1]) annotation (Line(
+        connect(T4.firePort, Deact.conditionPort[1])        annotation (Line(
             points={{-84.2,28},{-92,28},{-92,28.4}},
             color={255,0,255},
             smooth=Smooth.None));
-        connect(deactivation.message_output_port, deactivationOutputPort) annotation (
+        connect(Deact.message_output_port, OutDeact)                      annotation (
            Line(
             points={{-113,37},{-126,37},{-126,-90},{96,-90},{96,16},{98,16},{98,
                 14},{102,14}},
             color={0,0,0},
             smooth=Smooth.None));
-        connect(T3.transition_input_port[1], activationAccepted.mailbox_output_port[
-          1]) annotation (Line(
+        connect(T3.transition_input_port[1], AcceptBox.mailbox_output_port[1])
+              annotation (Line(
             points={{-64.9,-17.88},{-84,-17.88},{-84,-17},{-91,-17}},
             color={0,0,0},
             smooth=Smooth.None));
@@ -11453,21 +11415,11 @@ receives a message data again, it changes back to state PeriodicReceiving.
 
   end CoordinationPattern;
 
-
   annotation ();
 end CoordinationPatternRepository;
 
 
 package CoordinationProtocols
-
-
-
-
-
-
-
-
-
 
   package ExamplesForPatternUse
     package ProducerConsumer
@@ -12018,6 +11970,14 @@ There are two components that use a shared memory. One component (the WritingCom
 Two bebots are driving a line. The front bebot periodically transmitts its acceleration to the rear bebot. The rear adapts its acceleration to the front bebots's acceleration, so that no accident can occur. 
 </html>"));
         end Bebot;
+
+        package t1
+          model test2
+            extends
+              CoordinationPatternRepository.CoordinationPattern.Turn_Transmission.Turn_Transmission_Partner;
+            annotation (Diagram(graphics));
+          end test2;
+        end t1;
       end TwoBebotsInARowExample;
     end PeriodicTransmission;
 
@@ -13413,375 +13373,583 @@ Two Bebots drive in a line, so one is in front, namely the \"FrontBebot\", and t
     end BlockExecution;
 
     package Synchronized_Collaboration
-      model Slave
-        extends
-          CoordinationPatternRepository.CoordinationPattern.SynchronizedCollaboration.Collaboration_Slave(
-            CollaborationActive(use_activePort=true),
-          activationProposal(numberOfMessageReals=1),
-          T1(numberOfMessageReals=1),
-          activationProposalInputPort(
-            redeclare Integer integers[0] "integers[0]",
-            redeclare Boolean booleans[0] "booelans[0]",
-            redeclare Real reals[1] "reals[1]"),
-          deactivationInputPort(
-            redeclare Integer integers[0] "integers[0]",
-            redeclare Boolean booleans[0] "booelans[0]",
-            redeclare Real reals[0] "reals[0]"),
-          activationAcceptedOutputPort(
-            redeclare Integer integers[0] "integers[0]",
-            redeclare Boolean booleans[0] "booelans[0]",
-            redeclare Real reals[0] "reals[0]"),
-          activationRejectedOutputPort(
-            redeclare Integer integers[0] "integers[0]",
-            redeclare Boolean booleans[0] "booelans[0]",
-            redeclare Real reals[0] "reals[0]"));
-        Modelica.Blocks.Interfaces.RealOutput accelerationOfMaster annotation (
-            Placement(transformation(
-              extent={{-10,-10},{10,10}},
-              rotation=270,
-              origin={10,-106})));
 
-      equation
+
+
+      package PaperExample
+        model Protocol_Slave_Role
+          extends
+            CoordinationPatternRepository.CoordinationPattern.SynchronizedCollaboration.Collaboration_Slave(
+            InProposal(
+              redeclare Integer integers[0] "integers[0]",
+              redeclare Boolean booleans[0] "booelans[0]",
+              redeclare Real reals[1] "reals[1]"),
+            InDeact(
+              redeclare Integer integers[0] "integers[0]",
+              redeclare Boolean booleans[0] "booelans[0]",
+              redeclare Real reals[0] "reals[0]"),
+            OutReject(
+              redeclare Integer integers[0] "integers[0]",
+              redeclare Boolean booleans[0] "booelans[0]",
+              redeclare Real reals[0] "reals[0]"),
+            OutAccept(
+              redeclare Integer integers[0] "integers[0]",
+              redeclare Boolean booleans[0] "booelans[0]",
+              redeclare Real reals[0] "reals[0]"),
+            ProposalBox(numberOfMessageReals=1),
+            T1(numberOfMessageReals=1),
+            T2(condition=readyForPlatoon),
+            T5(condition=not readyForPlatoon));
+          Modelica.Blocks.Interfaces.BooleanInput readyForPlatoon annotation (Placement(
+                transformation(
+                extent={{-14,-14},{14,14}},
+                rotation=270,
+                origin={18,106})));
+          Modelica.Blocks.Interfaces.RealInput velocity annotation (Placement(
+                transformation(
+                extent={{-16,-16},{16,16}},
+                rotation=270,
+                origin={-66,104})));
+          Modelica.Blocks.Interfaces.RealOutput myVelocity annotation (Placement(
+                transformation(
+                extent={{-10,-10},{10,10}},
+                rotation=270,
+                origin={0,-100})));
+          annotation (Diagram(graphics));
+        // Modelica.Blocks.Interfaces.RealOutput
+        Real v;
+        equation
+        if CollaborationActive.active then
+          myVelocity = v;
+        else
+          myVelocity = velocity;
+        end if;
+
         when T1.fire then
-          accelerationOfMaster =  T1.transition_input_port[1].reals[1];
+          v = T1.transition_input_port[1].reals [1];
         end when;
+        end Protocol_Slave_Role;
 
+        model Protocol_Master_Role
+          extends
+            CoordinationPatternRepository.CoordinationPattern.SynchronizedCollaboration.Collaboration_Master(
+            Proposal(numberOfMessageReals=1),
+            OutProposal(
+              redeclare Integer integers[0] "integers[0]",
+              redeclare Boolean booleans[0] "booelans[0]",
+              redeclare Real reals[1] "reals[1]"),
+            OutDeact(
+              redeclare Integer integers[0] "integers[0]",
+              redeclare Boolean booleans[0] "booelans[0]",
+              redeclare Real reals[0] "reals[0]"),
+            InAccept(
+              redeclare Integer integers[0] "integers[0]",
+              redeclare Boolean booleans[0] "booelans[0]",
+              redeclare Real reals[0] "reals[0]"),
+            InReject(
+              redeclare Integer integers[0] "integers[0]",
+              redeclare Boolean booleans[0] "booelans[0]",
+              redeclare Real reals[0] "reals[0]"),
+            T1(use_conditionPort=false, condition=startPlatoon and not
+                  stopPlatoon),
+            T4(use_conditionPort=false, condition=stopPlatoon));
+          Modelica.Blocks.Interfaces.RealInput velocity annotation (Placement(
+                transformation(
+                extent={{-20,-20},{20,20}},
+                rotation=270,
+                origin={20,110})));
+          Modelica.Blocks.Interfaces.BooleanInput startPlatoon annotation (
+              Placement(transformation(
+                extent={{-20,-20},{20,20}},
+                rotation=270,
+                origin={-22,110})));
+          Modelica.Blocks.Interfaces.BooleanInput stopPlatoon annotation (
+              Placement(transformation(
+                extent={{-20,-20},{20,20}},
+                rotation=270,
+                origin={-56,108})));
+        equation
+          connect(Proposal.u_reals[1], velocity) annotation (Line(
+              points={{49,60},{34,60},{34,110},{20,110}},
+              color={0,0,127},
+              smooth=Smooth.None));
+          annotation (Diagram(graphics));
+        end Protocol_Master_Role;
+
+        model System
+
+          Protocol_Slave_Role rearRailCab(evaluationTime=0.1)
+            annotation (Placement(transformation(extent={{-10,-10},{10,10}},
+                rotation=270,
+                origin={4,70})));
+          Protocol_Master_Role frontRailCab(timeout=0.2)
+            annotation (Placement(transformation(extent={{-10,-10},{10,10}},
+                rotation=270,
+                origin={6,-30})));
+
+          Modelica.Blocks.Sources.BooleanExpression ready(y=true) annotation (
+              Placement(transformation(
+                extent={{-10,-10},{10,10}},
+                rotation=180,
+                origin={74,66})));
+          Modelica.Blocks.Sources.BooleanExpression start(y=true) annotation (
+              Placement(transformation(
+                extent={{-10,-10},{10,10}},
+                rotation=180,
+                origin={94,-22})));
+          Modelica.Blocks.Sources.RealExpression velocityOfFront(y=15)
+            annotation (Placement(transformation(
+                extent={{-10,-10},{10,10}},
+                rotation=180,
+                origin={84,-46})));
+          Modelica.Blocks.Sources.BooleanExpression stop(y=if time > 1.5 then
+                true else false) annotation (Placement(transformation(
+                extent={{-10,-10},{10,10}},
+                rotation=180,
+                origin={96,-4})));
+          Modelica.Blocks.Sources.RealExpression velocityOfRear(y=20)
+            annotation (Placement(transformation(
+                extent={{-10,-10},{10,10}},
+                rotation=180,
+                origin={76,86})));
+        equation
+          connect(frontRailCab.InReject, rearRailCab.OutReject) annotation (Line(
+              points={{12.2,-20},{12.2,59.6},{9.2,59.6}},
+              color={0,0,0},
+              smooth=Smooth.None));
+          connect(frontRailCab.InAccept, rearRailCab.OutAccept) annotation (Line(
+              points={{2,-20},{2,59.8},{4.6,59.8}},
+              color={0,0,0},
+              smooth=Smooth.None));
+          connect(rearRailCab.InDeact, frontRailCab.OutDeact) annotation (Line(
+              points={{5,80},{4,80},{4,84},{-56,84},{-56,-46},{7.4,-46},{7.4,
+                  -40.2}},
+              color={0,0,255},
+              smooth=Smooth.None));
+          connect(frontRailCab.OutProposal, rearRailCab.InProposal) annotation (Line(
+              points={{12,-40},{58,-40},{58,80},{7.4,80}},
+              color={0,0,0},
+              smooth=Smooth.None));
+          connect(rearRailCab.readyForPlatoon, ready.y) annotation (Line(
+              points={{14.6,68.2},{38.3,68.2},{38.3,66},{63,66}},
+              color={255,0,255},
+              smooth=Smooth.None));
+          connect(frontRailCab.velocity, velocityOfFront.y) annotation (Line(
+              points={{17,-32},{44,-32},{44,-46},{73,-46}},
+              color={0,0,127},
+              smooth=Smooth.None));
+          connect(frontRailCab.startPlatoon, start.y) annotation (Line(
+              points={{17,-27.8},{62.5,-27.8},{62.5,-22},{83,-22}},
+              color={255,0,255},
+              smooth=Smooth.None));
+          connect(stop.y, frontRailCab.stopPlatoon) annotation (Line(
+              points={{85,-4},{52,-4},{52,-24.4},{16.8,-24.4}},
+              color={255,0,255},
+              smooth=Smooth.None));
+          connect(rearRailCab.velocity, velocityOfRear.y) annotation (Line(
+              points={{14.4,76.6},{68,86},{65,86}},
+              color={0,0,127},
+              smooth=Smooth.None));
         annotation (Diagram(graphics));
-      end Slave;
+        end System;
+      end PaperExample;
 
-      model Master
-        extends
-          CoordinationPatternRepository.CoordinationPattern.SynchronizedCollaboration.Collaboration_Master(
-           T1(use_after=true, afterTime=0.1), CollaborationActive(
-              use_activePort=true),
-          activationProposal(numberOfMessageReals=1),
-          activationRejectedInputPort(
+      package Convoy
+        model Port_Master
+          extends
+            CoordinationPatternRepository.CoordinationPattern.SynchronizedCollaboration.Collaboration_Master(
+             T1(use_after=true, afterTime=0.1,
+              condition=startTransmission and not stopTransmission),
+                                                CollaborationActive(
+                use_activePort=true),
+            activationProposal(numberOfMessageReals=1),
+            activationRejectedInputPort(
+              redeclare Integer integers[0] "integers[0]",
+              redeclare Boolean booleans[0] "booelans[0]",
+              redeclare Real reals[0] "reals[0]"),
+            activationProposalOutputPort(
+              redeclare Integer integers[0] "integers[0]",
+              redeclare Boolean booleans[0] "booelans[0]",
+              redeclare Real reals[1] "reals[1]"),
+            actiavtionAcceptedInputPort(
+              redeclare Integer integers[0] "integers[0]",
+              redeclare Boolean booleans[0] "booelans[0]",
+              redeclare Real reals[0] "reals[0]"),
+            deactivationOutputPort(
+              redeclare Integer integers[0] "integers[0]",
+              redeclare Boolean booleans[0] "booelans[0]",
+              redeclare Real reals[0] "reals[0]"),
+            T4(condition=stopTransmission));
+          Modelica.Blocks.Interfaces.RealInput accelerationOfMaster annotation (
+              Placement(transformation(
+                extent={{-20,-20},{20,20}},
+                rotation=270,
+                origin={46,106})));
+          Modelica.Blocks.Interfaces.BooleanInput startTransmission annotation
+            (Placement(transformation(
+                extent={{-20,-20},{20,20}},
+                rotation=270,
+                origin={-90,108})));
+          Modelica.Blocks.Interfaces.BooleanInput stopTransmission annotation (
+              Placement(transformation(
+                extent={{-20,-20},{20,20}},
+                rotation=270,
+                origin={-30,108})));
+        equation
+          connect(accelerationOfMaster, activationProposal.u_reals[1])
+            annotation (Line(
+              points={{46,106},{36,106},{36,60},{49,60}},
+              color={0,0,127},
+              smooth=Smooth.None));
+          annotation (Diagram(graphics));
+        end Port_Master;
+
+        model Bebot
+
+        parameter Boolean isFront = false;
+        parameter Real evaluationTime;
+        parameter Real timeout;
+
+        // components of front e.g. isFront = true:
+
+          RealTimeCoordinationLibrary.CoordinationProtocols.ExamplesForPatternUse.Synchronized_Collaboration.Convoy.Port_Master
+                 master(timeout=timeout) if
+                           isFront
+            annotation (Placement(transformation(extent={{-2,-24},{18,-4}})));
+
+          Modelica.Blocks.Interfaces.BooleanInput startConvoy if       isFront annotation (
+              Placement(transformation(
+                extent={{-14,-14},{14,14}},
+                rotation=270,
+                origin={-14,104})));
+
+          Modelica.Blocks.Interfaces.BooleanInput stopConvoy if       isFront annotation (
+              Placement(transformation(
+                extent={{-14,-14},{14,14}},
+                rotation=270,
+                origin={46,104})));
+
+          MessageInterface.InputDelegationPort activationRejectedIn(
             redeclare Integer integers[0] "integers[0]",
             redeclare Boolean booleans[0] "booelans[0]",
-            redeclare Real reals[0] "reals[0]"),
-          activationProposalOutputPort(
+            redeclare Real reals[0] "reals[0]") if isFront
+            annotation (Placement(transformation(extent={{-108,-32},{-88,-12}})));
+          MessageInterface.InputDelegationPort activationAcceptedIn(
             redeclare Integer integers[0] "integers[0]",
             redeclare Boolean booleans[0] "booelans[0]",
-            redeclare Real reals[1] "reals[1]"),
-          actiavtionAcceptedInputPort(
+            redeclare Real reals[0] "reals[0]") if isFront
+            annotation (Placement(transformation(extent={{-108,-98},{-88,-78}})));
+
+          MessageInterface.OutputDelegationPort activationProposal(
             redeclare Integer integers[0] "integers[0]",
             redeclare Boolean booleans[0] "booelans[0]",
-            redeclare Real reals[0] "reals[0]"),
-          deactivationOutputPort(
+            redeclare Real reals[1] "reals[1]") if
+                                                  isFront
+            annotation (Placement(transformation(extent={{90,-44},{110,-24}})));
+          MessageInterface.OutputDelegationPort deactivationProposal(
             redeclare Integer integers[0] "integers[0]",
             redeclare Boolean booleans[0] "booelans[0]",
-            redeclare Real reals[0] "reals[0]"));
-        Modelica.Blocks.Interfaces.RealInput accelerationOfMaster annotation (
-            Placement(transformation(
-              extent={{-20,-20},{20,20}},
-              rotation=270,
-              origin={46,106})));
-      equation
-        connect(accelerationOfMaster, activationProposal.u_reals[1])
-          annotation (Line(
-            points={{46,106},{36,106},{36,60},{49,60}},
-            color={0,0,127},
-            smooth=Smooth.None));
-        annotation (Diagram(graphics));
-      end Master;
+            redeclare Real reals[0] "reals[0]") if    isFront
+           annotation (Placement(transformation(extent={{92,-98},{112,-78}})));
 
-      model Bebot
+        // components of rear e.g. isFront = false:
+          Modelica.Blocks.Interfaces.BooleanInput readyForConvoy if
+                                                           not isFront annotation (Placement(
+                transformation(
+                extent={{-14,-14},{14,14}},
+                rotation=270,
+                origin={-48,104})));
 
-      parameter Boolean isFront = false;
-      parameter Real evaluationTime;
-      parameter Real timeout;
+          RealTimeCoordinationLibrary.CoordinationProtocols.ExamplesForPatternUse.Synchronized_Collaboration.Convoy.Port_Slave
+                slave(evaluationTime=evaluationTime) if
+                         not isFront annotation (Placement(transformation(extent={{0,66},{
+                    20,86}})));
 
-      // components of front e.g. isFront = true:
+          MessageInterface.InputDelegationPort activation(
+            redeclare Integer integers[0] "integers[0]",
+            redeclare Boolean booleans[0] "booelans[0]",
+            redeclare Real reals[1] "reals[1]") if
+               not isFront
+            annotation (Placement(transformation(extent={{-110,76},{-90,96}})));
 
-        Master master(timeout=timeout) if
-                         isFront
-          annotation (Placement(transformation(extent={{-2,-24},{18,-4}})));
+          MessageInterface.InputDelegationPort deactivation(
+            redeclare Integer integers[0] "integers[0]",
+            redeclare Boolean booleans[0] "booelans[0]",
+            redeclare Real reals[0] "reals[0]") if
+               not isFront
+            annotation (Placement(transformation(extent={{-108,28},{-88,48}})));
 
-        Modelica.Blocks.Interfaces.BooleanInput startConvoy if       isFront annotation (
-            Placement(transformation(
-              extent={{-14,-14},{14,14}},
-              rotation=270,
-              origin={-14,104})));
+          MessageInterface.OutputDelegationPort activationRejected(
+            redeclare Integer integers[0] "integers[0]",
+            redeclare Boolean booleans[0] "booelans[0]",
+            redeclare Real reals[0] "reals[0]") if
+               not isFront
+            annotation (Placement(transformation(extent={{88,72},{108,92}})));
+          MessageInterface.OutputDelegationPort activationAccepted(
+            redeclare Integer integers[0] "integers[0]",
+            redeclare Boolean booleans[0] "booelans[0]",
+            redeclare Real reals[0] "reals[0]") if
+               not isFront
+            annotation (Placement(transformation(extent={{92,16},{112,36}})));
+        Modelica.Blocks.Interfaces.RealOutput  localAcceleration;
+          Modelica.Blocks.Interfaces.BooleanOutput convoy
+            annotation (Placement(transformation(extent={{-17,-17},{17,17}},
+                rotation=270,
+                origin={7,-107})));
+          Modelica.Blocks.Interfaces.RealInput acceleration
+            annotation (Placement(transformation(extent={{-122,-10},{-92,20}})));
+          Modelica.Blocks.Interfaces.RealOutput velocity
+            annotation (Placement(transformation(extent={{98,-8},{118,12}})));
+        equation
 
-        Modelica.Blocks.Interfaces.BooleanInput stopConvoy if       isFront annotation (
-            Placement(transformation(
-              extent={{-14,-14},{14,14}},
-              rotation=270,
-              origin={46,104})));
+          if not convoy then
+            der(velocity) = acceleration;
+          else
+            der(velocity) = localAcceleration;
+          end if;
 
-        MessageInterface.InputDelegationPort activationRejectedIn(
-          redeclare Integer integers[0] "integers[0]",
-          redeclare Boolean booleans[0] "booelans[0]",
-          redeclare Real reals[0] "reals[0]") if isFront
-          annotation (Placement(transformation(extent={{-108,-32},{-88,-12}})));
-        MessageInterface.InputDelegationPort activationAcceptedIn(
-          redeclare Integer integers[0] "integers[0]",
-          redeclare Boolean booleans[0] "booelans[0]",
-          redeclare Real reals[0] "reals[0]") if isFront
-          annotation (Placement(transformation(extent={{-108,-98},{-88,-78}})));
+          if isFront then
+            connect(localAcceleration, acceleration);
+          else
+            connect(localAcceleration, slave.accelerationOfMaster);
+          end if;
 
-        MessageInterface.OutputDelegationPort activationProposal(
-          redeclare Integer integers[0] "integers[0]",
-          redeclare Boolean booleans[0] "booelans[0]",
-          redeclare Real reals[1] "reals[1]") if
-                                                isFront
-          annotation (Placement(transformation(extent={{90,-44},{110,-24}})));
-        MessageInterface.OutputDelegationPort deactivationProposal(
-          redeclare Integer integers[0] "integers[0]",
-          redeclare Boolean booleans[0] "booelans[0]",
-          redeclare Real reals[0] "reals[0]") if    isFront
-         annotation (Placement(transformation(extent={{92,-98},{112,-78}})));
+          connect(convoy, master.CollaborationActive.activePort);
+          connect(convoy, slave.CollaborationActive.activePort);
+          connect(slave.activationProposalInputPort, activation) annotation (Line(
+              points={{0,79.4},{-72,79.4},{-72,86},{-100,86}},
+              color={0,0,255},
+              smooth=Smooth.None));
+          connect(slave.deactivationInputPort, deactivation) annotation (Line(
+              points={{0,77},{-70,77},{-70,38},{-98,38}},
+              color={0,0,255},
+              smooth=Smooth.None));
+          connect(slave.activationRejectedOutputPort, activationRejected) annotation (
+              Line(
+              points={{20.2,81.2},{55.1,81.2},{55.1,82},{98,82}},
+              color={0,0,0},
+              smooth=Smooth.None));
+          connect(slave.activationAcceptedOutputPort, activationAccepted) annotation (
+              Line(
+              points={{20.2,76.8},{57.1,76.8},{57.1,26},{102,26}},
+              color={0,0,0},
+              smooth=Smooth.None));
+          connect(master.activationRejectedInputPort, activationRejectedIn) annotation (
+             Line(
+              points={{-2,-7.8},{-48,-7.8},{-48,-22},{-98,-22}},
+              color={0,0,255},
+              smooth=Smooth.None));
+          connect(master.actiavtionAcceptedInputPort, activationAcceptedIn) annotation (
+             Line(
+              points={{-2,-18},{-28,-18},{-28,-88},{-98,-88}},
+              color={0,0,255},
+              smooth=Smooth.None));
+          connect(master.deactivationOutputPort, deactivationProposal) annotation (Line(
+              points={{18.2,-12.6},{33.1,-12.6},{33.1,-88},{102,-88}},
+              color={0,0,0},
+              smooth=Smooth.None));
+          connect(master.activationProposalOutputPort, activationProposal) annotation (
+              Line(
+              points={{18,-8},{54,-8},{54,-34},{100,-34}},
+              color={0,0,0},
+              smooth=Smooth.None));
+          connect(startConvoy, master.startTransmission)       annotation (Line(
+              points={{-14,104},{-14,60},{0,60},{0,-3.6},{1,-3.6}},
+              color={255,0,255},
+              smooth=Smooth.None));
+          connect(stopConvoy, master.stopTransmission)       annotation (Line(
+              points={{46,104},{46,60},{6,60},{6,-3.6},{6.2,-3.6}},
+              color={255,0,255},
+              smooth=Smooth.None));
+          connect(readyForConvoy, slave.ready)
+                                      annotation (Line(
+              points={{-48,104},{-48,86.4},{2.8,86.4}},
+              color={255,0,255},
+              smooth=Smooth.None));
+          connect(acceleration, master.accelerationOfMaster) annotation (Line(
+              points={{-107,5},{12.5,5},{12.5,-3.4},{12.6,-3.4}},
+              color={0,0,127},
+              smooth=Smooth.None));
+          annotation (Diagram(graphics), Icon(graphics={
+                Ellipse(
+                  extent={{-102,-94},{-54,-140}},
+                  lineColor={0,0,0},
+                  fillColor={0,0,0},
+                  fillPattern=FillPattern.Solid),
+                Ellipse(
+                  extent={{56,-96},{104,-142}},
+                  lineColor={0,0,0},
+                  fillColor={0,0,0},
+                  fillPattern=FillPattern.Solid),
+                Rectangle(
+                  extent={{-94,90},{98,-92}},
+                  pattern=LinePattern.None,
+                  lineColor={0,0,0}),
+                Text(
+                  extent={{-87,-13},{87,13}},
+                  textString="%name",
+                  lineColor={0,0,0},
+                  origin={-25,41},
+                  rotation=360)}));
+        end Bebot;
 
-      // components of rear e.g. isFront = false:
-        Modelica.Blocks.Interfaces.BooleanInput readyForConvoy if
-                                                         not isFront annotation (Placement(
-              transformation(
-              extent={{-14,-14},{14,14}},
-              rotation=270,
-              origin={-48,104})));
+        model Port_Slave
+          extends
+            CoordinationPatternRepository.CoordinationPattern.SynchronizedCollaboration.Collaboration_Slave(
+              CollaborationActive(use_activePort=true),
+            activationProposal(numberOfMessageReals=1),
+            T1(numberOfMessageReals=1),
+            activationProposalInputPort(
+              redeclare Integer integers[0] "integers[0]",
+              redeclare Boolean booleans[0] "booelans[0]",
+              redeclare Real reals[1] "reals[1]"),
+            deactivationInputPort(
+              redeclare Integer integers[0] "integers[0]",
+              redeclare Boolean booleans[0] "booelans[0]",
+              redeclare Real reals[0] "reals[0]"),
+            activationAcceptedOutputPort(
+              redeclare Integer integers[0] "integers[0]",
+              redeclare Boolean booleans[0] "booelans[0]",
+              redeclare Real reals[0] "reals[0]"),
+            activationRejectedOutputPort(
+              redeclare Integer integers[0] "integers[0]",
+              redeclare Boolean booleans[0] "booelans[0]",
+              redeclare Real reals[0] "reals[0]"),
+            T5(condition=not ready),
+            T3(condition=true),
+            T2(condition=ready));
+          Modelica.Blocks.Interfaces.RealOutput accelerationOfMaster annotation (
+              Placement(transformation(
+                extent={{-10,-10},{10,10}},
+                rotation=270,
+                origin={10,-106})));
 
-        Slave slave(evaluationTime=evaluationTime) if
-                       not isFront annotation (Placement(transformation(extent={{0,66},{
-                  20,86}})));
+          Modelica.Blocks.Interfaces.BooleanInput ready annotation (Placement(
+                transformation(
+                extent={{-20,-20},{20,20}},
+                rotation=270,
+                origin={-80,118})));
+        equation
+          when T1.fire then
+            accelerationOfMaster =  T1.transition_input_port[1].reals[1];
+          end when;
 
-        MessageInterface.InputDelegationPort activation(
-          redeclare Integer integers[0] "integers[0]",
-          redeclare Boolean booleans[0] "booelans[0]",
-          redeclare Real reals[1] "reals[1]") if
-             not isFront
-          annotation (Placement(transformation(extent={{-110,76},{-90,96}})));
+          annotation (Diagram(graphics));
+        end Port_Slave;
 
-        MessageInterface.InputDelegationPort deactivation(
-          redeclare Integer integers[0] "integers[0]",
-          redeclare Boolean booleans[0] "booelans[0]",
-          redeclare Real reals[0] "reals[0]") if
-             not isFront
-          annotation (Placement(transformation(extent={{-108,28},{-88,48}})));
+        model FinalSystemMain
 
-        MessageInterface.OutputDelegationPort activationRejected(
-          redeclare Integer integers[0] "integers[0]",
-          redeclare Boolean booleans[0] "booelans[0]",
-          redeclare Real reals[0] "reals[0]") if
-             not isFront
-          annotation (Placement(transformation(extent={{88,72},{108,92}})));
-        MessageInterface.OutputDelegationPort activationAccepted(
-          redeclare Integer integers[0] "integers[0]",
-          redeclare Boolean booleans[0] "booelans[0]",
-          redeclare Real reals[0] "reals[0]") if
-             not isFront
-          annotation (Placement(transformation(extent={{92,16},{112,36}})));
-      Modelica.Blocks.Interfaces.RealOutput  localAcceleration;
-        Modelica.Blocks.Interfaces.BooleanOutput convoy
-          annotation (Placement(transformation(extent={{-17,-17},{17,17}},
-              rotation=270,
-              origin={7,-107})));
-        Modelica.Blocks.Interfaces.RealInput acceleration
-          annotation (Placement(transformation(extent={{-122,-10},{-92,20}})));
-        Modelica.Blocks.Interfaces.RealOutput velocity
-          annotation (Placement(transformation(extent={{98,-8},{118,12}})));
-      equation
-
-        if not convoy then
-          der(velocity) = acceleration;
-        else
-          der(velocity) = localAcceleration;
-        end if;
-
-        if isFront then
-          connect(localAcceleration, acceleration);
-        else
-          connect(localAcceleration, slave.accelerationOfMaster);
-        end if;
-
-        connect(convoy, master.CollaborationActive.activePort);
-        connect(convoy, slave.CollaborationActive.activePort);
-        connect(slave.activationProposalInputPort, activation) annotation (Line(
-            points={{0,79.4},{-72,79.4},{-72,86},{-100,86}},
-            color={0,0,255},
-            smooth=Smooth.None));
-        connect(slave.deactivationInputPort, deactivation) annotation (Line(
-            points={{0,77},{-70,77},{-70,38},{-98,38}},
-            color={0,0,255},
-            smooth=Smooth.None));
-        connect(slave.activationRejectedOutputPort, activationRejected) annotation (
-            Line(
-            points={{20.2,81.2},{55.1,81.2},{55.1,82},{98,82}},
-            color={0,0,0},
-            smooth=Smooth.None));
-        connect(slave.activationAcceptedOutputPort, activationAccepted) annotation (
-            Line(
-            points={{20.2,76.8},{57.1,76.8},{57.1,26},{102,26}},
-            color={0,0,0},
-            smooth=Smooth.None));
-        connect(master.activationRejectedInputPort, activationRejectedIn) annotation (
-           Line(
-            points={{-2,-7.8},{-48,-7.8},{-48,-22},{-98,-22}},
-            color={0,0,255},
-            smooth=Smooth.None));
-        connect(master.actiavtionAcceptedInputPort, activationAcceptedIn) annotation (
-           Line(
-            points={{-2,-18},{-28,-18},{-28,-88},{-98,-88}},
-            color={0,0,255},
-            smooth=Smooth.None));
-        connect(master.deactivationOutputPort, deactivationProposal) annotation (Line(
-            points={{18.2,-12.6},{33.1,-12.6},{33.1,-88},{102,-88}},
-            color={0,0,0},
-            smooth=Smooth.None));
-        connect(master.activationProposalOutputPort, activationProposal) annotation (
-            Line(
-            points={{18,-8},{54,-8},{54,-34},{100,-34}},
-            color={0,0,0},
-            smooth=Smooth.None));
-        connect(startConvoy, master.startTransmission)       annotation (Line(
-            points={{-14,104},{-14,60},{0,60},{0,-3.6},{1,-3.6}},
-            color={255,0,255},
-            smooth=Smooth.None));
-        connect(stopConvoy, master.stopTransmission)       annotation (Line(
-            points={{46,104},{46,60},{6,60},{6,-3.6},{6.2,-3.6}},
-            color={255,0,255},
-            smooth=Smooth.None));
-        connect(readyForConvoy, slave.ready)
-                                    annotation (Line(
-            points={{-48,104},{-48,86.4},{2.8,86.4}},
-            color={255,0,255},
-            smooth=Smooth.None));
-        connect(acceleration, master.accelerationOfMaster) annotation (Line(
-            points={{-107,5},{12.5,5},{12.5,-3.4},{12.6,-3.4}},
-            color={0,0,127},
-            smooth=Smooth.None));
-        annotation (Diagram(graphics), Icon(graphics={
-              Ellipse(
-                extent={{-102,-94},{-54,-140}},
-                lineColor={0,0,0},
-                fillColor={0,0,0},
-                fillPattern=FillPattern.Solid),
-              Ellipse(
-                extent={{56,-96},{104,-142}},
-                lineColor={0,0,0},
-                fillColor={0,0,0},
-                fillPattern=FillPattern.Solid),
-              Rectangle(
-                extent={{-94,90},{98,-92}},
-                pattern=LinePattern.None,
-                lineColor={0,0,0}),
-              Text(
-                extent={{-87,-13},{87,13}},
-                textString="%name",
-                lineColor={0,0,0},
-                origin={-25,41},
-                rotation=360)}));
-      end Bebot;
-
-      model FinalSystemMain
-
-        Bebot bebotRear(evaluationTime=0.1, timeout=0.2)
-          annotation (Placement(transformation(extent={{-68,34},{-48,54}})));
-        Bebot bebotFront(
-          isFront=true,
-          evaluationTime=0.1,
-          timeout=0.2)
-          annotation (Placement(transformation(extent={{78,44},{98,64}})));
-        Modelica.Blocks.Sources.BooleanStep stopConvoy(startTime=5)
-                                                              annotation (
-            Placement(transformation(
-              extent={{-10,-10},{10,10}},
-              rotation=270,
-              origin={42,94})));
-        Modelica.Blocks.Sources.BooleanStep startConvoy(startTime=0.5)
-                                                                 annotation (
-            Placement(transformation(
-              extent={{-10,-10},{10,10}},
-              rotation=270,
-              origin={10,94})));
-        Modelica.Blocks.Sources.BooleanStep readyForConvoy(startTime=0.2)
-                                                                 annotation (
-            Placement(transformation(
-              extent={{-10,-10},{10,10}},
-              rotation=270,
-              origin={-60,94})));
-        Examples.Application.Parts.Robot_V3 robot_V3_1
-          annotation (Placement(transformation(extent={{-56,-56},{-26,-36}})));
-        Examples.Application.Parts.Robot_V3 robot_V3_2(xstart_wmr=1)
-          annotation (Placement(transformation(extent={{44,-58},{74,-38}})));
-        Modelica.Blocks.Sources.Ramp ramp(
-          duration=1,
-          offset=6,
-          height=4)
-          annotation (Placement(transformation(extent={{-150,42},{-130,62}})));
-        Modelica.Blocks.Sources.Constant const(k=3) annotation (Placement(
-              transformation(
-              extent={{-10,-10},{10,10}},
-              rotation=-90,
-              origin={140,78})));
-        inner Modelica.Mechanics.MultiBody.World world(label2="z", n={0,0,-1})
-          annotation (Placement(transformation(extent={{-50,-78},{-40,-68}})));
-      equation
-        connect(startConvoy.y, bebotFront.startConvoy)
+          RealTimeCoordinationLibrary.CoordinationProtocols.ExamplesForPatternUse.Synchronized_Collaboration.Convoy.Bebot
+                bebotRear(evaluationTime=0.1, timeout=0.2)
+            annotation (Placement(transformation(extent={{-68,34},{-48,54}})));
+          RealTimeCoordinationLibrary.CoordinationProtocols.ExamplesForPatternUse.Synchronized_Collaboration.Convoy.Bebot
+                bebotFront(
+            isFront=true,
+            evaluationTime=0.1,
+            timeout=0.2)
+            annotation (Placement(transformation(extent={{78,44},{98,64}})));
+          Modelica.Blocks.Sources.BooleanStep stopConvoy(startTime=5)
+                                                                annotation (
+              Placement(transformation(
+                extent={{-10,-10},{10,10}},
+                rotation=270,
+                origin={42,94})));
+          Modelica.Blocks.Sources.BooleanStep startConvoy(startTime=0.5)
+                                                                   annotation (
+              Placement(transformation(
+                extent={{-10,-10},{10,10}},
+                rotation=270,
+                origin={10,94})));
+          Modelica.Blocks.Sources.BooleanStep readyForConvoy(startTime=0.2)
+                                                                   annotation (
+              Placement(transformation(
+                extent={{-10,-10},{10,10}},
+                rotation=270,
+                origin={-60,94})));
+          Examples.Application.Parts.Robot_V3 robot_V3_1
+            annotation (Placement(transformation(extent={{-56,-56},{-26,-36}})));
+          Examples.Application.Parts.Robot_V3 robot_V3_2(xstart_wmr=1)
+            annotation (Placement(transformation(extent={{44,-58},{74,-38}})));
+          Modelica.Blocks.Sources.Ramp ramp(
+            duration=1,
+            offset=6,
+            height=4)
+            annotation (Placement(transformation(extent={{-150,42},{-130,62}})));
+          Modelica.Blocks.Sources.Constant const(k=3) annotation (Placement(
+                transformation(
+                extent={{-10,-10},{10,10}},
+                rotation=-90,
+                origin={140,78})));
+          inner Modelica.Mechanics.MultiBody.World world(label2="z", n={0,0,-1})
+            annotation (Placement(transformation(extent={{-50,-78},{-40,-68}})));
+        equation
+          connect(startConvoy.y, bebotFront.startConvoy)
+                                                     annotation (Line(
+              points={{10,83},{10,64.4},{86.6,64.4}},
+              color={255,0,255},
+              smooth=Smooth.None));
+          connect(stopConvoy.y, bebotFront.stopConvoy)
                                                    annotation (Line(
-            points={{10,83},{10,64.4},{86.6,64.4}},
-            color={255,0,255},
-            smooth=Smooth.None));
-        connect(stopConvoy.y, bebotFront.stopConvoy)
-                                                 annotation (Line(
-            points={{42,83},{42,64.4},{92.6,64.4}},
-            color={255,0,255},
-            smooth=Smooth.None));
-        connect(bebotFront.activationProposal, bebotRear.activation)
-                                                             annotation (Line(
-            points={{98,50.6},{106,50.6},{106,70},{-68,70},{-68,52.6}},
-            color={0,0,0},
-            smooth=Smooth.None));
-        connect(bebotRear.deactivation, bebotFront.deactivationProposal)
-                                                                 annotation (
-            Line(
-            points={{-67.8,47.8},{-102,47.8},{-102,-2},{108,-2},{108,45.2},{98.2,45.2}},
-            color={0,0,255},
-            smooth=Smooth.None));
+              points={{42,83},{42,64.4},{92.6,64.4}},
+              color={255,0,255},
+              smooth=Smooth.None));
+          connect(bebotFront.activationProposal, bebotRear.activation)
+                                                               annotation (Line(
+              points={{98,50.6},{106,50.6},{106,70},{-68,70},{-68,52.6}},
+              color={0,0,0},
+              smooth=Smooth.None));
+          connect(bebotRear.deactivation, bebotFront.deactivationProposal)
+                                                                   annotation (
+              Line(
+              points={{-67.8,47.8},{-102,47.8},{-102,-2},{108,-2},{108,45.2},{98.2,45.2}},
+              color={0,0,255},
+              smooth=Smooth.None));
 
-        connect(bebotFront.activationAcceptedIn, bebotRear.activationAccepted)
-          annotation (Line(
-            points={{78.2,45.2},{48,48},{48,46},{-24,48},{-24,46.6},{-47.8,46.6}},
-            color={0,0,255},
-            smooth=Smooth.None));
-        connect(bebotRear.activationRejected, bebotFront.activationRejectedIn)
-          annotation (Line(
-            points={{-48.2,52.2},{4.9,52.2},{4.9,51.8},{78.2,51.8}},
-            color={0,0,0},
-            smooth=Smooth.None));
-        connect(readyForConvoy.y, bebotRear.readyForConvoy)
-                                                   annotation (Line(
-            points={{-60,83},{-60,54.4},{-62.8,54.4}},
-            color={255,0,255},
-            smooth=Smooth.None));
-        connect(bebotRear.velocity, robot_V3_1.omegaL_des) annotation (Line(
-            points={{-47.2,44.2},{-52,44.2},{-52,-46},{-55,-46}},
-            color={0,0,127},
-            smooth=Smooth.None));
-        connect(bebotRear.velocity, robot_V3_1.omegaR_des) annotation (Line(
-            points={{-47.2,44.2},{-24,44.2},{-24,-46},{-27,-46}},
-            color={0,0,127},
-            smooth=Smooth.None));
-        connect(bebotFront.velocity, robot_V3_2.omegaL_des) annotation (Line(
-            points={{98.8,54.2},{32,54.2},{32,-48},{45,-48}},
-            color={0,0,127},
-            smooth=Smooth.None));
-        connect(bebotFront.velocity, robot_V3_2.omegaR_des) annotation (Line(
-            points={{98.8,54.2},{72,54.2},{72,-48},{73,-48}},
-            color={0,0,127},
-            smooth=Smooth.None));
-        connect(ramp.y, bebotRear.acceleration) annotation (Line(
-            points={{-129,52},{-86,52},{-86,44.5},{-68.7,44.5}},
-            color={0,0,127},
-            smooth=Smooth.None));
-        connect(const.y, bebotFront.acceleration) annotation (Line(
-            points={{140,67},{140,54.5},{77.3,54.5}},
-            color={0,0,127},
-            smooth=Smooth.None));
-        annotation (Icon(graphics), Diagram(graphics),
-          Documentation(info="<html>
+          connect(bebotFront.activationAcceptedIn, bebotRear.activationAccepted)
+            annotation (Line(
+              points={{78.2,45.2},{48,48},{48,46},{-24,48},{-24,46.6},{-47.8,46.6}},
+              color={0,0,255},
+              smooth=Smooth.None));
+          connect(bebotRear.activationRejected, bebotFront.activationRejectedIn)
+            annotation (Line(
+              points={{-48.2,52.2},{4.9,52.2},{4.9,51.8},{78.2,51.8}},
+              color={0,0,0},
+              smooth=Smooth.None));
+          connect(readyForConvoy.y, bebotRear.readyForConvoy)
+                                                     annotation (Line(
+              points={{-60,83},{-60,54.4},{-62.8,54.4}},
+              color={255,0,255},
+              smooth=Smooth.None));
+          connect(bebotRear.velocity, robot_V3_1.omegaL_des) annotation (Line(
+              points={{-47.2,44.2},{-52,44.2},{-52,-46},{-55,-46}},
+              color={0,0,127},
+              smooth=Smooth.None));
+          connect(bebotRear.velocity, robot_V3_1.omegaR_des) annotation (Line(
+              points={{-47.2,44.2},{-24,44.2},{-24,-46},{-27,-46}},
+              color={0,0,127},
+              smooth=Smooth.None));
+          connect(bebotFront.velocity, robot_V3_2.omegaL_des) annotation (Line(
+              points={{98.8,54.2},{32,54.2},{32,-48},{45,-48}},
+              color={0,0,127},
+              smooth=Smooth.None));
+          connect(bebotFront.velocity, robot_V3_2.omegaR_des) annotation (Line(
+              points={{98.8,54.2},{72,54.2},{72,-48},{73,-48}},
+              color={0,0,127},
+              smooth=Smooth.None));
+          connect(ramp.y, bebotRear.acceleration) annotation (Line(
+              points={{-129,52},{-86,52},{-86,44.5},{-68.7,44.5}},
+              color={0,0,127},
+              smooth=Smooth.None));
+          connect(const.y, bebotFront.acceleration) annotation (Line(
+              points={{140,67},{140,54.5},{77.3,54.5}},
+              color={0,0,127},
+              smooth=Smooth.None));
+          annotation (Icon(graphics), Diagram(graphics),
+            Documentation(info="<html>
 Two bebots drive in a line. The front bebot asks wether they should form a convoy. If the rear bebot is ready, they join an form a convoy, else if it is not ready, the front rebot will repeat its request later on, as long as the variable startTransmission equals true.
 </html>"));
-      end FinalSystemMain;
+        end FinalSystemMain;
+      end Convoy;
     end Synchronized_Collaboration;
   end ExamplesForPatternUse;
 
@@ -14358,17 +14526,17 @@ Two bebots drive in a line. The front bebot asks wether they should form a convo
           smooth=Smooth.None));
       connect(Start_Transmission, collaboration_Master_Real.startTransmission)
         annotation (Line(
-          points={{-173,115},{-173,76.5},{-128.3,76.5},{-128.3,67.04}},
+          points={{-173,115},{-173,76.5},{-117.38,76.5},{-117.38,68.08}},
           color={255,0,255},
           smooth=Smooth.None));
       connect(Stop_Transmission, collaboration_Master_Real.stopTransmission)
         annotation (Line(
-          points={{-149,115},{-149,81.5},{-108.02,81.5},{-108.02,67.04}},
+          points={{-149,115},{-149,81.5},{-133.37,81.5},{-133.37,68.34}},
           color={255,0,255},
           smooth=Smooth.None));
       connect(Strike, turn_Transmission_Partner_Real.strike) annotation (Line(
-          points={{-127,115},{-128,90},{-46,90},{-46,46},{34.43,46},{34.43,
-              23.6364}},
+          points={{-127,115},{-128,90},{-46,90},{-46,46},{43.97,46},{43.97,
+              26.9091}},
           color={255,0,255},
           smooth=Smooth.None));
 
@@ -14490,7 +14658,8 @@ Two bebots drive in a line. The front bebot asks wether they should form a convo
             T1(numberOfMessageReals=6),
             T4(numberOfMessageReals=6),
             InTurn(redeclare Real reals[6] "reals[6]"),
-            message(numberOfMessageReals=6));
+            message(numberOfMessageReals=6),
+            T3(use_conditionPort=true));
 
           Modelica.Blocks.Interfaces.RealOutput Out_Y    annotation (Placement(
                 transformation(
@@ -14555,6 +14724,13 @@ Two bebots drive in a line. The front bebot asks wether they should form a convo
                 rotation=270,
                 origin={92,-132})));
 
+          Modelica.Blocks.Interfaces.BooleanInput strike annotation (Placement(
+                transformation(
+                extent={{-11,-11},{11,11}},
+                rotation=270,
+                origin={-51,115})));
+          Modelica_StateGraph2.Blocks.MathBoolean.RisingEdge rising1
+            annotation (Placement(transformation(extent={{-100,78},{-92,86}})));
         algorithm
           when T4.fire then
             Out_TurnTime := T4.transition_input_port[1].reals[1];
@@ -14599,6 +14775,14 @@ Two bebots drive in a line. The front bebot asks wether they should form a convo
               points={{101,-65},{83,-65},{83,-76},{-73,-76}},
               color={255,127,0},
               smooth=Smooth.None));
+          connect(strike, rising1.u) annotation (Line(
+              points={{-51,115},{-115.5,115},{-115.5,82},{-101.2,82}},
+              color={255,0,255},
+              smooth=Smooth.None));
+          connect(rising1.y, T3.conditionPort) annotation (Line(
+              points={{-91.2,82},{-80,82},{-80,-12},{-69,-12}},
+              color={255,0,255},
+              smooth=Smooth.None));
           annotation (Diagram(coordinateSystem(preserveAspectRatio=true,  extent={{-100,
                     -120},{100,100}}),
                               graphics), Icon(coordinateSystem(extent={{-100,
@@ -14608,13 +14792,14 @@ Two bebots drive in a line. The front bebot asks wether they should form a convo
 
       package Synchronized_Collaboration
 
-
         model Collaboration_Slave
            extends
             RealTimeCoordinationLibrary.CoordinationProtocols.PlayingRobotsExample.SynchronizedCoordinationProtocols.Synchronized_Collaboration.Collaboration_Slave(
             T1(numberOfMessageReals=3),
             activationProposal(numberOfMessageReals=3),
-            activationProposalInputPort(redeclare Real reals[3] "reals[3]"));
+            activationProposalInputPort(redeclare Real reals[3] "reals[3]"),
+            T2(condition=ready),
+            T5(condition=not ready));
 
           Modelica.Blocks.Interfaces.RealOutput Out_Weight annotation (Placement(
                 transformation(
@@ -14657,7 +14842,9 @@ Two bebots drive in a line. The front bebot asks wether they should form a convo
             T3(
               numberOfMessageReals=0,
               use_syncReceive=false,
-              use_syncSend=true));
+              use_syncSend=true),
+            T1(condition=startTransmision and not stopTransmission),
+            T4(condition=stopTransmission));
           Modelica.Blocks.Interfaces.RealInput In_Weight annotation (Placement(
                 transformation(
                 extent={{-12,-12},{12,12}},
@@ -14673,6 +14860,16 @@ Two bebots drive in a line. The front bebot asks wether they should form a convo
                 extent={{-12,-12},{12,12}},
                 rotation=270,
                 origin={58,106})));
+          Modelica.Blocks.Interfaces.BooleanInput stopTransmission annotation (
+              Placement(transformation(
+                extent={{-13,-13},{13,13}},
+                rotation=270,
+                origin={-83,109})));
+          Modelica.Blocks.Interfaces.BooleanInput startTransmission annotation
+            (Placement(transformation(
+                extent={{-12,-12},{12,12}},
+                rotation=270,
+                origin={-42,108})));
         equation
           connect(In_Weight, activationProposal.u_reals[1]) annotation (Line(
               points={{30,106},{30,60},{49,60}},
