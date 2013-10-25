@@ -1,12 +1,3 @@
 UsersGuide
-Examples
-Transition
-SelfTransition
-Step
-Message
-Mailbox
-TimeElements
-MessageInterface
-CoordinationPatternRepository
-CoordinationProtocols
-Internal
+RealTimeCoordination
+CoordinationPattern
